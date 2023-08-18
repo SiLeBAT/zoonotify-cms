@@ -13,9 +13,9 @@
     "pm2": "^5.3.0"
   },
   "dependencies": {
-    "@strapi/plugin-i18n": "4.10.2",
-    "@strapi/plugin-users-permissions": "4.10.2",
-    "@strapi/strapi": "4.10.2",
+    "@strapi/plugin-i18n": "4.12.5",
+    "@strapi/plugin-users-permissions": "4.12.5",
+    "@strapi/strapi": "4.12.5",
     "pg": "8.8.0"
   },
   "author": {
