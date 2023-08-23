@@ -1,0 +1,27 @@
+{
+  "kind": "collectionType",
+  "collectionName": "matrix_details",
+  "info": {
+    "singularName": "matrix-detail",
+    "pluralName": "matrix-details",
+    "displayName": "Matrix Detail"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "iri": {
+      "type": "string"
+    },
+    "labtests": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::labtest.labtest",
+      "mappedBy": "matrix_detail"
+    }
+  }
+}
