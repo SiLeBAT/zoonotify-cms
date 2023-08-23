@@ -1,0 +1,28 @@
+{
+  "kind": "collectionType",
+  "collectionName": "objectives",
+  "info": {
+    "singularName": "objective",
+    "pluralName": "objectives",
+    "displayName": "objective",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "iri": {
+      "type": "string"
+    },
+    "labtests": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::labtest.labtest",
+      "mappedBy": "objective"
+    }
+  }
+}
