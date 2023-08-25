@@ -1,0 +1,21 @@
+{
+  "kind": "collectionType",
+  "collectionName": "matrices",
+  "info": {
+    "singularName": "matrix",
+    "pluralName": "matrices",
+    "displayName": "Matrix"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "iri": {
+      "type": "string"
+    }
+  }
+}

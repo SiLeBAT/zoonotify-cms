@@ -1,0 +1,22 @@
+{
+  "kind": "collectionType",
+  "collectionName": "animal_species_food_categories",
+  "info": {
+    "singularName": "animal-species-food-category",
+    "pluralName": "animal-species-food-categories",
+    "displayName": "Animal Species Food Category",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "iri": {
+      "type": "string"
+    }
+  }
+}
