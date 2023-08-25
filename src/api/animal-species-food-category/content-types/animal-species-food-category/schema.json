@@ -17,18 +17,6 @@
     },
     "iri": {
       "type": "string"
-    },
-    "labtests": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::labtest.labtest",
-      "mappedBy": "animal_species_food_upper_category"
-    },
-    "labtests_direction": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::labtest.labtest",
-      "mappedBy": "animal_species_production_direction_food"
     }
   }
 }
