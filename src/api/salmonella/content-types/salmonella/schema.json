@@ -16,12 +16,6 @@
     },
     "iri": {
       "type": "string"
-    },
-    "labtests": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::labtest.labtest",
-      "mappedBy": "salmonella"
     }
   }
 }
