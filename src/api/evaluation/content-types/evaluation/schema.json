@@ -32,17 +32,15 @@
           "localized": true
         }
       },
-      "type": "richtext"
+      "type": "richtext",
+      "required": true
     },
     "diagram": {
       "type": "media",
-      "multiple": true,
+      "multiple": false,
       "required": true,
       "allowedTypes": [
-        "images",
-        "files",
-        "videos",
-        "audios"
+        "images"
       ],
       "pluginOptions": {
         "i18n": {
@@ -81,7 +79,8 @@
         "STEC",
         "CARBA_E_COLI",
         "ENTEROCOCCUS_SPP"
-      ]
+      ],
+      "required": true
     },
     "category": {
       "pluginOptions": {
@@ -96,7 +95,8 @@
         "SCHWEIN",
         "RIND",
         "DIVERSE"
-      ]
+      ],
+      "required": true
     },
     "diagramType": {
       "pluginOptions": {
@@ -110,7 +110,8 @@
         "ERREGERCHARAK",
         "SUBSTANZ_GRAPH",
         "TREND_DIAGRAMM"
-      ]
+      ],
+      "required": true
     },
     "productionType": {
       "pluginOptions": {
@@ -130,7 +131,8 @@
         "RIND",
         "ZUCHTHUEHNER_LEGE_UND_MASTLINIE",
         "DIVERSE"
-      ]
+      ],
+      "required": true
     },
     "matrix": {
       "pluginOptions": {
@@ -147,12 +149,13 @@
         "SCHLACHTKOERPER",
         "HALS_HAUT",
         "MULTIPLE"
-      ]
+      ],
+      "required": true
     },
     "csv_data": {
       "type": "media",
       "multiple": false,
-      "required": false,
+      "required": true,
       "allowedTypes": [
         "files"
       ],
