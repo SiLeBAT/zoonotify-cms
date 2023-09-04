@@ -122,6 +122,9 @@ const toLinkedData = (data: IIsolateData[]): any => {
 
 const getRelationalData = (type: string, id: string, obj: IRelation) => {
     var relationDataAttributes: IRelationDataAttributes = obj?.data?.attributes;
+    if(!relationDataAttributes)
+        return "";
+
     return {
         "@type": type ? type : relationDataAttributes ? relationDataAttributes.name : "",
         "@id": id ? id : relationDataAttributes ? relationDataAttributes.iri : "",
