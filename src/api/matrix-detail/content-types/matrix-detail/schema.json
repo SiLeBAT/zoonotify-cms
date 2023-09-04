@@ -17,10 +17,10 @@
     "iri": {
       "type": "string"
     },
-    "labtests": {
+    "isolates": {
       "type": "relation",
       "relation": "oneToMany",
-      "target": "api::labtest.labtest",
+      "target": "api::isolate.isolate",
       "mappedBy": "matrix_detail"
     }
   }
