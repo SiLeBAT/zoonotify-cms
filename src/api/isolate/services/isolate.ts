@@ -125,44 +125,64 @@ const setRelationalData = (record: any): Isolate => {
 
     newTest.year = Number(record.Jahr);
 
-    newTest.state = {
-        "set": [getId(states, "name", record.BL)]
-    };
-
-    newTest.microorganism = {
-        "set": [getId(microorganisms, "name", record.Mikroorganismus)]
+    if (record.BL) {
+        newTest.state = {
+            "set": [getId(states, "name", record.BL)]
+        };
     }
 
-    newTest.objective = {
-        "set": [getId(objectives, "name", record.Probenahmegrund)]
+    if (record.Mikroorganismus) {
+        newTest.microorganism = {
+            "set": [getId(microorganisms, "name", record.Mikroorganismus)]
+        }
     }
 
-    newTest.sampling_point = {
-        "set": [getId(points, "name", record.Probenahmestelle)]
+    if (record.Probenahmegrund) {
+        newTest.objective = {
+            "set": [getId(objectives, "name", record.Probenahmegrund)]
+        }
     }
 
-    newTest.sampling_origin = {
-        "set": [getId(origins, "name", record.Probenherkunft)]
+    if (record.Probenahmestelle) {
+        newTest.sampling_point = {
+            "set": [getId(points, "name", record.Probenahmestelle)]
+        }
     }
 
-    newTest.animal_species_food_upper_category = {
-        "set": [getId(categories, "name", record.Tierart_Lebensmittel_Oberkategorie)]
+    if (record.Probenherkunft) {
+        newTest.sampling_origin = {
+            "set": [getId(origins, "name", record.Probenherkunft)]
+        }
     }
 
-    newTest.animal_species_production_direction_food = {
-        "set": [getId(productions, "name", record.Tierart_Produktionsrichtung_Lebensmittel)]
+    if (record.Tierart_Lebensmittel_Oberkategorie) {
+        newTest.animal_species_food_upper_category = {
+            "set": [getId(categories, "name", record.Tierart_Lebensmittel_Oberkategorie)]
+        }
     }
 
-    newTest.matrix = {
-        "set": [getId(matrices, "name", record.Matrix)]
+    if (record.Tierart_Produktionsrichtung_Lebensmittel) {
+        newTest.animal_species_production_direction_food = {
+            "set": [getId(productions, "name", record.Tierart_Produktionsrichtung_Lebensmittel)]
+        }
     }
 
-    newTest.matrix_detail = {
-        "set": [getId(matrixDetails, "name", record.Matrixdetail)]
+    if (record.Matrix) {
+        newTest.matrix = {
+            "set": [getId(matrices, "name", record.Matrix)]
+        }
     }
 
-    newTest.salmonella = {
-        "set": [getId(salmonellas, "name", record.Salm_Serovar)]
+    if (record.Matrixdetail) {
+        newTest.matrix_detail = {
+            "set": [getId(matrixDetails, "name", record.Matrixdetail)]
+        }
+    }
+
+    if (record.Salm_Serovar) {
+        newTest.salmonella = {
+            "set": [getId(salmonellas, "name", record.Salm_Serovar)]
+        }
     }
 
     newTest.createdAt = getDateTimeISOString();
