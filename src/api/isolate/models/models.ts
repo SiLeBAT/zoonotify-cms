@@ -100,7 +100,7 @@ export interface IIsolate {
     SMX_Res_qual: string
     state: IRelation
     microorganism: IRelation
-    objective: IRelation
+    sampling_objective: IRelation
     sampling_point: IRelation
     sampling_origin: IRelation
     animal_species_food_upper_category: IRelation
@@ -117,7 +117,7 @@ export class Isolate implements IIsolate {
     }
     state: IRelation;
     microorganism: IRelation;
-    objective: IRelation;
+    sampling_objective: IRelation;
     sampling_point: IRelation;
     sampling_origin: IRelation;
     animal_species_food_upper_category: IRelation;

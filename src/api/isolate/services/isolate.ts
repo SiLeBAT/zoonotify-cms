@@ -138,7 +138,7 @@ const setRelationalData = (record: any): Isolate => {
     }
 
     if (record.Probenahmegrund) {
-        newTest.objective = {
+        newTest.sampling_objective = {
             "set": [getId(objectives, "name", record.Probenahmegrund)]
         }
     }
