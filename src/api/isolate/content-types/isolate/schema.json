@@ -1,0 +1,339 @@
+{
+  "kind": "collectionType",
+  "collectionName": "isolates",
+  "info": {
+    "singularName": "isolate",
+    "pluralName": "isolates",
+    "displayName": "isolate",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "year": {
+      "type": "biginteger"
+    },
+    "state": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::state.state"
+    },
+    "microorganism": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::microorganism.microorganism",
+      "inversedBy": "isolates"
+    },
+    "sampling_objective": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::sampling-objective.sampling-objective",
+      "inversedBy": "isolates"
+    },
+    "sampling_point": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::sampling-point.sampling-point",
+      "inversedBy": "isolates"
+    },
+    "sampling_origin": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::sampling-origin.sampling-origin",
+      "inversedBy": "isolates"
+    },
+    "matrix": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::matrix.matrix",
+      "inversedBy": "isolates"
+    },
+    "matrix_detail": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::matrix-detail.matrix-detail",
+      "inversedBy": "isolates"
+    },
+    "animal_species_food_upper_category": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::animal-species-food-category.animal-species-food-category",
+      "inversedBy": "isolates"
+    },
+    "animal_species_production_direction_food": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::animal-species-production-direction-food.animal-species-production-direction-food",
+      "inversedBy": "direction_isolates"
+    },
+    "salmonella": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::salmonella.salmonella",
+      "inversedBy": "isolates"
+    },
+    "Originaleinsendenr": {
+      "type": "string"
+    },
+    "BfR_Isolat_Nr": {
+      "type": "string"
+    },
+    "DB_ID": {
+      "type": "string"
+    },
+    "NRL": {
+      "type": "string"
+    },
+    "ZoMo_Programm": {
+      "type": "string"
+    },
+    "Bericht_e": {
+      "type": "string"
+    },
+    "MRSA_spa_Typ": {
+      "type": "string"
+    },
+    "MRSA_Klonale_Gruppe": {
+      "type": "string"
+    },
+    "Entero_Spez": {
+      "type": "string"
+    },
+    "Campy_Spez": {
+      "type": "string"
+    },
+    "Listeria_Serotyp": {
+      "type": "string"
+    },
+    "STEC_Serotyp": {
+      "type": "string"
+    },
+    "STEC_stx1_Gen": {
+      "type": "string"
+    },
+    "STEC_stx2_Gen": {
+      "type": "string"
+    },
+    "STEC_eae_Gen": {
+      "type": "string"
+    },
+    "STEC_e_hly_Gen": {
+      "type": "string"
+    },
+    "ESBL_AmpC_Carba_Phanotyp": {
+      "type": "string"
+    },
+    "WGS": {
+      "type": "string"
+    },
+    "keine_Gene_oder_Mutationen_gefunden": {
+      "type": "string"
+    },
+    "ESBL_Gene": {
+      "type": "string"
+    },
+    "nicht_ESBL_Beta_Laktamase_Gene": {
+      "type": "string"
+    },
+    "AmpC_Gene": {
+      "type": "string"
+    },
+    "AmpC_Punktmutation": {
+      "type": "string"
+    },
+    "Carbapenemase_Gene": {
+      "type": "string"
+    },
+    "Gene_noch_zu_bestimmen": {
+      "type": "string"
+    },
+    "AK_Res_quant": {
+      "type": "string"
+    },
+    "GEN_Res_quant": {
+      "type": "string"
+    },
+    "KAN_Res_quant": {
+      "type": "string"
+    },
+    "STR_Res_quant": {
+      "type": "string"
+    },
+    "CHL_Res_quant": {
+      "type": "string"
+    },
+    "FFN_Res_quant": {
+      "type": "string"
+    },
+    "PEN_Res_quant": {
+      "type": "string"
+    },
+    "AMP_Res_quant": {
+      "type": "string"
+    },
+    "FOT_Res_quant": {
+      "type": "string"
+    },
+    "FOX_Res_quant": {
+      "type": "string"
+    },
+    "TAZ_Res_quant": {
+      "type": "string"
+    },
+    "MERO_Res_quant": {
+      "type": "string"
+    },
+    "CIP_Res_quant": {
+      "type": "string"
+    },
+    "NAL_Res_quant": {
+      "type": "string"
+    },
+    "COL_Res_quant": {
+      "type": "string"
+    },
+    "TET_Res_quant": {
+      "type": "string"
+    },
+    "TGC_Res_quant": {
+      "type": "string"
+    },
+    "RIF_Res_quant": {
+      "type": "string"
+    },
+    "CLI_Res_quant": {
+      "type": "string"
+    },
+    "AZI_Res_quant": {
+      "type": "string"
+    },
+    "ERY_Res_quant": {
+      "type": "string"
+    },
+    "TEC_Res_quant": {
+      "type": "string"
+    },
+    "VAN_Res_quant": {
+      "type": "string"
+    },
+    "DAP_Res_quant": {
+      "type": "string"
+    },
+    "LZD_Res_quant": {
+      "type": "string"
+    },
+    "TIA_Res_quant": {
+      "type": "string"
+    },
+    "MUP_Res_quant": {
+      "type": "string"
+    },
+    "SYN_Res_quant": {
+      "type": "string"
+    },
+    "FUS_Res_quant": {
+      "type": "string"
+    },
+    "TMP_Res_quant": {
+      "type": "string"
+    },
+    "SMX_Res_quant": {
+      "type": "string"
+    },
+    "AK_Res_qual": {
+      "type": "string"
+    },
+    "GEN_Res_qual": {
+      "type": "string"
+    },
+    "KAN_Res_qual": {
+      "type": "string"
+    },
+    "STR_Res_qual": {
+      "type": "string"
+    },
+    "CHL_Res_qual": {
+      "type": "string"
+    },
+    "FFN_Res_qual": {
+      "type": "string"
+    },
+    "PEN_Res_qual": {
+      "type": "string"
+    },
+    "AMP_Res_qual": {
+      "type": "string"
+    },
+    "FOT_Res_qual": {
+      "type": "string"
+    },
+    "FOX_Res_qual": {
+      "type": "string"
+    },
+    "TAZ_Res_qual": {
+      "type": "string"
+    },
+    "MERO_Res_qual": {
+      "type": "string"
+    },
+    "CIP_Res_qual": {
+      "type": "string"
+    },
+    "NAL_Res_qual": {
+      "type": "string"
+    },
+    "COL_Res_qual": {
+      "type": "string"
+    },
+    "TET_Res_qual": {
+      "type": "string"
+    },
+    "TGC_Res_qual": {
+      "type": "string"
+    },
+    "RIF_Res_qual": {
+      "type": "string"
+    },
+    "CLI_Res_qual": {
+      "type": "string"
+    },
+    "AZI_Res_qual": {
+      "type": "string"
+    },
+    "ERY_Res_qual": {
+      "type": "string"
+    },
+    "TEC_Res_qual": {
+      "type": "string"
+    },
+    "VAN_Res_qual": {
+      "type": "string"
+    },
+    "DAP_Res_qual": {
+      "type": "string"
+    },
+    "LZD_Res_qual": {
+      "type": "string"
+    },
+    "TIA_Res_qual": {
+      "type": "string"
+    },
+    "MUP_Res_qual": {
+      "type": "string"
+    },
+    "SYN_Res_qual": {
+      "type": "string"
+    },
+    "FUS_Res_qual": {
+      "type": "string"
+    },
+    "TMP_Res_qual": {
+      "type": "string"
+    },
+    "SMX_Res_qual": {
+      "type": "string"
+    }
+  }
+}

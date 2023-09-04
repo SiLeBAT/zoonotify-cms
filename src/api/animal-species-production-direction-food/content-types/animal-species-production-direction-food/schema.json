@@ -1,10 +1,10 @@
 {
   "kind": "collectionType",
-  "collectionName": "animal_species_food_categories",
+  "collectionName": "animal-species-production-direction-foods",
   "info": {
-    "singularName": "animal-species-food-category",
-    "pluralName": "animal-species-food-categories",
-    "displayName": "Animal Species Food Upper Category",
+    "singularName": "animal-species-production-direction-food",
+    "pluralName": "animal-species-production-direction-foods",
+    "displayName": "Animal Species Production Direction Food",
     "description": ""
   },
   "options": {
@@ -18,11 +18,11 @@
     "iri": {
       "type": "string"
     },
-    "isolates": {
+    "direction_isolates": {
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::isolate.isolate",
-      "mappedBy": "animal_species_food_upper_category"
+      "mappedBy": "animal_species_production_direction_food"
     }
   }
 }
