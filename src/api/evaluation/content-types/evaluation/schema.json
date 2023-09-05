@@ -106,7 +106,7 @@
       },
       "type": "enumeration",
       "enum": [
-        "AGG_TABELLE",
+        "MDR",
         "ERREGERCHARAK",
         "SUBSTANZ_GRAPH",
         "TREND_DIAGRAMM"
