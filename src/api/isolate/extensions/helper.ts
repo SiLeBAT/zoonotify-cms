@@ -1,5 +1,5 @@
+import { INode, ISubNode } from "../models/models";
 import { IIsolateData, IIsolateDataAttributes, IRelation, IRelationDataAttributes } from "../models/response";
-
 
 const toLinkedData = (data: IIsolateData[]): any => {
     var ldResponse = [];
@@ -7,7 +7,7 @@ const toLinkedData = (data: IIsolateData[]): any => {
     data.forEach((labTestData: IIsolateData) => {
         var rec: IIsolateDataAttributes = labTestData.attributes;
 
-        let newRec = {
+        let newRec: INode = {
             "@context": "https://schema.org",
             "@type": "MedicalWebPage",
             "Year": rec.year,
@@ -120,17 +120,19 @@ const toLinkedData = (data: IIsolateData[]): any => {
     return ldResponse;
 };
 
-const getRelationalData = (type: string, id: string, obj: IRelation) => {
+const getRelationalData = (type: string, id: string, obj: IRelation): string | ISubNode => {
     var relationDataAttributes: IRelationDataAttributes = obj?.data?.attributes;
-    if(!relationDataAttributes)
+    if (!relationDataAttributes)
         return "";
 
-    return {
+    var subNode: ISubNode =
+    {
         "@type": type ? type : relationDataAttributes ? relationDataAttributes.name : "",
         "@id": id ? id : relationDataAttributes ? relationDataAttributes.iri : "",
-        "name": relationDataAttributes?.name,
-        "iri": relationDataAttributes?.iri
-    }
+        "name": relationDataAttributes.name,
+        "iri": relationDataAttributes.iri
+    };
+    return subNode;
 }
 
 export { toLinkedData }
