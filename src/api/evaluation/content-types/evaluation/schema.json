@@ -58,7 +58,8 @@
       "enum": [
         "TIERE",
         "FUTTERMITTEL",
-        "LEBENSMITTEL"
+        "LEBENSMITTEL",
+        "MULTIPLE"
       ],
       "required": true
     },
