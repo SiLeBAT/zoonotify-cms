@@ -1,0 +1,59 @@
+{
+  "kind": "collectionType",
+  "collectionName": "resistance_tables",
+  "info": {
+    "singularName": "resistance-table",
+    "pluralName": "resistance-tables",
+    "displayName": "Resistance_Table",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "table_id": {
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "type": "string",
+      "unique": true,
+      "required": true,
+      "maxLength": 5
+    },
+    "description": {
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "type": "richtext",
+      "required": true
+    },
+    "yearly_cut_off": {
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      },
+      "type": "json",
+      "required": true
+    },
+    "title": {
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "type": "richtext",
+      "maxLength": 100,
+      "required": true
+    }
+  }
+}
