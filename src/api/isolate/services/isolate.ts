@@ -6,16 +6,16 @@ import { IKeys, IIsolate, Isolate } from '../models/models';
 import { getDateTimeISOString, getId } from '../../../extensions/helper';
 const fs = require('fs');
 const xlsx = require("xlsx");
-var states;
-var microorganisms;
-var objectives;
-var salmonellas;
-var origins;
-var points;
-var matrices;
-var matrixDetails;
-var categories;
-var productions;
+let states;
+let microorganisms;
+let objectives;
+let salmonellas;
+let origins;
+let points;
+let matrices;
+let matrixDetails;
+let categories;
+let productions;
 const { promisify } = require('util')
 const { setImmediate } = require('timers')
 
@@ -72,23 +72,23 @@ export default factories.createCoreService('api::isolate.isolate', ({ strapi }) 
             * Get the file from the context and read the data as a json array
         */
         console.time('FileRead');
-        const { request: { body, files: { file = '' } = {} } } = ctx;
+        const { request: { files: { file = '' } = {} } } = ctx;
         const buffer = fs.readFileSync(file.path);
-        var workbook = xlsx.read(buffer);
-        var sheet_name_list = workbook.SheetNames;
-        var response = xlsx.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]], { defval: "" });
+        let workbook = xlsx.read(buffer);
+        let sheet_name_list = workbook.SheetNames;
+        let response = xlsx.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]], { defval: "" });
         console.timeEnd('FileRead');
-        var recs: Isolate[] = []
-        var keyMappings: IKeys[] = [];
+        let recs: Isolate[] = []
+        let keyMappings: IKeys[] = [];
 
         response.forEach((rec, recIndex) => {
-            var newRec = {};
+            let newRec = {};
             if (recIndex == 0) {
                 Object.keys(rec).forEach((entry) => {
-                    var key = entry.replace(/\s+/g, '_');
+                    let key = entry.replace(/\s+/g, '_');
                     key = key.replace(/\//g, '_');
                     key = key.replace(/\./g, '_');
-                    key = key.replace(/\-/g, '_');
+                    key = key.replace(/-/g, '_');
                     keyMappings.push({
                         name: entry,
                         displayName: key
@@ -121,7 +121,7 @@ export default factories.createCoreService('api::isolate.isolate', ({ strapi }) 
  */
 const setRelationalData = (record: any): Isolate => {
     const { Jahr, BL, Mikroorganismus, Probenahmegrund, Probenahmestelle, Probenherkunft, Tierart_Lebensmittel_Oberkategorie, Tierart_Produktionsrichtung_Lebensmittel, Matrix, Matrixdetail, Salm_Serovar, ...strippedRecord } = record;
-    var newTest = new Isolate(strippedRecord as IIsolate);
+    let newTest = new Isolate(strippedRecord as IIsolate);
 
     newTest.year = Number(record.Jahr);
 
@@ -198,7 +198,7 @@ const setRelationalData = (record: any): Isolate => {
  * @returns Id of the newly added record
  */
 const saveIsolate = async (rec, i) => {
-    var response = await strapi.db.query("api::isolate.isolate").create({
+    let response = await strapi.db.query("api::isolate.isolate").create({
         data: JSON.parse(JSON.stringify(rec))
     });
     return response.id;

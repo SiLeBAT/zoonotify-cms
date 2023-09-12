@@ -1,11 +1,16 @@
 import { INode, ISubNode } from "../models/models";
 import { IIsolateData, IIsolateDataAttributes, IRelation, IRelationDataAttributes } from "../models/response";
 
-const toLinkedData = (data: IIsolateData[]): any => {
-    var ldResponse = [];
+/**
+ * Convert json to json-LD
+ * @param data List of IIsolateData 
+ * @returns List of Linked Data as a INode collection
+ */
+const toLinkedData = (data: IIsolateData[]): INode[] => {
+    let ldResponse: INode[] = [];
 
     data.forEach((labTestData: IIsolateData) => {
-        var rec: IIsolateDataAttributes = labTestData.attributes;
+        let rec: IIsolateDataAttributes = labTestData.attributes;
 
         let newRec: INode = {
             "@context": "https://schema.org",
@@ -120,15 +125,22 @@ const toLinkedData = (data: IIsolateData[]): any => {
     return ldResponse;
 };
 
+/**
+ * 
+ * @param type @type of the linked data node
+ * @param id @id of the linked data noded
+ * @param obj JSON object with node details
+ * @returns Linked data object as a instance of ISubNode
+ */
 const getRelationalData = (type: string, id: string, obj: IRelation): string | ISubNode => {
-    var relationDataAttributes: IRelationDataAttributes = obj?.data?.attributes;
+    let relationDataAttributes: IRelationDataAttributes = obj?.data?.attributes;
     if (!relationDataAttributes)
         return "";
 
-    var subNode: ISubNode =
+    let subNode: ISubNode =
     {
-        "@type": type ? type : relationDataAttributes ? relationDataAttributes.name : "",
-        "@id": id ? id : relationDataAttributes ? relationDataAttributes.iri : "",
+        "@type": type || relationDataAttributes.name,
+        "@id": id || relationDataAttributes.iri,
         "name": relationDataAttributes.name,
         "iri": relationDataAttributes.iri
     };
