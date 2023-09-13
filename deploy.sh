@@ -8,6 +8,7 @@ sed 's/\// /g') | cut -f1) ] && UP_TO_DATE=0 || UP_TO_DATE=1
 
 if [ $UP_TO_DATE = 1 ]; then
     git pull
+    npm ci
     npm run build
     ./node_modules/.bin/pm2 restart 0
 fi
