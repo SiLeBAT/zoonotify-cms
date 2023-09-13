@@ -1,4 +1,4 @@
-i#! /bin/bash
+#! /bin/bash
 
 UP_TO_DATE=0
 
