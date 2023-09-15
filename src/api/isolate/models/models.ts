@@ -219,10 +219,10 @@ export class Isolate implements IIsolate {
 }
 
 export interface ISubNode {
-    "@type": string
-    "@id": string
+    "@context": {
+        name: string
+    },
     name: string
-    iri: string
 }
 
 export interface IResistanceQuant {
