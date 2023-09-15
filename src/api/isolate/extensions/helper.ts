@@ -14,26 +14,26 @@ const toLinkedData = (data: IIsolateData[]): INode[] => {
 
         let newRec: INode = {
             "@context": "https://schema.org",
-            "@type": "MedicalWebPage",
+            "@type": "MedicalStudy",
             "Year": rec.year,
-            "State": getRelationalData("Place", null, rec.state),
-            "Microorganism": getRelationalData("MedicalCode", null, rec.microorganism),
+            "State": getRelationalData(rec.state),
+            "Microorganism": getRelationalData(rec.microorganism),
             "Originaleinsendenr": rec.Originaleinsendenr,
             "BfR_Isolat_Nr": rec.BfR_Isolat_Nr,
             "DB_ID": rec.DB_ID,
             "NRL": rec.NRL,
-            "Sampling Reason": getRelationalData("MedicalCode", null, rec.objective),
-            "Sampling Point": getRelationalData("MedicalCode", null, rec.sampling_point),
+            "Sampling Reason": getRelationalData(rec.objective),
+            "Sampling Point": getRelationalData(rec.sampling_point),
             "ZoMo_Programm": rec.ZoMo_Programm,
-            "Animal species/food upper category": getRelationalData("MedicalCode", null, rec.animal_species_food_upper_category),
-            "Animal species production direction/food": getRelationalData("MedicalCode", null, rec.animal_species_production_direction_food),
-            "Matrix": getRelationalData("MedicalCode", null, rec.matrix),
+            "Animal species/food upper category": getRelationalData(rec.animal_species_food_upper_category),
+            "Animal species production direction/food": getRelationalData(rec.animal_species_production_direction_food),
+            "Matrix": getRelationalData(rec.matrix),
             "Bericht_e": rec.Bericht_e,
             "MRSA_spa_Typ": rec.MRSA_spa_Typ,
             "MRSA_Klonale_Gruppe": rec.MRSA_Klonale_Gruppe,
             "Entero_Spez": rec.Entero_Spez,
             "Campy_Spez": rec.Campy_Spez,
-            "Salmonella": getRelationalData("MedicalCode", null, rec.salmonella),
+            "Salmonella": getRelationalData(rec.salmonella),
             "Listeria_Serotyp": rec.Listeria_Serotyp,
             "STEC_Serotyp": rec.STEC_Serotyp,
             "STEC_stx1_Gen": rec.STEC_stx1_Gen,
@@ -49,9 +49,9 @@ const toLinkedData = (data: IIsolateData[]): INode[] => {
             "Gene_noch_zu_bestimmen": rec.Gene_noch_zu_bestimmen,
             "WGS": rec.WGS,
             "ESBL_AmpC_Carba_Phanotyp": rec.ESBL_AmpC_Carba_Phanotyp,
-            "Sampling Origin": getRelationalData("MedicalCode", null, rec.sampling_origin),
+            "Sampling Origin": getRelationalData(rec.sampling_origin),
             "Resistance Quant": {
-                "@type": "MedicalStudy",
+                "@type": "DrugStrength",
                 "AK_Res_quant": rec.AK_Res_quant,
                 "GEN_Res_quant": rec.GEN_Res_quant,
                 "KAN_Res_quant": rec.KAN_Res_quant,
@@ -85,7 +85,7 @@ const toLinkedData = (data: IIsolateData[]): INode[] => {
                 "SMX_Res_quant": rec.SMX_Res_quant
             },
             "Resistance Qual": {
-                "@type": "MedicalStudy",
+                "@type": "DrugStrength",
                 "AK_Res_qual": rec.AK_Res_qual,
                 "GEN_Res_qual": rec.GEN_Res_qual,
                 "KAN_Res_qual": rec.KAN_Res_qual,
@@ -126,23 +126,21 @@ const toLinkedData = (data: IIsolateData[]): INode[] => {
 };
 
 /**
- * 
- * @param type @type of the linked data node
- * @param id @id of the linked data noded
+ * Generate SubNode object using data passed
  * @param obj JSON object with node details
  * @returns Linked data object as a instance of ISubNode
  */
-const getRelationalData = (type: string, id: string, obj: IRelation): string | ISubNode => {
+const getRelationalData = (obj: IRelation): string | ISubNode => {
     let relationDataAttributes: IRelationDataAttributes = obj?.data?.attributes;
     if (!relationDataAttributes)
         return "";
 
     let subNode: ISubNode =
     {
-        "@type": type || relationDataAttributes.name,
-        "@id": id || relationDataAttributes.iri,
-        "name": relationDataAttributes.name,
-        "iri": relationDataAttributes.iri
+        "@context": {
+            "name": relationDataAttributes.iri
+        },
+        name: relationDataAttributes.name
     };
     return subNode;
 }
