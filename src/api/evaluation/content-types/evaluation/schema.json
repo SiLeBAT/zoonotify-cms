@@ -22,7 +22,7 @@
           "localized": true
         }
       },
-      "type": "string",
+      "type": "text",
       "required": true,
       "unique": true
     },
@@ -131,6 +131,7 @@
         "PUTE",
         "RIND",
         "ZUCHTHUEHNER_LEGE_UND_MASTLINIE",
+        "MILCHRIND",
         "DIVERSE"
       ],
       "required": true
@@ -149,6 +150,7 @@
         "KOT_STAUB",
         "SCHLACHTKOERPER",
         "HALS_HAUT",
+        "MILCH",
         "MULTIPLE"
       ],
       "required": true
