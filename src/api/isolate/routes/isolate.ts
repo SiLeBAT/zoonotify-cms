@@ -15,12 +15,15 @@ const defaultRouter = factories.createCoreRouter('api::isolate.isolate', {
                     //update your request here if needed
                     await next();
                     //update your response here if needed
-                    let response: IIsolateResponse = ctx.response.body;
+                    const contentType = ctx?.request?.header['content-type'];
+                    if(contentType == 'application/ld+json'){
+                        let response: IIsolateResponse = ctx.response.body;
 
-                    if (response.data && response.data.length > 0) {
-                        console.time("JSON to JSON-LD");
-                        ctx.response.body = toLinkedData(response.data);
-                        console.timeEnd("JSON to JSON-LD");
+                        if (response.data && response.data.length > 0) {
+                            console.time("JSON to JSON-LD");
+                            ctx.response.body = toLinkedData(response.data);
+                            console.timeEnd("JSON to JSON-LD");
+                        }
                     }
                     return ctx;
                 }
