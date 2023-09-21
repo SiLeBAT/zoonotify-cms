@@ -1,4 +1,5 @@
 export interface IKeys {
+    index: number;
     name: string;
     displayName: string;
 }
