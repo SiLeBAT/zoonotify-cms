@@ -5,7 +5,11 @@ import { factories } from '@strapi/strapi';
 import { IKeys, IIsolate, Isolate } from '../models/models';
 import { getDateTimeISOString, getId } from '../../../extensions/helper';
 const fs = require('fs');
-const xlsx = require("xlsx");
+import xlsx from 'node-xlsx';
+const { promisify } = require('util');
+const { setImmediate } = require('timers');
+const setImmediateP = promisify(setImmediate);
+
 let states;
 let microorganisms;
 let objectives;
@@ -16,10 +20,6 @@ let matrices;
 let matrixDetails;
 let categories;
 let productions;
-const { promisify } = require('util')
-const { setImmediate } = require('timers')
-
-const setImmediateP = promisify(setImmediate)
 
 export default factories.createCoreService('api::isolate.isolate', ({ strapi }) => ({
     async import(ctx) {
@@ -74,43 +74,51 @@ export default factories.createCoreService('api::isolate.isolate', ({ strapi }) 
         console.time('FileRead');
         const { request: { files: { file = '' } = {} } } = ctx;
         const buffer = fs.readFileSync(file.path);
-        let workbook = xlsx.read(buffer);
-        let sheet_name_list = workbook.SheetNames;
-        let response = xlsx.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]], { defval: "" });
+        const dataFromExcel = xlsx.parse(buffer);
         console.timeEnd('FileRead');
+
+        if (!dataFromExcel || dataFromExcel.length == 0) {
+            console.timeEnd('Import');
+            throw new TypeError("File is not in expected format.");
+        }
+
+        let dataFromFirstSheet = dataFromExcel[0].data;
+
+        if (!dataFromFirstSheet || dataFromExcel.length == 0) {
+            console.timeEnd('Import');
+            throw new TypeError("File is empty.");
+        }
+
+        const headers = dataFromFirstSheet.shift();
         let recs: Isolate[] = []
         let keyMappings: IKeys[] = [];
 
-        response.forEach((rec, recIndex) => {
-            let newRec = {};
-            if (recIndex == 0) {
-                Object.keys(rec).forEach((entry) => {
-                    let key = entry.replace(/\s+/g, '_');
-                    key = key.replace(/\//g, '_');
-                    key = key.replace(/\./g, '_');
-                    key = key.replace(/-/g, '_');
-                    keyMappings.push({
-                        name: entry,
-                        displayName: key
-                    });
-                });
-            }
-
-            keyMappings.forEach((keyEntry) => {
-                newRec[keyEntry.displayName] = rec[keyEntry.name] ? rec[keyEntry.name].toString() : "";
+        Object.values(headers).forEach((entry, index) => {
+            let key = entry.replace(/\s+/g, '_');
+            key = key.replace(/\//g, '_');
+            key = key.replace(/\./g, '_');
+            key = key.replace(/-/g, '_');
+            keyMappings.push({
+                index: index,
+                name: entry,
+                displayName: key
             });
+        });
 
+        dataFromFirstSheet.forEach((rec) => {
+            let newRec = {};
+            keyMappings.forEach((keyEntry) => {
+                newRec[keyEntry.displayName] = rec[keyEntry.index] ? rec[keyEntry.index].toString() : "";
+            });
             recs.push(setRelationalData(newRec));
         });
 
         console.log(`Inserting total ${recs.length} records`);
-        console.time('mapAllSettled')
-        const results = await mapAllSettled(recs, saveIsolate, 100)
-        console.timeEnd('mapAllSettled')
+        console.time('mapAllSettled');
+        const results = await mapAllSettled(recs, saveIsolate, 100);
+        console.timeEnd('mapAllSettled');
         console.timeEnd('Import');
         return results;
-
-
     }
 }));
 
