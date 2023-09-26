@@ -13,6 +13,7 @@
     "pm2": "^5.3.0"
   },
   "dependencies": {
+    "@strapi/plugin-documentation": "4.12.5",
     "@strapi/plugin-i18n": "4.12.5",
     "@strapi/plugin-users-permissions": "4.12.5",
     "@strapi/strapi": "4.12.5",
