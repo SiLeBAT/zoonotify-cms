@@ -3,6 +3,8 @@
  */
 
 import { Strapi } from '@strapi/strapi';
+import {version} from './../../package.json';
+
 
 export default (config, { strapi }: { strapi: Strapi }) => {
   // Add your own logic here.
@@ -10,7 +12,7 @@ export default (config, { strapi }: { strapi: Strapi }) => {
     // strapi.log.info('In version-injector middleware.');
 
     await next();
-    ctx.set('cms-version', process.env.npm_package_version);
+    ctx.set('cms-version', version);
     ctx.set('Access-Control-Expose-Headers', 'cms-version');
   };
 };
