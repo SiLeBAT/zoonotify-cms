@@ -1,0 +1,34 @@
+{
+  "kind": "collectionType",
+  "collectionName": "external_links",
+  "info": {
+    "singularName": "externallinks",
+    "pluralName": "external-links",
+    "displayName": "ExternalLinks",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "Link": {
+      "type": "string",
+      "required": true
+    },
+    "Section": {
+      "type": "enumeration",
+      "enum": [
+        "Lagal regulations",
+        "Reports",
+        "Organizations and institutes",
+        "Online tools"
+      ],
+      "required": true
+    }
+  }
+}
