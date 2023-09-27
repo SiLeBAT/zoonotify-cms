@@ -11,5 +11,6 @@ export default (config, { strapi }: { strapi: Strapi }) => {
 
     await next();
     ctx.set('cms-version', process.env.npm_package_version);
+    ctx.set('Access-Control-Expose-Headers', 'cms-version');
   };
 };
