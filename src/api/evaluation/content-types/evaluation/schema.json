@@ -60,6 +60,7 @@
         "FUTTERMITTEL",
         "LEBENSMITTEL",
         "MULTIPLE"
+        
       ],
       "required": true
     },
