@@ -12,21 +12,21 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "Name": {
+    "name": {
       "type": "string",
       "required": true
     },
-    "Link": {
+    "link": {
       "type": "string",
       "required": true
     },
     "category": {
       "type": "enumeration",
       "enum": [
-        "Legal regulation",
-        "Reports",
-        "Organization and Institutes",
-        "Online Tools"
+        "LEGAL-REGULATION",
+        "REPORTS",
+        "ORGANIZATION-AND-INSTITUTES",
+        "ONLINE-TOOLS"
       ],
       "required": true
     }
