@@ -23,10 +23,10 @@
     "category": {
       "type": "enumeration",
       "enum": [
-        "LEGAL-REGULATION",
+        "LEGAL_REGULATION",
         "REPORTS",
-        "ORGANIZATION-AND-INSTITUTES",
-        "ONLINE-TOOLS"
+        "ORGANIZATION_AND_INSTITUTES",
+        "ONLINE_TOOLS"
       ],
       "required": true
     }
