@@ -3,7 +3,7 @@
  */
 import { factories } from '@strapi/strapi';
 import { IKeys, IIsolate, Isolate } from '../models/models';
-import { getDateTimeISOString, getId } from '../../../extensions/helper';
+import { getDateTimeISOString, getId } from './../extensions/helper';
 const fs = require('fs');
 import xlsx from 'node-xlsx';
 const { promisify } = require('util');
