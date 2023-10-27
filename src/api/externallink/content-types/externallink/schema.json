@@ -29,6 +29,11 @@
         "ONLINE_TOOLS"
       ],
       "required": true
+    },
+    "ordernumber": {
+      "type": "integer",
+      "required": true,
+      "unique": true
     }
   }
 }
