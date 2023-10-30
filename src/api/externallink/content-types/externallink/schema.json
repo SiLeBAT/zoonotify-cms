@@ -30,7 +30,7 @@
       ],
       "required": true
     },
-    "ordernumber": {
+    "priority": {
       "type": "integer",
       "required": true,
       "unique": true
