@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/usr/bin/env bash
 
 UP_TO_DATE=0
 
