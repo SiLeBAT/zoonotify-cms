@@ -11,4 +11,5 @@ if [ $UP_TO_DATE = 1 ]; then
     yarn
     yarn build
     ./node_modules/.bin/pm2 restart 0
+
 fi

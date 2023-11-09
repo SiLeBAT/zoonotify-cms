@@ -60,7 +60,6 @@
         "FUTTERMITTEL",
         "LEBENSMITTEL",
         "MULTIPLE"
-        
       ],
       "required": true
     },
@@ -123,13 +122,12 @@
       },
       "type": "enumeration",
       "enum": [
-        "HUHN",
         "LEGEHENNEN",
         "MASTHAEHNCHEN",
         "MASTKALB_JUNGRIND",
+        "MASTRIND",
         "MASTPUTEN",
         "MASTSCHWEIN",
-        "PUTE",
         "RIND",
         "ZUCHTHUEHNER_LEGE_UND_MASTLINIE",
         "MILCHRIND",
