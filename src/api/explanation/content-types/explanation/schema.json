@@ -34,9 +34,9 @@
       },
       "type": "enumeration",
       "enum": [
-        "HAUPT",
         "GRAPHIKEN",
         "METHODEN",
+        "HINTERGRUND",
         "DATEN"
       ],
       "required": true
