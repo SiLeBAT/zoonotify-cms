@@ -82,6 +82,7 @@ ssl
 nbproject
 public/uploads/*
 !public/uploads/.gitkeep
+local
 
 ############################
 # Node.js
@@ -113,3 +114,4 @@ exports
 dist
 build
 .strapi-updater.json
+export_20*

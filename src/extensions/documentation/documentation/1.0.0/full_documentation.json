@@ -14,7 +14,7 @@
       "name": "Apache 2.0",
       "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
     },
-    "x-generation-date": "2023-11-07T11:05:09.709Z"
+    "x-generation-date": "2023-11-09T09:53:21.673Z"
   },
   "x-strapi-config": {
     "path": "/documentation",
@@ -3701,13 +3701,12 @@
           "productionType": {
             "type": "string",
             "enum": [
-              "HUHN",
               "LEGEHENNEN",
               "MASTHAEHNCHEN",
               "MASTKALB_JUNGRIND",
+              "MASTRIND",
               "MASTPUTEN",
               "MASTSCHWEIN",
-              "PUTE",
               "RIND",
               "ZUCHTHUEHNER_LEGE_UND_MASTLINIE",
               "MILCHRIND",
@@ -3826,13 +3825,12 @@
               "productionType": {
                 "type": "string",
                 "enum": [
-                  "HUHN",
                   "LEGEHENNEN",
                   "MASTHAEHNCHEN",
                   "MASTKALB_JUNGRIND",
+                  "MASTRIND",
                   "MASTPUTEN",
                   "MASTSCHWEIN",
-                  "PUTE",
                   "RIND",
                   "ZUCHTHUEHNER_LEGE_UND_MASTLINIE",
                   "MILCHRIND",
@@ -4671,13 +4669,12 @@
           "productionType": {
             "type": "string",
             "enum": [
-              "HUHN",
               "LEGEHENNEN",
               "MASTHAEHNCHEN",
               "MASTKALB_JUNGRIND",
+              "MASTRIND",
               "MASTPUTEN",
               "MASTSCHWEIN",
-              "PUTE",
               "RIND",
               "ZUCHTHUEHNER_LEGE_UND_MASTLINIE",
               "MILCHRIND",
