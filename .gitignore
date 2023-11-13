@@ -83,6 +83,7 @@ nbproject
 public/uploads/*
 !public/uploads/.gitkeep
 local
+.strapi
 
 ############################
 # Node.js
