@@ -1,0 +1,54 @@
+{
+  "kind": "collectionType",
+  "collectionName": "explanations",
+  "info": {
+    "singularName": "explanation",
+    "pluralName": "explanations",
+    "displayName": "Explanation",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "title": {
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "section": {
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      },
+      "type": "enumeration",
+      "enum": [
+        "GRAPHIKEN",
+        "METHODEN",
+        "HINTERGRUND",
+        "DATEN"
+      ],
+      "required": true
+    },
+    "description": {
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "type": "richtext",
+      "required": true
+    }
+  }
+}

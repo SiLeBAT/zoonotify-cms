@@ -1,0 +1,27 @@
+{
+  "kind": "collectionType",
+  "collectionName": "salmonellas",
+  "info": {
+    "singularName": "salmonella",
+    "pluralName": "salmonellas",
+    "displayName": "Salmonella"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "iri": {
+      "type": "string"
+    },
+    "isolates": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::isolate.isolate",
+      "mappedBy": "salmonella"
+    }
+  }
+}

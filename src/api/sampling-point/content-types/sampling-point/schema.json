@@ -1,0 +1,27 @@
+{
+  "kind": "collectionType",
+  "collectionName": "sampling_points",
+  "info": {
+    "singularName": "sampling-point",
+    "pluralName": "sampling-points",
+    "displayName": "sampling point"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "iri": {
+      "type": "string"
+    },
+    "isolates": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::isolate.isolate",
+      "mappedBy": "sampling_point"
+    }
+  }
+}

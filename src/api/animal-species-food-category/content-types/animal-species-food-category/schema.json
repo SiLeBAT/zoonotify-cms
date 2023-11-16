@@ -1,0 +1,28 @@
+{
+  "kind": "collectionType",
+  "collectionName": "animal_species_food_categories",
+  "info": {
+    "singularName": "animal-species-food-category",
+    "pluralName": "animal-species-food-categories",
+    "displayName": "Animal Species Food Upper Category",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "iri": {
+      "type": "string"
+    },
+    "isolates": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::isolate.isolate",
+      "mappedBy": "animal_species_food_upper_category"
+    }
+  }
+}

@@ -37,7 +37,7 @@ $RECYCLE.BIN/
 ############################
 
 *.7z
-*.csv
+# *.csv
 *.dat
 *.dmg
 *.gz
@@ -82,6 +82,8 @@ ssl
 nbproject
 public/uploads/*
 !public/uploads/.gitkeep
+local
+.strapi
 
 ############################
 # Node.js
@@ -113,3 +115,4 @@ exports
 dist
 build
 .strapi-updater.json
+export_20*
