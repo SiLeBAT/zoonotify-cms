@@ -1,11 +1,10 @@
 {
   "kind": "collectionType",
-  "collectionName": "animal_species_food_categories",
+  "collectionName": "animal_species_food_upper_categories",
   "info": {
-    "singularName": "animal-species-food-category",
-    "pluralName": "animal-species-food-categories",
-    "displayName": "Animal Species Food Upper Category",
-    "description": ""
+    "singularName": "animal-species-food-upper-category",
+    "pluralName": "animal-species-food-upper-categories",
+    "displayName": "Animal Species Food Upper Category"
   },
   "options": {
     "draftAndPublish": false
