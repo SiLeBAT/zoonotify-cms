@@ -11,7 +11,6 @@ export interface IIsolateDataAttributes {
     year: number
     createdAt: any
     updatedAt: any
-    Originaleinsendenr: any
     BfR_Isolat_Nr: string
     DB_ID: string
     NRL: string
@@ -98,7 +97,7 @@ export interface IIsolateDataAttributes {
     FUS_Res_qual: string
     TMP_Res_qual: string
     SMX_Res_qual: string
-    state: IState
+    // state: IState
     microorganism: IMicroorganism
     objective: ISamplingObjective
     sampling_point: ISamplingPoint
