@@ -12,7 +12,6 @@ export interface IIsolate {
     year: number
     createdAt: string
     updatedAt: string
-    Originaleinsendenr: any
     BfR_Isolat_Nr: string
     DB_ID: string
     NRL: string
@@ -99,7 +98,6 @@ export interface IIsolate {
     FUS_Res_qual: string
     TMP_Res_qual: string
     SMX_Res_qual: string
-    state: IRelation
     microorganism: IRelation
     sampling_objective: IRelation
     sampling_point: IRelation
@@ -116,7 +114,6 @@ export class Isolate implements IIsolate {
     constructor(data: Partial<IIsolate>) {
         Object.assign(this, data);
     }
-    state: IRelation;
     microorganism: IRelation;
     sampling_objective: IRelation;
     sampling_point: IRelation;
@@ -129,7 +126,6 @@ export class Isolate implements IIsolate {
     year: number;
     createdAt: string;
     updatedAt: string;
-    Originaleinsendenr: any;
     BfR_Isolat_Nr: string;
     DB_ID: string;
     NRL: string;
@@ -300,9 +296,7 @@ export interface INode {
     "@context": string
     "@type": string
     Year: number
-    State: ISubNode | string
     Microorganism: ISubNode | string
-    Originaleinsendenr: string
     BfR_Isolat_Nr: string
     DB_ID: string
     NRL: string

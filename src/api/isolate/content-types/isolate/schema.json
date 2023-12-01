@@ -15,11 +15,6 @@
     "year": {
       "type": "biginteger"
     },
-    "state": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::state.state"
-    },
     "microorganism": {
       "type": "relation",
       "relation": "manyToOne",
@@ -67,9 +62,6 @@
       "relation": "manyToOne",
       "target": "api::salmonella.salmonella",
       "inversedBy": "isolates"
-    },
-    "Originaleinsendenr": {
-      "type": "string"
     },
     "BfR_Isolat_Nr": {
       "type": "string"
