@@ -4,7 +4,8 @@
   "info": {
     "singularName": "animal-species-food-upper-category",
     "pluralName": "animal-species-food-upper-categories",
-    "displayName": "Animal Species Food Upper Category"
+    "displayName": "Animal Species Food Top Category",
+    "description": ""
   },
   "options": {
     "draftAndPublish": false
