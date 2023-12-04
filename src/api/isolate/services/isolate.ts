@@ -10,7 +10,6 @@ const { promisify } = require('util');
 const { setImmediate } = require('timers');
 const setImmediateP = promisify(setImmediate);
 
-// let states;
 let microorganisms;
 let objectives;
 let salmonellas;
@@ -28,10 +27,6 @@ export default factories.createCoreService('api::isolate.isolate', ({ strapi }) 
         /**
             * Fetch master data
         */
-        // states = await strapi.entityService.findMany('api::state.state', {
-        //     fields: ['id', 'name']
-        // });
-
         microorganisms = await strapi.entityService.findMany('api::microorganism.microorganism', {
             fields: ['id', 'name']
         });
@@ -130,14 +125,7 @@ export default factories.createCoreService('api::isolate.isolate', ({ strapi }) 
 const setRelationalData = (record: any): Isolate => {
     const { Jahr, BL, Mikroorganismus, Probenahmegrund, Probenahmestelle, Probenherkunft, Tierart_Lebensmittel_Oberkategorie, Tierart_Produktionsrichtung_Lebensmittel, Matrix, Matrixdetail, Salm_Serovar, ...strippedRecord } = record;
     let newTest = new Isolate(strippedRecord as IIsolate);
-
     newTest.year = Number(record.Jahr);
-
-    // if (record.BL) {
-    //     newTest.state = {
-    //         "set": [getId(states, "name", record.BL)]
-    //     };
-    // }
 
     if (record.Mikroorganismus) {
         newTest.microorganism = {
