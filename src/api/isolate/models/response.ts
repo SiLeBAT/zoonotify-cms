@@ -97,7 +97,6 @@ export interface IIsolateDataAttributes {
     FUS_Res_qual: string
     TMP_Res_qual: string
     SMX_Res_qual: string
-    // state: IState
     microorganism: IMicroorganism
     objective: ISamplingObjective
     sampling_point: ISamplingPoint
@@ -124,10 +123,6 @@ export interface IRelationDataAttributes {
     createdAt: any
     updatedAt: any
 }
-
-export interface IState extends IRelation {
-}
-
 
 export interface IMicroorganism extends IRelation {
 }
