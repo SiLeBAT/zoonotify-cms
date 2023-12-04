@@ -25,7 +25,7 @@ const toLinkedData = (data: IIsolateData[]): INode[] => {
             "Sampling Reason": getRelationalData(rec.objective),
             "Sampling Point": getRelationalData(rec.sampling_point),
             "ZoMo_Programm": rec.ZoMo_Programm,
-            "Animal species/food upper category": getRelationalData(rec.animal_species_food_upper_category),
+            "Animal species/food top category": getRelationalData(rec.animal_species_food_top_category),
             "Animal species production direction/food": getRelationalData(rec.animal_species_production_direction_food),
             "Matrix": getRelationalData(rec.matrix),
             "Bericht_e": rec.Bericht_e,

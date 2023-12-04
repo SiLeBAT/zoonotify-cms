@@ -329,7 +329,7 @@
     "SMX_Res_qual": {
       "type": "string"
     },
-    "animal_species_food_upper_category": {
+    "animal_species_food_top_category": {
       "type": "relation",
       "relation": "manyToOne",
       "target": "api::animal-species-food-upper-category.animal-species-food-upper-category",

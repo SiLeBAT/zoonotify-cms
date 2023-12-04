@@ -22,7 +22,7 @@
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::isolate.isolate",
-      "mappedBy": "animal_species_food_upper_category"
+      "mappedBy": "animal_species_food_top_category"
     }
   }
 }
