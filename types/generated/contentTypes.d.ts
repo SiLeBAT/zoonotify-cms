@@ -23,7 +23,6 @@ export interface AdminPermission extends Schema.CollectionType {
       Attribute.SetMinMaxLength<{
         minLength: 1;
       }>;
-    actionParameters: Attribute.JSON & Attribute.DefaultTo<{}>;
     subject: Attribute.String &
       Attribute.SetMinMaxLength<{
         minLength: 1;
@@ -677,13 +676,13 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
   };
 }
 
-export interface ApiAnimalSpeciesFoodCategoryAnimalSpeciesFoodCategory
+export interface ApiAnimalSpeciesFoodTopCategoryAnimalSpeciesFoodTopCategory
   extends Schema.CollectionType {
-  collectionName: 'animal_species_food_categories';
+  collectionName: 'animal_species_food_top_categories';
   info: {
-    singularName: 'animal-species-food-category';
-    pluralName: 'animal-species-food-categories';
-    displayName: 'Animal Species Food Upper Category';
+    singularName: 'animal-species-food-top-category';
+    pluralName: 'animal-species-food-top-categories';
+    displayName: 'Animal Species Food Top Category';
     description: '';
   };
   options: {
@@ -693,20 +692,20 @@ export interface ApiAnimalSpeciesFoodCategoryAnimalSpeciesFoodCategory
     name: Attribute.String;
     iri: Attribute.String;
     isolates: Attribute.Relation<
-      'api::animal-species-food-category.animal-species-food-category',
+      'api::animal-species-food-top-category.animal-species-food-top-category',
       'oneToMany',
       'api::isolate.isolate'
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
-      'api::animal-species-food-category.animal-species-food-category',
+      'api::animal-species-food-top-category.animal-species-food-top-category',
       'oneToOne',
       'admin::user'
     > &
       Attribute.Private;
     updatedBy: Attribute.Relation<
-      'api::animal-species-food-category.animal-species-food-category',
+      'api::animal-species-food-top-category.animal-species-food-top-category',
       'oneToOne',
       'admin::user'
     > &
@@ -1138,11 +1137,6 @@ export interface ApiIsolateIsolate extends Schema.CollectionType {
   };
   attributes: {
     year: Attribute.BigInteger;
-    state: Attribute.Relation<
-      'api::isolate.isolate',
-      'oneToOne',
-      'api::state.state'
-    >;
     microorganism: Attribute.Relation<
       'api::isolate.isolate',
       'manyToOne',
@@ -1173,11 +1167,6 @@ export interface ApiIsolateIsolate extends Schema.CollectionType {
       'manyToOne',
       'api::matrix-detail.matrix-detail'
     >;
-    animal_species_food_upper_category: Attribute.Relation<
-      'api::isolate.isolate',
-      'manyToOne',
-      'api::animal-species-food-category.animal-species-food-category'
-    >;
     animal_species_production_direction_food: Attribute.Relation<
       'api::isolate.isolate',
       'manyToOne',
@@ -1188,7 +1177,6 @@ export interface ApiIsolateIsolate extends Schema.CollectionType {
       'manyToOne',
       'api::salmonella.salmonella'
     >;
-    Originaleinsendenr: Attribute.String;
     BfR_Isolat_Nr: Attribute.String;
     DB_ID: Attribute.String;
     NRL: Attribute.String;
@@ -1275,6 +1263,11 @@ export interface ApiIsolateIsolate extends Schema.CollectionType {
     FUS_Res_qual: Attribute.String;
     TMP_Res_qual: Attribute.String;
     SMX_Res_qual: Attribute.String;
+    animal_species_food_top_category: Attribute.Relation<
+      'api::isolate.isolate',
+      'manyToOne',
+      'api::animal-species-food-top-category.animal-species-food-top-category'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -1617,36 +1610,6 @@ export interface ApiSamplingPointSamplingPoint extends Schema.CollectionType {
   };
 }
 
-export interface ApiStateState extends Schema.CollectionType {
-  collectionName: 'states';
-  info: {
-    singularName: 'state';
-    pluralName: 'states';
-    displayName: 'state';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    name: Attribute.String;
-    iri: Attribute.String;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<
-      'api::state.state',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<
-      'api::state.state',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-  };
-}
-
 export interface ApiWelcomeWelcome extends Schema.SingleType {
   collectionName: 'welcomes';
   info: {
@@ -1700,7 +1663,7 @@ export interface ApiWelcomeWelcome extends Schema.SingleType {
   };
 }
 
-declare module '@strapi/types' {
+declare module '@strapi/strapi' {
   export module Shared {
     export interface ContentTypes {
       'admin::permission': AdminPermission;
@@ -1716,7 +1679,7 @@ declare module '@strapi/types' {
       'plugin::users-permissions.permission': PluginUsersPermissionsPermission;
       'plugin::users-permissions.role': PluginUsersPermissionsRole;
       'plugin::users-permissions.user': PluginUsersPermissionsUser;
-      'api::animal-species-food-category.animal-species-food-category': ApiAnimalSpeciesFoodCategoryAnimalSpeciesFoodCategory;
+      'api::animal-species-food-top-category.animal-species-food-top-category': ApiAnimalSpeciesFoodTopCategoryAnimalSpeciesFoodTopCategory;
       'api::animal-species-production-direction-food.animal-species-production-direction-food': ApiAnimalSpeciesProductionDirectionFoodAnimalSpeciesProductionDirectionFood;
       'api::configuration.configuration': ApiConfigurationConfiguration;
       'api::evaluation.evaluation': ApiEvaluationEvaluation;
@@ -1732,7 +1695,6 @@ declare module '@strapi/types' {
       'api::sampling-objective.sampling-objective': ApiSamplingObjectiveSamplingObjective;
       'api::sampling-origin.sampling-origin': ApiSamplingOriginSamplingOrigin;
       'api::sampling-point.sampling-point': ApiSamplingPointSamplingPoint;
-      'api::state.state': ApiStateState;
       'api::welcome.welcome': ApiWelcomeWelcome;
     }
   }
