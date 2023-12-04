@@ -164,7 +164,7 @@ const setRelationalData = (record: any): Isolate => {
     }
 
     if (record.Tierart_Lebensmittel_Oberkategorie) {
-        newTest.animal_species_food_upper_category = {
+        newTest.animal_species_food_top_category = {
             "set": [getId(categories, "name", record.Tierart_Lebensmittel_Oberkategorie)]
         }
     }

@@ -102,7 +102,7 @@ export interface IIsolate {
     sampling_objective: IRelation
     sampling_point: IRelation
     sampling_origin: IRelation
-    animal_species_food_upper_category: IRelation
+    animal_species_food_top_category: IRelation
     animal_species_production_direction_food: IRelation
     matrix: IRelation
     matrix_detail: IRelation
@@ -118,7 +118,7 @@ export class Isolate implements IIsolate {
     sampling_objective: IRelation;
     sampling_point: IRelation;
     sampling_origin: IRelation;
-    animal_species_food_upper_category: IRelation;
+    animal_species_food_top_category: IRelation;
     animal_species_production_direction_food: IRelation;
     matrix: IRelation;
     matrix_detail: IRelation;
@@ -303,7 +303,7 @@ export interface INode {
     "Sampling Reason": ISubNode | string
     "Sampling Point": ISubNode | string
     ZoMo_Programm: string
-    "Animal species/food upper category": ISubNode | string
+    "Animal species/food top category": ISubNode | string
     "Animal species production direction/food": ISubNode | string
     Matrix: ISubNode | string
     Bericht_e: string

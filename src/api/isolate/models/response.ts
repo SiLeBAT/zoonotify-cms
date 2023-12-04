@@ -102,7 +102,7 @@ export interface IIsolateDataAttributes {
     objective: ISamplingObjective
     sampling_point: ISamplingPoint
     sampling_origin: ISamplingOrigin
-    animal_species_food_upper_category: IAnimalSpeciesFoodUpperCategory
+    animal_species_food_top_category: IAnimalSpeciesFoodTopCategory
     matrix: IMatrix
     salmonella: ISalmonella
     matrix_detail: IMatrixDetail
@@ -141,7 +141,7 @@ export interface ISamplingPoint extends IRelation {
 export interface ISamplingOrigin extends IRelation {
 }
 
-export interface IAnimalSpeciesFoodUpperCategory extends IRelation {
+export interface IAnimalSpeciesFoodTopCategory extends IRelation {
 }
 
 export interface IMatrix extends IRelation {
