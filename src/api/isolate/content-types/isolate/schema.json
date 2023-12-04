@@ -332,7 +332,7 @@
     "animal_species_food_top_category": {
       "type": "relation",
       "relation": "manyToOne",
-      "target": "api::animal-species-food-upper-category.animal-species-food-upper-category",
+      "target": "api::animal-species-food-top-category.animal-species-food-top-category",
       "inversedBy": "isolates"
     }
   }

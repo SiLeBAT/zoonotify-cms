@@ -14,7 +14,7 @@
       "name": "Apache 2.0",
       "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
     },
-    "x-generation-date": "2023-12-04T10:44:13.609Z"
+    "x-generation-date": "2023-12-04T11:56:24.005Z"
   },
   "x-strapi-config": {
     "path": "/documentation",
@@ -86,7 +86,7 @@
           }
         }
       },
-      "AnimalSpeciesFoodUpperCategoryRequest": {
+      "AnimalSpeciesFoodTopCategoryRequest": {
         "type": "object",
         "required": [
           "data"
@@ -119,24 +119,24 @@
           }
         }
       },
-      "AnimalSpeciesFoodUpperCategoryListResponseDataItem": {
+      "AnimalSpeciesFoodTopCategoryListResponseDataItem": {
         "type": "object",
         "properties": {
           "id": {
             "type": "number"
           },
           "attributes": {
-            "$ref": "#/components/schemas/AnimalSpeciesFoodUpperCategory"
+            "$ref": "#/components/schemas/AnimalSpeciesFoodTopCategory"
           }
         }
       },
-      "AnimalSpeciesFoodUpperCategoryListResponse": {
+      "AnimalSpeciesFoodTopCategoryListResponse": {
         "type": "object",
         "properties": {
           "data": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/AnimalSpeciesFoodUpperCategoryListResponseDataItem"
+              "$ref": "#/components/schemas/AnimalSpeciesFoodTopCategoryListResponseDataItem"
             }
           },
           "meta": {
@@ -165,7 +165,7 @@
           }
         }
       },
-      "AnimalSpeciesFoodUpperCategory": {
+      "AnimalSpeciesFoodTopCategory": {
         "type": "object",
         "properties": {
           "name": {
@@ -1638,22 +1638,22 @@
           }
         }
       },
-      "AnimalSpeciesFoodUpperCategoryResponseDataObject": {
+      "AnimalSpeciesFoodTopCategoryResponseDataObject": {
         "type": "object",
         "properties": {
           "id": {
             "type": "number"
           },
           "attributes": {
-            "$ref": "#/components/schemas/AnimalSpeciesFoodUpperCategory"
+            "$ref": "#/components/schemas/AnimalSpeciesFoodTopCategory"
           }
         }
       },
-      "AnimalSpeciesFoodUpperCategoryResponse": {
+      "AnimalSpeciesFoodTopCategoryResponse": {
         "type": "object",
         "properties": {
           "data": {
-            "$ref": "#/components/schemas/AnimalSpeciesFoodUpperCategoryResponseDataObject"
+            "$ref": "#/components/schemas/AnimalSpeciesFoodTopCategoryResponseDataObject"
           },
           "meta": {
             "type": "object"
@@ -21477,7 +21477,7 @@
     }
   },
   "paths": {
-    "/animal-species-food-upper-categories": {
+    "/animal-species-food-top-categories": {
       "get": {
         "responses": {
           "200": {
@@ -21485,7 +21485,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AnimalSpeciesFoodUpperCategoryListResponse"
+                  "$ref": "#/components/schemas/AnimalSpeciesFoodTopCategoryListResponse"
                 }
               }
             }
@@ -21542,7 +21542,7 @@
           }
         },
         "tags": [
-          "Animal-species-food-upper-category"
+          "Animal-species-food-top-category"
         ],
         "parameters": [
           {
@@ -21647,7 +21647,7 @@
             }
           }
         ],
-        "operationId": "get/animal-species-food-upper-categories"
+        "operationId": "get/animal-species-food-top-categories"
       },
       "post": {
         "responses": {
@@ -21656,7 +21656,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AnimalSpeciesFoodUpperCategoryResponse"
+                  "$ref": "#/components/schemas/AnimalSpeciesFoodTopCategoryResponse"
                 }
               }
             }
@@ -21713,23 +21713,23 @@
           }
         },
         "tags": [
-          "Animal-species-food-upper-category"
+          "Animal-species-food-top-category"
         ],
         "parameters": [],
-        "operationId": "post/animal-species-food-upper-categories",
+        "operationId": "post/animal-species-food-top-categories",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/AnimalSpeciesFoodUpperCategoryRequest"
+                "$ref": "#/components/schemas/AnimalSpeciesFoodTopCategoryRequest"
               }
             }
           }
         }
       }
     },
-    "/animal-species-food-upper-categories/{id}": {
+    "/animal-species-food-top-categories/{id}": {
       "get": {
         "responses": {
           "200": {
@@ -21737,7 +21737,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AnimalSpeciesFoodUpperCategoryResponse"
+                  "$ref": "#/components/schemas/AnimalSpeciesFoodTopCategoryResponse"
                 }
               }
             }
@@ -21794,7 +21794,7 @@
           }
         },
         "tags": [
-          "Animal-species-food-upper-category"
+          "Animal-species-food-top-category"
         ],
         "parameters": [
           {
@@ -21808,7 +21808,7 @@
             }
           }
         ],
-        "operationId": "get/animal-species-food-upper-categories/{id}"
+        "operationId": "get/animal-species-food-top-categories/{id}"
       },
       "put": {
         "responses": {
@@ -21817,7 +21817,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AnimalSpeciesFoodUpperCategoryResponse"
+                  "$ref": "#/components/schemas/AnimalSpeciesFoodTopCategoryResponse"
                 }
               }
             }
@@ -21874,7 +21874,7 @@
           }
         },
         "tags": [
-          "Animal-species-food-upper-category"
+          "Animal-species-food-top-category"
         ],
         "parameters": [
           {
@@ -21888,13 +21888,13 @@
             }
           }
         ],
-        "operationId": "put/animal-species-food-upper-categories/{id}",
+        "operationId": "put/animal-species-food-top-categories/{id}",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/AnimalSpeciesFoodUpperCategoryRequest"
+                "$ref": "#/components/schemas/AnimalSpeciesFoodTopCategoryRequest"
               }
             }
           }
@@ -21965,7 +21965,7 @@
           }
         },
         "tags": [
-          "Animal-species-food-upper-category"
+          "Animal-species-food-top-category"
         ],
         "parameters": [
           {
@@ -21979,7 +21979,7 @@
             }
           }
         ],
-        "operationId": "delete/animal-species-food-upper-categories/{id}"
+        "operationId": "delete/animal-species-food-top-categories/{id}"
       }
     },
     "/animal-species-production-direction-foods": {
