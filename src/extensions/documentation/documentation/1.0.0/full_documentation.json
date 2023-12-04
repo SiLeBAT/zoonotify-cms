@@ -14,7 +14,7 @@
       "name": "Apache 2.0",
       "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
     },
-    "x-generation-date": "2023-12-01T09:27:31.106Z"
+    "x-generation-date": "2023-12-04T10:44:13.609Z"
   },
   "x-strapi-config": {
     "path": "/documentation",
@@ -1459,7 +1459,7 @@
                         "SMX_Res_qual": {
                           "type": "string"
                         },
-                        "animal_species_food_upper_category": {
+                        "animal_species_food_top_category": {
                           "type": "object",
                           "properties": {
                             "data": {
@@ -3033,7 +3033,7 @@
                         "SMX_Res_qual": {
                           "type": "string"
                         },
-                        "animal_species_food_upper_category": {
+                        "animal_species_food_top_category": {
                           "type": "object",
                           "properties": {
                             "data": {
@@ -6872,7 +6872,7 @@
               "SMX_Res_qual": {
                 "type": "string"
               },
-              "animal_species_food_upper_category": {
+              "animal_species_food_top_category": {
                 "oneOf": [
                   {
                     "type": "integer"
@@ -8192,7 +8192,7 @@
                                     "SMX_Res_qual": {
                                       "type": "string"
                                     },
-                                    "animal_species_food_upper_category": {
+                                    "animal_species_food_top_category": {
                                       "type": "object",
                                       "properties": {
                                         "data": {
@@ -8755,7 +8755,7 @@
           "SMX_Res_qual": {
             "type": "string"
           },
-          "animal_species_food_upper_category": {
+          "animal_species_food_top_category": {
             "type": "object",
             "properties": {
               "data": {
@@ -10211,7 +10211,7 @@
                         "SMX_Res_qual": {
                           "type": "string"
                         },
-                        "animal_species_food_upper_category": {
+                        "animal_species_food_top_category": {
                           "type": "object",
                           "properties": {
                             "data": {
@@ -11785,7 +11785,7 @@
                         "SMX_Res_qual": {
                           "type": "string"
                         },
-                        "animal_species_food_upper_category": {
+                        "animal_species_food_top_category": {
                           "type": "object",
                           "properties": {
                             "data": {
@@ -13359,7 +13359,7 @@
                         "SMX_Res_qual": {
                           "type": "string"
                         },
-                        "animal_species_food_upper_category": {
+                        "animal_species_food_top_category": {
                           "type": "object",
                           "properties": {
                             "data": {
@@ -15458,7 +15458,7 @@
                         "SMX_Res_qual": {
                           "type": "string"
                         },
-                        "animal_species_food_upper_category": {
+                        "animal_species_food_top_category": {
                           "type": "object",
                           "properties": {
                             "data": {
@@ -17032,7 +17032,7 @@
                         "SMX_Res_qual": {
                           "type": "string"
                         },
-                        "animal_species_food_upper_category": {
+                        "animal_species_food_top_category": {
                           "type": "object",
                           "properties": {
                             "data": {
@@ -18606,7 +18606,7 @@
                         "SMX_Res_qual": {
                           "type": "string"
                         },
-                        "animal_species_food_upper_category": {
+                        "animal_species_food_top_category": {
                           "type": "object",
                           "properties": {
                             "data": {
@@ -20180,7 +20180,7 @@
                         "SMX_Res_qual": {
                           "type": "string"
                         },
-                        "animal_species_food_upper_category": {
+                        "animal_species_food_top_category": {
                           "type": "object",
                           "properties": {
                             "data": {
