@@ -1,16 +1,9 @@
 {
   "kind": "collectionType",
-<<<<<<<< HEAD:src/api/animal-species-food-upper-category/content-types/animal-species-food-upper-category/schema.json
-  "collectionName": "animal_species_food_upper_categories",
-  "info": {
-    "singularName": "animal-species-food-upper-category",
-    "pluralName": "animal-species-food-upper-categories",
-========
   "collectionName": "animal_species_food_top_categories",
   "info": {
     "singularName": "animal-species-food-top-category",
     "pluralName": "animal-species-food-top-categories",
->>>>>>>> develop:src/api/animal-species-food-top-category/content-types/animal-species-food-top-category/schema.json
     "displayName": "Animal Species Food Top Category",
     "description": ""
   },
