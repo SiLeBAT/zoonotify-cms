@@ -55,7 +55,7 @@ export default factories.createCoreService('api::isolate.isolate', ({ strapi }) 
             fields: ['id', 'name']
         });
 
-        categories = await strapi.entityService.findMany('api::animal-species-food-category.animal-species-food-category', {
+        categories = await strapi.entityService.findMany('api::animal-species-food-top-category.animal-species-food-top-category', {
             fields: ['id', 'name']
         });
 
