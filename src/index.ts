@@ -35,12 +35,16 @@ export default {
         .service("api::isolate.isolate")
         .import(ctx);
 
+        fs.unlink(filePath, function(err) {
+          
+      });
+
       var stream = fs.createWriteStream(outFilePath);
       stream.once('open', function (fd) {
         stream.write(JSON.stringify(data));
         stream.end();
       });
-      
+
     }
   }
 };
