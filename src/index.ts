@@ -13,9 +13,34 @@ export default {
    *
    * This gives you an opportunity to set up your data model,
    * run jobs, or perform some special logic.
-   * 
-   * Uncomment below code to add some records to the collection
-   * 
    */
-  bootstrap(/*{ strapi }*/) {},
+  async bootstrap({ strapi }) {
+    const fs = require('fs');
+    let path = require('path');
+    let filePath = path.join(__dirname, '../../data/data.xlsx');
+    let outFilePath = path.join(__dirname, '../../data/import-result.json');
+
+    if (fs.existsSync(filePath) && !fs.existsSync(outFilePath)) {
+      let ctx = {
+        request: {
+          files: {
+            file: {
+              path: filePath
+            }
+          }
+        }
+      };
+
+      const data = await strapi
+        .service("api::isolate.isolate")
+        .import(ctx);
+
+      var stream = fs.createWriteStream(outFilePath);
+      stream.once('open', function (fd) {
+        stream.write(JSON.stringify(data));
+        stream.end();
+      });
+      
+    }
+  }
 };
