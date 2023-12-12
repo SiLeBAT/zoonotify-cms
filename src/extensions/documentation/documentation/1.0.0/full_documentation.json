@@ -14,7 +14,7 @@
       "name": "Apache 2.0",
       "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
     },
-    "x-generation-date": "2023-12-06T13:30:55.297Z"
+    "x-generation-date": "2023-12-12T11:08:37.976Z"
   },
   "x-strapi-config": {
     "path": "/documentation",
@@ -1389,6 +1389,18 @@
                           "type": "string"
                         },
                         "SMX_Res_qual": {
+                          "type": "string"
+                        },
+                        "ETP_Res_qual": {
+                          "type": "string"
+                        },
+                        "ETP_Res_quant": {
+                          "type": "string"
+                        },
+                        "Datum_der_Datenextraktion": {
+                          "type": "string"
+                        },
+                        "DB_Version": {
                           "type": "string"
                         },
                         "animal_species_food_top_category": {
@@ -2895,6 +2907,18 @@
                           "type": "string"
                         },
                         "SMX_Res_qual": {
+                          "type": "string"
+                        },
+                        "ETP_Res_qual": {
+                          "type": "string"
+                        },
+                        "ETP_Res_quant": {
+                          "type": "string"
+                        },
+                        "Datum_der_Datenextraktion": {
+                          "type": "string"
+                        },
+                        "DB_Version": {
                           "type": "string"
                         },
                         "animal_species_food_top_category": {
@@ -6727,6 +6751,18 @@
               "SMX_Res_qual": {
                 "type": "string"
               },
+              "ETP_Res_qual": {
+                "type": "string"
+              },
+              "ETP_Res_quant": {
+                "type": "string"
+              },
+              "Datum_der_Datenextraktion": {
+                "type": "string"
+              },
+              "DB_Version": {
+                "type": "string"
+              },
               "animal_species_food_top_category": {
                 "oneOf": [
                   {
@@ -7962,6 +7998,18 @@
                                     "SMX_Res_qual": {
                                       "type": "string"
                                     },
+                                    "ETP_Res_qual": {
+                                      "type": "string"
+                                    },
+                                    "ETP_Res_quant": {
+                                      "type": "string"
+                                    },
+                                    "Datum_der_Datenextraktion": {
+                                      "type": "string"
+                                    },
+                                    "DB_Version": {
+                                      "type": "string"
+                                    },
                                     "animal_species_food_top_category": {
                                       "type": "object",
                                       "properties": {
@@ -8520,6 +8568,18 @@
             "type": "string"
           },
           "SMX_Res_qual": {
+            "type": "string"
+          },
+          "ETP_Res_qual": {
+            "type": "string"
+          },
+          "ETP_Res_quant": {
+            "type": "string"
+          },
+          "Datum_der_Datenextraktion": {
+            "type": "string"
+          },
+          "DB_Version": {
             "type": "string"
           },
           "animal_species_food_top_category": {
@@ -9908,6 +9968,18 @@
                           "type": "string"
                         },
                         "SMX_Res_qual": {
+                          "type": "string"
+                        },
+                        "ETP_Res_qual": {
+                          "type": "string"
+                        },
+                        "ETP_Res_quant": {
+                          "type": "string"
+                        },
+                        "Datum_der_Datenextraktion": {
+                          "type": "string"
+                        },
+                        "DB_Version": {
                           "type": "string"
                         },
                         "animal_species_food_top_category": {
@@ -11416,6 +11488,18 @@
                         "SMX_Res_qual": {
                           "type": "string"
                         },
+                        "ETP_Res_qual": {
+                          "type": "string"
+                        },
+                        "ETP_Res_quant": {
+                          "type": "string"
+                        },
+                        "Datum_der_Datenextraktion": {
+                          "type": "string"
+                        },
+                        "DB_Version": {
+                          "type": "string"
+                        },
                         "animal_species_food_top_category": {
                           "type": "object",
                           "properties": {
@@ -12920,6 +13004,18 @@
                           "type": "string"
                         },
                         "SMX_Res_qual": {
+                          "type": "string"
+                        },
+                        "ETP_Res_qual": {
+                          "type": "string"
+                        },
+                        "ETP_Res_quant": {
+                          "type": "string"
+                        },
+                        "Datum_der_Datenextraktion": {
+                          "type": "string"
+                        },
+                        "DB_Version": {
                           "type": "string"
                         },
                         "animal_species_food_top_category": {
@@ -14954,6 +15050,18 @@
                         "SMX_Res_qual": {
                           "type": "string"
                         },
+                        "ETP_Res_qual": {
+                          "type": "string"
+                        },
+                        "ETP_Res_quant": {
+                          "type": "string"
+                        },
+                        "Datum_der_Datenextraktion": {
+                          "type": "string"
+                        },
+                        "DB_Version": {
+                          "type": "string"
+                        },
                         "animal_species_food_top_category": {
                           "type": "object",
                           "properties": {
@@ -16458,6 +16566,18 @@
                           "type": "string"
                         },
                         "SMX_Res_qual": {
+                          "type": "string"
+                        },
+                        "ETP_Res_qual": {
+                          "type": "string"
+                        },
+                        "ETP_Res_quant": {
+                          "type": "string"
+                        },
+                        "Datum_der_Datenextraktion": {
+                          "type": "string"
+                        },
+                        "DB_Version": {
                           "type": "string"
                         },
                         "animal_species_food_top_category": {
@@ -17966,6 +18086,18 @@
                         "SMX_Res_qual": {
                           "type": "string"
                         },
+                        "ETP_Res_qual": {
+                          "type": "string"
+                        },
+                        "ETP_Res_quant": {
+                          "type": "string"
+                        },
+                        "Datum_der_Datenextraktion": {
+                          "type": "string"
+                        },
+                        "DB_Version": {
+                          "type": "string"
+                        },
                         "animal_species_food_top_category": {
                           "type": "object",
                           "properties": {
@@ -19470,6 +19602,18 @@
                           "type": "string"
                         },
                         "SMX_Res_qual": {
+                          "type": "string"
+                        },
+                        "ETP_Res_qual": {
+                          "type": "string"
+                        },
+                        "ETP_Res_quant": {
+                          "type": "string"
+                        },
+                        "Datum_der_Datenextraktion": {
+                          "type": "string"
+                        },
+                        "DB_Version": {
                           "type": "string"
                         },
                         "animal_species_food_top_category": {

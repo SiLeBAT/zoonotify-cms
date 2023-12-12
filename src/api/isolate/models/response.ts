@@ -106,6 +106,10 @@ export interface IIsolateDataAttributes {
     salmonella: ISalmonella
     matrix_detail: IMatrixDetail
     animal_species_production_direction_food: IAnimalSpeciesProductionDirectionFood
+    ETP_Res_qual: string;
+    ETP_Res_quant: string;
+    Datum_der_Datenextraktion: string;
+    DB_Version: string;
 }
 
 export interface IRelation {

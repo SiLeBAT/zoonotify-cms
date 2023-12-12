@@ -212,6 +212,10 @@ export class Isolate implements IIsolate {
     FUS_Res_qual: string;
     TMP_Res_qual: string;
     SMX_Res_qual: string;
+    ETP_Res_qual: string;
+    ETP_Res_quant: string;
+    Datum_der_Datenextraktion: string;
+    DB_Version: string;
 
 }
 
@@ -255,6 +259,7 @@ export interface IResistanceQuant {
     FUS_Res_quant: string
     TMP_Res_quant: string
     SMX_Res_quant: string
+    ETP_Res_quant: string;
 }
 
 export interface IResistanceQual {
@@ -290,6 +295,7 @@ export interface IResistanceQual {
     FUS_Res_qual: string
     TMP_Res_qual: string
     SMX_Res_qual: string
+    ETP_Res_qual: string;
 }
 
 export interface INode {
@@ -330,4 +336,6 @@ export interface INode {
     "Sampling Origin": ISubNode | string
     "Resistance Quant": IResistanceQuant
     "Resistance Qual": IResistanceQual
+    Datum_der_Datenextraktion: string;
+    DB_Version: string;
 }
