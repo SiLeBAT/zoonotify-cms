@@ -105,7 +105,10 @@ export default factories.createCoreService('api::isolate.isolate', ({ strapi }) 
             keyMappings.forEach((keyEntry) => {
                 newRec[keyEntry.displayName] = rec[keyEntry.index] ? rec[keyEntry.index].toString() : "";
             });
-            recs.push(setRelationalData(newRec));
+            let newRecord = setRelationalData(newRec);
+            if(newRecord.DB_ID){
+                recs.push(newRecord);
+            }
         });
 
         console.log(`Inserting total ${recs.length} records`);
