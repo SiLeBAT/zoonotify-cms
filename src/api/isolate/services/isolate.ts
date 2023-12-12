@@ -215,12 +215,12 @@ const mapItem = async (mapFn, currentValue, index, array) => {
     try {
         await setImmediateP()
         return {
-            status: 'fulfilled',
+            status: `Successfully saved a record with DB_ID ${currentValue.DB_ID}`,
             value: await mapFn(currentValue, index, array)
         }
     } catch (reason) {
         return {
-            status: 'rejected',
+            status: `Error occured for a record with DB_ID ${currentValue.DB_ID}`,
             reason
         }
     }

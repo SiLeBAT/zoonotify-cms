@@ -1264,6 +1264,10 @@ export interface ApiIsolateIsolate extends Schema.CollectionType {
     FUS_Res_qual: Attribute.String;
     TMP_Res_qual: Attribute.String;
     SMX_Res_qual: Attribute.String;
+    ETP_Res_qual: Attribute.String;
+    ETP_Res_quant: Attribute.String;
+    Datum_der_Datenextraktion: Attribute.String;
+    DB_Version: Attribute.String;
     animal_species_food_top_category: Attribute.Relation<
       'api::isolate.isolate',
       'manyToOne',

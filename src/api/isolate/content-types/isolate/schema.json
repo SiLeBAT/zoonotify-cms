@@ -321,6 +321,18 @@
     "SMX_Res_qual": {
       "type": "string"
     },
+    "ETP_Res_qual": {
+      "type": "string"
+    },
+    "ETP_Res_quant": {
+      "type": "string"
+    },
+    "Datum_der_Datenextraktion": {
+      "type": "string"
+    },
+    "DB_Version": {
+      "type": "string"
+    },
     "animal_species_food_top_category": {
       "type": "relation",
       "relation": "manyToOne",
