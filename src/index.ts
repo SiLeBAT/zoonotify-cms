@@ -35,13 +35,32 @@ export default {
         .service("api::isolate.isolate")
         .import(ctx);
 
-        fs.unlink(filePath, function(err) {
-          
+      fs.unlink(filePath, function (err) {
+
       });
+
+      let dataLog = {
+        "Total Records": data.length,
+        "Successfully Saved": 0,
+        Failures: []
+      }
+
+      if (data) {
+        let failures = data.filter((result) => {
+          return result.statusCode == 500;
+        });
+
+        let success = data.filter((result) => {
+          return result.statusCode == 200;
+        });
+
+        dataLog["Successfully Saved"] = success.length;
+        dataLog.Failures = failures;
+      }
 
       var stream = fs.createWriteStream(outFilePath);
       stream.once('open', function (fd) {
-        stream.write(JSON.stringify(data));
+        stream.write(JSON.stringify(dataLog));
         stream.end();
       });
 
