@@ -21,6 +21,8 @@ export default {
     let outFilePath = path.join(__dirname, '../../data/import-result.json');
 
     if (fs.existsSync(filePath) && !fs.existsSync(outFilePath)) {
+      var begin = Date.now();
+
       let ctx = {
         request: {
           files: {
@@ -41,6 +43,7 @@ export default {
 
       let dataLog = {
         "Total Records": data.length,
+        "Time Taken": "0",
         "Successfully Saved": 0,
         Failures: []
       }
@@ -56,6 +59,7 @@ export default {
 
         dataLog["Successfully Saved"] = success.length;
         dataLog.Failures = failures;
+        dataLog["Time Taken"] = (Date.now() - begin) / 1000 + "secs";
       }
 
       var stream = fs.createWriteStream(outFilePath);
