@@ -1480,6 +1480,11 @@ export interface ApiResistanceTableResistanceTable
       Attribute.SetMinMaxLength<{
         maxLength: 100;
       }>;
+    yearly_cut_offs: Attribute.Relation<
+      'api::resistance-table.resistance-table',
+      'oneToMany',
+      'api::yearly-cut-off.yearly-cut-off'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
