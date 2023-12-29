@@ -751,6 +751,37 @@ export interface ApiAnimalSpeciesProductionDirectionFoodAnimalSpeciesProductionD
   };
 }
 
+export interface ApiAntibioticAntibiotic extends Schema.CollectionType {
+  collectionName: 'antibiotics';
+  info: {
+    singularName: 'antibiotic';
+    pluralName: 'antibiotics';
+    displayName: 'Antibiotic';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    name: Attribute.String;
+    shortName: Attribute.String;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::antibiotic.antibiotic',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::antibiotic.antibiotic',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiConfigurationConfiguration extends Schema.SingleType {
   collectionName: 'configurations';
   info: {
@@ -1668,6 +1699,40 @@ export interface ApiWelcomeWelcome extends Schema.SingleType {
   };
 }
 
+export interface ApiYearlyCutOffYearlyCutOff extends Schema.CollectionType {
+  collectionName: 'yearly_cut_offs';
+  info: {
+    singularName: 'yearly-cut-off';
+    pluralName: 'yearly-cut-offs';
+    displayName: 'Yearly Cut Off';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    year: Attribute.Integer;
+    AntibioticCutOff: Attribute.Component<
+      'antibiotic-data.antibiotic-cut-off-data',
+      true
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::yearly-cut-off.yearly-cut-off',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::yearly-cut-off.yearly-cut-off',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 declare module '@strapi/types' {
   export module Shared {
     export interface ContentTypes {
@@ -1686,6 +1751,7 @@ declare module '@strapi/types' {
       'plugin::users-permissions.user': PluginUsersPermissionsUser;
       'api::animal-species-food-top-category.animal-species-food-top-category': ApiAnimalSpeciesFoodTopCategoryAnimalSpeciesFoodTopCategory;
       'api::animal-species-production-direction-food.animal-species-production-direction-food': ApiAnimalSpeciesProductionDirectionFoodAnimalSpeciesProductionDirectionFood;
+      'api::antibiotic.antibiotic': ApiAntibioticAntibiotic;
       'api::configuration.configuration': ApiConfigurationConfiguration;
       'api::evaluation.evaluation': ApiEvaluationEvaluation;
       'api::evaluation-information.evaluation-information': ApiEvaluationInformationEvaluationInformation;
@@ -1701,6 +1767,7 @@ declare module '@strapi/types' {
       'api::sampling-origin.sampling-origin': ApiSamplingOriginSamplingOrigin;
       'api::sampling-point.sampling-point': ApiSamplingPointSamplingPoint;
       'api::welcome.welcome': ApiWelcomeWelcome;
+      'api::yearly-cut-off.yearly-cut-off': ApiYearlyCutOffYearlyCutOff;
     }
   }
 }

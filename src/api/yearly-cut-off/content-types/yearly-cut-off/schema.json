@@ -1,0 +1,24 @@
+{
+  "kind": "collectionType",
+  "collectionName": "yearly_cut_offs",
+  "info": {
+    "singularName": "yearly-cut-off",
+    "pluralName": "yearly-cut-offs",
+    "displayName": "Yearly Cut Off",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "year": {
+      "type": "integer"
+    },
+    "AntibioticCutOff": {
+      "type": "component",
+      "repeatable": true,
+      "component": "antibiotic-data.antibiotic-cut-off-data"
+    }
+  }
+}
