@@ -54,6 +54,11 @@
       "type": "richtext",
       "maxLength": 100,
       "required": true
+    },
+    "yearly_cut_offs": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::yearly-cut-off.yearly-cut-off"
     }
   }
 }
