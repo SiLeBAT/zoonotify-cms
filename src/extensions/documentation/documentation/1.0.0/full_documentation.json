@@ -14,7 +14,7 @@
       "name": "Apache 2.0",
       "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
     },
-    "x-generation-date": "2023-12-29T09:19:20.249Z"
+    "x-generation-date": "2024-01-02T07:41:45.321Z"
   },
   "x-strapi-config": {
     "path": "/documentation",
@@ -14183,6 +14183,9 @@
                               "cutOff": {
                                 "type": "number",
                                 "format": "float"
+                              },
+                              "Substanzklasse": {
+                                "type": "string"
                               }
                             }
                           }
@@ -21371,6 +21374,9 @@
           "cutOff": {
             "type": "number",
             "format": "float"
+          },
+          "Substanzklasse": {
+            "type": "string"
           }
         }
       },

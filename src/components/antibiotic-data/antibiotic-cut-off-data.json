@@ -19,6 +19,9 @@
     },
     "cutOff": {
       "type": "decimal"
+    },
+    "Substanzklasse": {
+      "type": "string"
     }
   }
 }
