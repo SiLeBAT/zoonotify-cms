@@ -15,6 +15,7 @@ export interface AntibioticDataAntibioticCutOffData extends Schema.Component {
     min: Attribute.Decimal;
     max: Attribute.Decimal;
     cutOff: Attribute.Decimal;
+    Substanzklasse: Attribute.String;
   };
 }
 
