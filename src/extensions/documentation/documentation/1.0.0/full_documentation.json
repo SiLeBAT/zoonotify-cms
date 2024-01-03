@@ -14,7 +14,7 @@
       "name": "Apache 2.0",
       "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
     },
-    "x-generation-date": "2024-01-02T07:41:45.321Z"
+    "x-generation-date": "2024-01-03T12:14:52.388Z"
   },
   "x-strapi-config": {
     "path": "/documentation",
@@ -14172,6 +14172,45 @@
                                   }
                                 }
                               },
+                              "substanzklasse": {
+                                "type": "string",
+                                "enum": [
+                                  "Aminoglycoside",
+                                  "Amphenicole",
+                                  "Penicilline",
+                                  "Cephalosporine",
+                                  "Carbapeneme",
+                                  "(Fluor)chinolone",
+                                  "Polymyxine",
+                                  "Tetrazykline",
+                                  "Glycylcycline",
+                                  "Azalide",
+                                  "Folatsynthesehemmer",
+                                  "Sulfonamide",
+                                  "Makrolide",
+                                  "Ansamycine",
+                                  "Lincosamide",
+                                  "Glykopeptide",
+                                  "Oxazolidinone",
+                                  "Pleuromutiline",
+                                  "Pseudomonische Säuren",
+                                  "Streptogramine",
+                                  "Triterpensäuren",
+                                  "Lipopeptide"
+                                ]
+                              },
+                              "bacteria": {
+                                "type": "string",
+                                "enum": [
+                                  "Escherichia coli",
+                                  "Salmonella spp",
+                                  "Campylobacter jejuni",
+                                  "Campylobacter coli",
+                                  "methicillin-resistant Staphylococcus aureus",
+                                  "Enterococcus faecalis",
+                                  "Enterococcus faecium"
+                                ]
+                              },
                               "min": {
                                 "type": "number",
                                 "format": "float"
@@ -14183,9 +14222,6 @@
                               "cutOff": {
                                 "type": "number",
                                 "format": "float"
-                              },
-                              "Substanzklasse": {
-                                "type": "string"
                               }
                             }
                           }
@@ -21363,6 +21399,45 @@
               }
             }
           },
+          "substanzklasse": {
+            "type": "string",
+            "enum": [
+              "Aminoglycoside",
+              "Amphenicole",
+              "Penicilline",
+              "Cephalosporine",
+              "Carbapeneme",
+              "(Fluor)chinolone",
+              "Polymyxine",
+              "Tetrazykline",
+              "Glycylcycline",
+              "Azalide",
+              "Folatsynthesehemmer",
+              "Sulfonamide",
+              "Makrolide",
+              "Ansamycine",
+              "Lincosamide",
+              "Glykopeptide",
+              "Oxazolidinone",
+              "Pleuromutiline",
+              "Pseudomonische Säuren",
+              "Streptogramine",
+              "Triterpensäuren",
+              "Lipopeptide"
+            ]
+          },
+          "bacteria": {
+            "type": "string",
+            "enum": [
+              "Escherichia coli",
+              "Salmonella spp",
+              "Campylobacter jejuni",
+              "Campylobacter coli",
+              "methicillin-resistant Staphylococcus aureus",
+              "Enterococcus faecalis",
+              "Enterococcus faecium"
+            ]
+          },
           "min": {
             "type": "number",
             "format": "float"
@@ -21374,9 +21449,6 @@
           "cutOff": {
             "type": "number",
             "format": "float"
-          },
-          "Substanzklasse": {
-            "type": "string"
           }
         }
       },
