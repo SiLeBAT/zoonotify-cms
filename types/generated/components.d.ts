@@ -12,10 +12,46 @@ export interface AntibioticDataAntibioticCutOffData extends Schema.Component {
       'oneToOne',
       'api::antibiotic.antibiotic'
     >;
+    substanzklasse: Attribute.Enumeration<
+      [
+        'Aminoglycoside',
+        'Amphenicole',
+        'Penicilline',
+        'Cephalosporine',
+        'Carbapeneme',
+        '(Fluor)chinolone',
+        'Polymyxine',
+        'Tetrazykline',
+        'Glycylcycline',
+        'Azalide',
+        'Folatsynthesehemmer',
+        'Sulfonamide',
+        'Makrolide',
+        'Ansamycine',
+        'Lincosamide',
+        'Glykopeptide',
+        'Oxazolidinone',
+        'Pleuromutiline',
+        'Pseudomonische S\u00E4uren',
+        'Streptogramine',
+        'Triterpens\u00E4uren',
+        'Lipopeptide'
+      ]
+    >;
+    bacteria: Attribute.Enumeration<
+      [
+        'Escherichia coli',
+        'Salmonella spp',
+        'Campylobacter jejuni',
+        'Campylobacter coli',
+        'methicillin-resistant Staphylococcus aureus',
+        'Enterococcus faecalis',
+        'Enterococcus faecium'
+      ]
+    >;
     min: Attribute.Decimal;
     max: Attribute.Decimal;
     cutOff: Attribute.Decimal;
-    Substanzklasse: Attribute.String;
   };
 }
 
