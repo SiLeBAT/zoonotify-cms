@@ -1480,11 +1480,15 @@ export interface ApiResistanceTableResistanceTable
       Attribute.SetMinMaxLength<{
         maxLength: 100;
       }>;
-    yearly_cut_offs: Attribute.Relation<
-      'api::resistance-table.resistance-table',
-      'oneToMany',
-      'api::yearly-cut-off.yearly-cut-off'
-    >;
+    cut_offs: Attribute.Component<
+      'antibiotic-data.antibiotic-cut-off-data',
+      true
+    > &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -1704,40 +1708,6 @@ export interface ApiWelcomeWelcome extends Schema.SingleType {
   };
 }
 
-export interface ApiYearlyCutOffYearlyCutOff extends Schema.CollectionType {
-  collectionName: 'yearly_cut_offs';
-  info: {
-    singularName: 'yearly-cut-off';
-    pluralName: 'yearly-cut-offs';
-    displayName: 'Yearly Cut Off';
-    description: '';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    year: Attribute.Integer;
-    AntibioticCutOff: Attribute.Component<
-      'antibiotic-data.antibiotic-cut-off-data',
-      true
-    >;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<
-      'api::yearly-cut-off.yearly-cut-off',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<
-      'api::yearly-cut-off.yearly-cut-off',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-  };
-}
-
 declare module '@strapi/types' {
   export module Shared {
     export interface ContentTypes {
@@ -1772,7 +1742,6 @@ declare module '@strapi/types' {
       'api::sampling-origin.sampling-origin': ApiSamplingOriginSamplingOrigin;
       'api::sampling-point.sampling-point': ApiSamplingPointSamplingPoint;
       'api::welcome.welcome': ApiWelcomeWelcome;
-      'api::yearly-cut-off.yearly-cut-off': ApiYearlyCutOffYearlyCutOff;
     }
   }
 }

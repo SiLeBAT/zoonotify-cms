@@ -6,6 +6,9 @@
   },
   "options": {},
   "attributes": {
+    "year": {
+      "type": "integer"
+    },
     "antibiotic": {
       "type": "relation",
       "relation": "oneToOne",

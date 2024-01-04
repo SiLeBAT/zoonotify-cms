@@ -7,6 +7,7 @@ export interface AntibioticDataAntibioticCutOffData extends Schema.Component {
     description: '';
   };
   attributes: {
+    year: Attribute.Integer;
     antibiotic: Attribute.Relation<
       'antibiotic-data.antibiotic-cut-off-data',
       'oneToOne',
