@@ -55,10 +55,15 @@
       "maxLength": 100,
       "required": true
     },
-    "yearly_cut_offs": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::yearly-cut-off.yearly-cut-off"
+    "cut_offs": {
+      "type": "component",
+      "repeatable": true,
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "component": "antibiotic-data.antibiotic-cut-off-data"
     }
   }
 }
