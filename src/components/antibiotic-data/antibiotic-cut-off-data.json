@@ -60,7 +60,7 @@
       "type": "decimal"
     },
     "cutOff": {
-      "type": "decimal"
+      "type": "string"
     }
   }
 }
