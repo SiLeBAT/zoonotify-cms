@@ -80,6 +80,11 @@ export default ({ env }) => {
         createRetryIntervalMillis: 2000
       },
       debug: false,
+      autoMigration : true,
+      settings: {
+        forceMigration: true,
+        runMigrations: true,
+      },
     },
     sqlite: {
       connection: {
