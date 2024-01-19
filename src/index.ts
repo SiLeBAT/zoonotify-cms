@@ -17,142 +17,150 @@ export default {
    * run jobs, or perform some special logic.
    */
   async bootstrap({ strapi }) {
-    const fs = require('fs');
-    let path = require('path');
-
-
-    let filePath = path.join(__dirname, '../../data/data.xlsx');
-    let outFilePath = path.join(__dirname, '../../data/import-result.json');
-
-    let resistanceDataPath = path.join(__dirname, '../../data/resistance-data.xlsx');
-    let resistanceDataResultPath = path.join(__dirname, '../../data/resistance-import-result.json');
-
     // Import data for LD
-    if (fs.existsSync(filePath) && !fs.existsSync(outFilePath)) {
-      var begin = Date.now();
-
-      let ctx = {
-        request: {
-          files: {
-            file: {
-              path: filePath
-            }
-          }
-        }
-      };
-
-      const data = await strapi
-        .service("api::isolate.isolate")
-        .import(ctx);
-
-      fs.unlink(filePath, function (err) {
-
-      });
-
-      let dataLog = {
-        "Total Records": data.length,
-        "Time Taken": "0",
-        "Successfully Saved": 0,
-        Failures: []
-      }
-
-      if (data) {
-        let failures = data.filter((result) => {
-          return result.statusCode == 500;
-        });
-
-        let success = data.filter((result) => {
-          return result.statusCode == 200;
-        });
-
-        dataLog["Successfully Saved"] = success.length;
-        dataLog.Failures = failures;
-        dataLog["Time Taken"] = (Date.now() - begin) / 1000 + "secs";
-      }
-
-      var stream = fs.createWriteStream(outFilePath);
-      stream.once('open', function (fd) {
-        stream.write(JSON.stringify(dataLog));
-        stream.end();
-      });
-
-    }
+    await importResistanceData(strapi);
 
     // Import data for yearly cutt-off
-    if (fs.existsSync(resistanceDataPath) && !fs.existsSync(resistanceDataResultPath)) {
-      var begin = Date.now();
-
-      const buffer = fs.readFileSync(resistanceDataPath);
-      const dataFromExcel = xlsx.parse(buffer);
-      console.log(dataFromExcel);
-      let dataList = [];
-
-      antibiotics = await strapi.entityService.findMany('api::antibiotic.antibiotic', {
-        fields: ['id', 'name']
-      });
-
-      dataFromExcel.forEach(sheet => {
-
-        let res = readRecord(sheet.data);
-        if (sheet.name == "EC") {
-          dataList.push(prepareRecord(res, "Escherichia coli", "1"));
-        }
-        if (sheet.name == "SA") {
-          dataList.push(prepareRecord(res, "Salmonella spp", "2"));
-        }
-        if (sheet.name == "CAj") {
-          dataList.push(prepareRecord(res, "Campylobacter jejuni", "3a"));
-        }
-        if (sheet.name == "CAc") {
-          dataList.push(prepareRecord(res, "Campylobacter coli", "3b"));
-        }
-        if (sheet.name == "MRSA") {
-          dataList.push(prepareRecord(res, "methicillin-resistant Staphylococcus aureus", "4"));
-        }
-        if (sheet.name == "E. faecalis") {
-          dataList.push(prepareRecord(res, "Enterococcus faecalis", "5a"));
-        }
-        if (sheet.name == "E. faecium") {
-          dataList.push(prepareRecord(res, "Enterococcus faecium", "5b"));
-        }
-      });
-
-      saveResistanceRecord(dataList)
-        .then(results => {
-          let dataLog = {
-            "Total Records": dataList.length,
-            "Time Taken": "0",
-            "Successfully Saved": 0,
-            Failures: []
-          }
-
-          if (results) {
-            let failures = results.filter((result) => {
-              return result.statusCode == 500;
-            });
-
-            let success = results.filter((result) => {
-              return result.statusCode == 201;
-            });
-
-            dataLog["Successfully Saved"] = success.length;
-            dataLog.Failures = failures;
-            dataLog["Time Taken"] = (Date.now() - begin) / 1000 + "secs";
-          }
-
-          var stream = fs.createWriteStream(resistanceDataResultPath);
-          stream.once('open', function (fd) {
-            stream.write(JSON.stringify(dataLog));
-            stream.end();
-          });
-        })
-        .catch(e => {
-        });
-
-    }
+    await importCutOffData(strapi);
   }
 
 };
+
+async function importResistanceData(strapi) {
+  const fs = require('fs');
+  let path = require('path');
+  let filePath = path.join(__dirname, '../../data/resistance-data.xlsx');
+  let outFilePath = path.join(__dirname, '../../data/resistance-data-import-result.json');
+
+  if (fs.existsSync(filePath) && !fs.existsSync(outFilePath)) {
+    var begin = Date.now();
+
+    let ctx = {
+      request: {
+        files: {
+          file: {
+            path: filePath
+          }
+        }
+      }
+    };
+
+    const data = await strapi
+      .service("api::isolate.isolate")
+      .import(ctx);
+
+    fs.unlink(filePath, function (err) {
+
+    });
+
+    let dataLog = {
+      "Total Records": data.length,
+      "Time Taken": "0",
+      "Successfully Saved": 0,
+      Failures: []
+    }
+
+    if (data) {
+      let failures = data.filter((result) => {
+        return result.statusCode == 500;
+      });
+
+      let success = data.filter((result) => {
+        return result.statusCode == 200;
+      });
+
+      dataLog["Successfully Saved"] = success.length;
+      dataLog.Failures = failures;
+      dataLog["Time Taken"] = (Date.now() - begin) / 1000 + "secs";
+    }
+
+    var stream = fs.createWriteStream(outFilePath);
+    stream.once('open', function (fd) {
+      stream.write(JSON.stringify(dataLog));
+      stream.end();
+    });
+
+  }
+}
+
+async function importCutOffData(strapi) {
+  const fs = require('fs');
+  let path = require('path');
+  let cutoffDataPath = path.join(__dirname, '../../data/cutoff-data.xlsx');
+  let cutoffDataResultPath = path.join(__dirname, '../../data/cutoff-import-result.json');
+
+  if (fs.existsSync(cutoffDataPath) && !fs.existsSync(cutoffDataResultPath)) {
+    var begin = Date.now();
+
+    const buffer = fs.readFileSync(cutoffDataPath);
+    const dataFromExcel = xlsx.parse(buffer);
+    console.log(dataFromExcel);
+    let dataList = [];
+
+    antibiotics = await strapi.entityService.findMany('api::antibiotic.antibiotic', {
+      fields: ['id', 'name']
+    });
+
+    dataFromExcel.forEach(sheet => {
+
+      let res = readRecord(sheet.data);
+      if (sheet.name == "EC") {
+        dataList.push(prepareRecord(res, "Escherichia coli", "1"));
+      }
+      if (sheet.name == "SA") {
+        dataList.push(prepareRecord(res, "Salmonella spp", "2"));
+      }
+      if (sheet.name == "CAj") {
+        dataList.push(prepareRecord(res, "Campylobacter jejuni", "3a"));
+      }
+      if (sheet.name == "CAc") {
+        dataList.push(prepareRecord(res, "Campylobacter coli", "3b"));
+      }
+      if (sheet.name == "MRSA") {
+        dataList.push(prepareRecord(res, "methicillin-resistant Staphylococcus aureus", "4"));
+      }
+      if (sheet.name == "E. faecalis") {
+        dataList.push(prepareRecord(res, "Enterococcus faecalis", "5a"));
+      }
+      if (sheet.name == "E. faecium") {
+        dataList.push(prepareRecord(res, "Enterococcus faecium", "5b"));
+      }
+    });
+
+    saveResistanceRecord(dataList)
+      .then(results => {
+        let dataLog = {
+          "Total Records": dataList.length,
+          "Time Taken": "0",
+          "Successfully Saved": 0,
+          Failures: []
+        }
+
+        if (results) {
+          let failures = results.filter((result) => {
+            return result.statusCode == 500;
+          });
+
+          let success = results.filter((result) => {
+            return result.statusCode == 201;
+          });
+
+          dataLog["Successfully Saved"] = success.length;
+          dataLog.Failures = failures;
+          dataLog["Time Taken"] = (Date.now() - begin) / 1000 + "secs";
+        }
+
+        var stream = fs.createWriteStream(cutoffDataResultPath);
+        stream.once('open', function (fd) {
+          stream.write(JSON.stringify(dataLog));
+          stream.end();
+        });
+      })
+      .catch(e => {
+      });
+
+  }
+}
 
 function readRecord(data: any[][]) {
   let baseRec = {};
@@ -245,7 +253,7 @@ async function saveResistanceRecord(records: any[]) {
         filters: { table_id: record.table_id }
       });
 
-      if (entries) {
+      if (entries && entries.length > 0) {
         const entry = await strapi.entityService.update('api::resistance-table.resistance-table', entries[0].id, {
           data: { ...record.cut_offs },
         });
