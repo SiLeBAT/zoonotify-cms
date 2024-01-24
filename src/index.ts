@@ -211,7 +211,6 @@ function prepareRecord(res, bacteria, tableId) {
   let newEntry: ResistanceRecord = {
     table_id: tableId,
     description: descriptionObj.Substanzklasse,
-    yearly_cut_off: "{'name':'ck'}",
     title: titleObj.Substanzklasse,
     cut_offs: []
   }
@@ -277,7 +276,6 @@ async function saveResistanceRecord(records: any[]) {
 export interface ResistanceRecord {
   table_id: string;
   description: string;
-  yearly_cut_off: string;
   title: string;
   cut_offs: CutOff[];
 }
