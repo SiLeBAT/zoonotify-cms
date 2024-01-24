@@ -4,7 +4,8 @@
   "info": {
     "singularName": "sampling-origin",
     "pluralName": "sampling-origins",
-    "displayName": "Sampling Origin"
+    "displayName": "DEPRECATED  Sampling Origin",
+    "description": ""
   },
   "options": {
     "draftAndPublish": false

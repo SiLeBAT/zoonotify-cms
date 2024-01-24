@@ -482,6 +482,97 @@ export interface PluginUploadFolder extends Schema.CollectionType {
   };
 }
 
+export interface PluginContentReleasesRelease extends Schema.CollectionType {
+  collectionName: 'strapi_releases';
+  info: {
+    singularName: 'release';
+    pluralName: 'releases';
+    displayName: 'Release';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  pluginOptions: {
+    'content-manager': {
+      visible: false;
+    };
+    'content-type-builder': {
+      visible: false;
+    };
+  };
+  attributes: {
+    name: Attribute.String & Attribute.Required;
+    releasedAt: Attribute.DateTime;
+    actions: Attribute.Relation<
+      'plugin::content-releases.release',
+      'oneToMany',
+      'plugin::content-releases.release-action'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'plugin::content-releases.release',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'plugin::content-releases.release',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface PluginContentReleasesReleaseAction
+  extends Schema.CollectionType {
+  collectionName: 'strapi_release_actions';
+  info: {
+    singularName: 'release-action';
+    pluralName: 'release-actions';
+    displayName: 'Release Action';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  pluginOptions: {
+    'content-manager': {
+      visible: false;
+    };
+    'content-type-builder': {
+      visible: false;
+    };
+  };
+  attributes: {
+    type: Attribute.Enumeration<['publish', 'unpublish']> & Attribute.Required;
+    entry: Attribute.Relation<
+      'plugin::content-releases.release-action',
+      'morphToOne'
+    >;
+    contentType: Attribute.String & Attribute.Required;
+    release: Attribute.Relation<
+      'plugin::content-releases.release-action',
+      'manyToOne',
+      'plugin::content-releases.release'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'plugin::content-releases.release-action',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'plugin::content-releases.release-action',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface PluginI18NLocale extends Schema.CollectionType {
   collectionName: 'i18n_locale';
   info: {
@@ -683,7 +774,7 @@ export interface ApiAnimalSpeciesFoodTopCategoryAnimalSpeciesFoodTopCategory
   info: {
     singularName: 'animal-species-food-top-category';
     pluralName: 'animal-species-food-top-categories';
-    displayName: 'Animal Species Food Top Category';
+    displayName: 'DEPRECATED Animal Species Food Top Category';
     description: '';
   };
   options: {
@@ -720,7 +811,7 @@ export interface ApiAnimalSpeciesProductionDirectionFoodAnimalSpeciesProductionD
   info: {
     singularName: 'animal-species-production-direction-food';
     pluralName: 'animal-species-production-direction-foods';
-    displayName: 'Animal Species Production Direction Food';
+    displayName: 'DEPRECATED Animal Species Production Direction Food';
     description: '';
   };
   options: {
@@ -1161,30 +1252,30 @@ export interface ApiIsolateIsolate extends Schema.CollectionType {
   info: {
     singularName: 'isolate';
     pluralName: 'isolates';
-    displayName: 'isolate';
+    displayName: 'DEPRECATED isolate';
     description: '';
   };
   options: {
     draftAndPublish: false;
   };
   attributes: {
-    year: Attribute.BigInteger;
+    samplingYear: Attribute.BigInteger;
     microorganism: Attribute.Relation<
       'api::isolate.isolate',
       'manyToOne',
       'api::microorganism.microorganism'
     >;
-    sampling_objective: Attribute.Relation<
+    samplingContext: Attribute.Relation<
       'api::isolate.isolate',
       'manyToOne',
       'api::sampling-objective.sampling-objective'
     >;
-    sampling_point: Attribute.Relation<
+    samplingStage: Attribute.Relation<
       'api::isolate.isolate',
       'manyToOne',
       'api::sampling-point.sampling-point'
     >;
-    sampling_origin: Attribute.Relation<
+    sampleType: Attribute.Relation<
       'api::isolate.isolate',
       'manyToOne',
       'api::sampling-origin.sampling-origin'
@@ -1194,12 +1285,12 @@ export interface ApiIsolateIsolate extends Schema.CollectionType {
       'manyToOne',
       'api::matrix.matrix'
     >;
-    matrix_detail: Attribute.Relation<
+    matrixDetail: Attribute.Relation<
       'api::isolate.isolate',
       'manyToOne',
       'api::matrix-detail.matrix-detail'
     >;
-    animal_species_production_direction_food: Attribute.Relation<
+    animalSpeciesProductionTypeFood: Attribute.Relation<
       'api::isolate.isolate',
       'manyToOne',
       'api::animal-species-production-direction-food.animal-species-production-direction-food'
@@ -1209,21 +1300,21 @@ export interface ApiIsolateIsolate extends Schema.CollectionType {
       'manyToOne',
       'api::salmonella.salmonella'
     >;
-    BfR_Isolat_Nr: Attribute.String;
-    DB_ID: Attribute.String;
-    NRL: Attribute.String;
-    ZoMo_Programm: Attribute.String;
-    Bericht_e: Attribute.String;
-    MRSA_spa_Typ: Attribute.String;
-    MRSA_Klonale_Gruppe: Attribute.String;
-    Entero_Spez: Attribute.String;
-    Campy_Spez: Attribute.String;
-    Listeria_Serotyp: Attribute.String;
-    STEC_Serotyp: Attribute.String;
-    STEC_stx1_Gen: Attribute.String;
-    STEC_stx2_Gen: Attribute.String;
-    STEC_eae_Gen: Attribute.String;
-    STEC_e_hly_Gen: Attribute.String;
+    bfrIsolatNr: Attribute.String;
+    dbId: Attribute.String;
+    nrl: Attribute.String;
+    zomoProgramm: Attribute.String;
+    berichte: Attribute.String;
+    mrsaSpaTyp: Attribute.String;
+    mrsaKlonaleGruppe: Attribute.String;
+    enteroSpez: Attribute.String;
+    campySpez: Attribute.String;
+    listeriaSerotyp: Attribute.String;
+    stecSerotyp: Attribute.String;
+    stx1Gen: Attribute.String;
+    stx2Gen: Attribute.String;
+    eaeGen: Attribute.String;
+    e_hlyGen: Attribute.String;
     ESBL_AmpC_Carba_Phanotyp: Attribute.String;
     WGS: Attribute.String;
     keine_Gene_oder_Mutationen_gefunden: Attribute.String;
@@ -1304,6 +1395,31 @@ export interface ApiIsolateIsolate extends Schema.CollectionType {
       'manyToOne',
       'api::animal-species-food-top-category.animal-species-food-top-category'
     >;
+    matrix_detail: Attribute.Relation<
+      'api::isolate.isolate',
+      'manyToOne',
+      'api::matrix-detail.matrix-detail'
+    >;
+    sampling_objective: Attribute.Relation<
+      'api::isolate.isolate',
+      'manyToOne',
+      'api::sampling-objective.sampling-objective'
+    >;
+    sampling_point: Attribute.Relation<
+      'api::isolate.isolate',
+      'manyToOne',
+      'api::sampling-point.sampling-point'
+    >;
+    sampling_origin: Attribute.Relation<
+      'api::isolate.isolate',
+      'manyToOne',
+      'api::sampling-origin.sampling-origin'
+    >;
+    animal_species_production_direction_food: Attribute.Relation<
+      'api::isolate.isolate',
+      'manyToOne',
+      'api::animal-species-production-direction-food.animal-species-production-direction-food'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -1326,7 +1442,8 @@ export interface ApiMatrixMatrix extends Schema.CollectionType {
   info: {
     singularName: 'matrix';
     pluralName: 'matrices';
-    displayName: 'Matrix';
+    displayName: 'MD Matrix';
+    description: '';
   };
   options: {
     draftAndPublish: false;
@@ -1361,7 +1478,8 @@ export interface ApiMatrixDetailMatrixDetail extends Schema.CollectionType {
   info: {
     singularName: 'matrix-detail';
     pluralName: 'matrix-details';
-    displayName: 'Matrix Detail';
+    displayName: 'MD Matrix Detail';
+    description: '';
   };
   options: {
     draftAndPublish: false;
@@ -1396,7 +1514,7 @@ export interface ApiMicroorganismMicroorganism extends Schema.CollectionType {
   info: {
     singularName: 'microorganism';
     pluralName: 'microorganisms';
-    displayName: 'microorganism';
+    displayName: 'MD Microorganism';
     description: '';
   };
   options: {
@@ -1518,7 +1636,8 @@ export interface ApiSalmonellaSalmonella extends Schema.CollectionType {
   info: {
     singularName: 'salmonella';
     pluralName: 'salmonellas';
-    displayName: 'Salmonella';
+    displayName: 'DEPRECATED Salmonella';
+    description: '';
   };
   options: {
     draftAndPublish: false;
@@ -1554,7 +1673,7 @@ export interface ApiSamplingObjectiveSamplingObjective
   info: {
     singularName: 'sampling-objective';
     pluralName: 'sampling-objectives';
-    displayName: 'Sampling Objective';
+    displayName: 'DEPRECATED Sampling Objective';
     description: '';
   };
   options: {
@@ -1590,7 +1709,8 @@ export interface ApiSamplingOriginSamplingOrigin extends Schema.CollectionType {
   info: {
     singularName: 'sampling-origin';
     pluralName: 'sampling-origins';
-    displayName: 'Sampling Origin';
+    displayName: 'DEPRECATED  Sampling Origin';
+    description: '';
   };
   options: {
     draftAndPublish: false;
@@ -1625,7 +1745,8 @@ export interface ApiSamplingPointSamplingPoint extends Schema.CollectionType {
   info: {
     singularName: 'sampling-point';
     pluralName: 'sampling-points';
-    displayName: 'sampling point';
+    displayName: 'DEPRECATED  sampling point';
+    description: '';
   };
   options: {
     draftAndPublish: false;
@@ -1720,6 +1841,8 @@ declare module '@strapi/types' {
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'plugin::upload.file': PluginUploadFile;
       'plugin::upload.folder': PluginUploadFolder;
+      'plugin::content-releases.release': PluginContentReleasesRelease;
+      'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
       'plugin::i18n.locale': PluginI18NLocale;
       'plugin::users-permissions.permission': PluginUsersPermissionsPermission;
       'plugin::users-permissions.role': PluginUsersPermissionsRole;

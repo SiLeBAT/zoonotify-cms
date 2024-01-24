@@ -4,7 +4,7 @@
   "info": {
     "singularName": "animal-species-production-direction-food",
     "pluralName": "animal-species-production-direction-foods",
-    "displayName": "Animal Species Production Direction Food",
+    "displayName": "DEPRECATED Animal Species Production Direction Food",
     "description": ""
   },
   "options": {

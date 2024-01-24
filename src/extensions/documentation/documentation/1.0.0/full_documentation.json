@@ -14,7 +14,7 @@
       "name": "Apache 2.0",
       "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
     },
-    "x-generation-date": "2024-01-15T13:43:56.863Z"
+    "x-generation-date": "2024-01-24T10:33:25.739Z"
   },
   "x-strapi-config": {
     "path": "/documentation",
@@ -188,7 +188,7 @@
                     "attributes": {
                       "type": "object",
                       "properties": {
-                        "year": {
+                        "samplingYear": {
                           "type": "string",
                           "pattern": "^\\d*$",
                           "example": "123456789"
@@ -531,7 +531,7 @@
                             }
                           }
                         },
-                        "sampling_objective": {
+                        "samplingContext": {
                           "type": "object",
                           "properties": {
                             "data": {
@@ -617,7 +617,7 @@
                             }
                           }
                         },
-                        "sampling_point": {
+                        "samplingStage": {
                           "type": "object",
                           "properties": {
                             "data": {
@@ -703,7 +703,7 @@
                             }
                           }
                         },
-                        "sampling_origin": {
+                        "sampleType": {
                           "type": "object",
                           "properties": {
                             "data": {
@@ -875,7 +875,7 @@
                             }
                           }
                         },
-                        "matrix_detail": {
+                        "matrixDetail": {
                           "type": "object",
                           "properties": {
                             "data": {
@@ -961,7 +961,7 @@
                             }
                           }
                         },
-                        "animal_species_production_direction_food": {
+                        "animalSpeciesProductionTypeFood": {
                           "type": "object",
                           "properties": {
                             "data": {
@@ -1133,49 +1133,49 @@
                             }
                           }
                         },
-                        "BfR_Isolat_Nr": {
+                        "bfrIsolatNr": {
                           "type": "string"
                         },
-                        "DB_ID": {
+                        "dbId": {
                           "type": "string"
                         },
-                        "NRL": {
+                        "nrl": {
                           "type": "string"
                         },
-                        "ZoMo_Programm": {
+                        "zomoProgramm": {
                           "type": "string"
                         },
-                        "Bericht_e": {
+                        "berichte": {
                           "type": "string"
                         },
-                        "MRSA_spa_Typ": {
+                        "mrsaSpaTyp": {
                           "type": "string"
                         },
-                        "MRSA_Klonale_Gruppe": {
+                        "mrsaKlonaleGruppe": {
                           "type": "string"
                         },
-                        "Entero_Spez": {
+                        "enteroSpez": {
                           "type": "string"
                         },
-                        "Campy_Spez": {
+                        "campySpez": {
                           "type": "string"
                         },
-                        "Listeria_Serotyp": {
+                        "listeriaSerotyp": {
                           "type": "string"
                         },
-                        "STEC_Serotyp": {
+                        "stecSerotyp": {
                           "type": "string"
                         },
-                        "STEC_stx1_Gen": {
+                        "stx1Gen": {
                           "type": "string"
                         },
-                        "STEC_stx2_Gen": {
+                        "stx2Gen": {
                           "type": "string"
                         },
-                        "STEC_eae_Gen": {
+                        "eaeGen": {
                           "type": "string"
                         },
-                        "STEC_e_hly_Gen": {
+                        "e_hlyGen": {
                           "type": "string"
                         },
                         "ESBL_AmpC_Carba_Phanotyp": {
@@ -1484,6 +1484,91 @@
                                       }
                                     }
                                   }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "matrix_detail": {
+                          "type": "object",
+                          "properties": {
+                            "data": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "number"
+                                },
+                                "attributes": {
+                                  "type": "object",
+                                  "properties": {}
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "sampling_objective": {
+                          "type": "object",
+                          "properties": {
+                            "data": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "number"
+                                },
+                                "attributes": {
+                                  "type": "object",
+                                  "properties": {}
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "sampling_point": {
+                          "type": "object",
+                          "properties": {
+                            "data": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "number"
+                                },
+                                "attributes": {
+                                  "type": "object",
+                                  "properties": {}
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "sampling_origin": {
+                          "type": "object",
+                          "properties": {
+                            "data": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "number"
+                                },
+                                "attributes": {
+                                  "type": "object",
+                                  "properties": {}
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "animal_species_production_direction_food": {
+                          "type": "object",
+                          "properties": {
+                            "data": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "number"
+                                },
+                                "attributes": {
+                                  "type": "object",
+                                  "properties": {}
                                 }
                               }
                             }
@@ -1706,7 +1791,7 @@
                     "attributes": {
                       "type": "object",
                       "properties": {
-                        "year": {
+                        "samplingYear": {
                           "type": "string",
                           "pattern": "^\\d*$",
                           "example": "123456789"
@@ -2049,7 +2134,7 @@
                             }
                           }
                         },
-                        "sampling_objective": {
+                        "samplingContext": {
                           "type": "object",
                           "properties": {
                             "data": {
@@ -2135,7 +2220,7 @@
                             }
                           }
                         },
-                        "sampling_point": {
+                        "samplingStage": {
                           "type": "object",
                           "properties": {
                             "data": {
@@ -2221,7 +2306,7 @@
                             }
                           }
                         },
-                        "sampling_origin": {
+                        "sampleType": {
                           "type": "object",
                           "properties": {
                             "data": {
@@ -2393,7 +2478,7 @@
                             }
                           }
                         },
-                        "matrix_detail": {
+                        "matrixDetail": {
                           "type": "object",
                           "properties": {
                             "data": {
@@ -2479,7 +2564,7 @@
                             }
                           }
                         },
-                        "animal_species_production_direction_food": {
+                        "animalSpeciesProductionTypeFood": {
                           "type": "object",
                           "properties": {
                             "data": {
@@ -2651,49 +2736,49 @@
                             }
                           }
                         },
-                        "BfR_Isolat_Nr": {
+                        "bfrIsolatNr": {
                           "type": "string"
                         },
-                        "DB_ID": {
+                        "dbId": {
                           "type": "string"
                         },
-                        "NRL": {
+                        "nrl": {
                           "type": "string"
                         },
-                        "ZoMo_Programm": {
+                        "zomoProgramm": {
                           "type": "string"
                         },
-                        "Bericht_e": {
+                        "berichte": {
                           "type": "string"
                         },
-                        "MRSA_spa_Typ": {
+                        "mrsaSpaTyp": {
                           "type": "string"
                         },
-                        "MRSA_Klonale_Gruppe": {
+                        "mrsaKlonaleGruppe": {
                           "type": "string"
                         },
-                        "Entero_Spez": {
+                        "enteroSpez": {
                           "type": "string"
                         },
-                        "Campy_Spez": {
+                        "campySpez": {
                           "type": "string"
                         },
-                        "Listeria_Serotyp": {
+                        "listeriaSerotyp": {
                           "type": "string"
                         },
-                        "STEC_Serotyp": {
+                        "stecSerotyp": {
                           "type": "string"
                         },
-                        "STEC_stx1_Gen": {
+                        "stx1Gen": {
                           "type": "string"
                         },
-                        "STEC_stx2_Gen": {
+                        "stx2Gen": {
                           "type": "string"
                         },
-                        "STEC_eae_Gen": {
+                        "eaeGen": {
                           "type": "string"
                         },
-                        "STEC_e_hly_Gen": {
+                        "e_hlyGen": {
                           "type": "string"
                         },
                         "ESBL_AmpC_Carba_Phanotyp": {
@@ -3002,6 +3087,91 @@
                                       }
                                     }
                                   }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "matrix_detail": {
+                          "type": "object",
+                          "properties": {
+                            "data": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "number"
+                                },
+                                "attributes": {
+                                  "type": "object",
+                                  "properties": {}
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "sampling_objective": {
+                          "type": "object",
+                          "properties": {
+                            "data": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "number"
+                                },
+                                "attributes": {
+                                  "type": "object",
+                                  "properties": {}
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "sampling_point": {
+                          "type": "object",
+                          "properties": {
+                            "data": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "number"
+                                },
+                                "attributes": {
+                                  "type": "object",
+                                  "properties": {}
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "sampling_origin": {
+                          "type": "object",
+                          "properties": {
+                            "data": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "number"
+                                },
+                                "attributes": {
+                                  "type": "object",
+                                  "properties": {}
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "animal_species_production_direction_food": {
+                          "type": "object",
+                          "properties": {
+                            "data": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "number"
+                                },
+                                "attributes": {
+                                  "type": "object",
+                                  "properties": {}
                                 }
                               }
                             }
@@ -5167,7 +5337,7 @@
               "data": {
                 "type": "array",
                 "items": {
-                  "$ref": "#/components/schemas/Evaluation"
+                  "$ref": "#/components/schemas/EvaluationListResponseDataItemLocalized"
                 }
               }
             }
@@ -5663,7 +5833,7 @@
               "data": {
                 "type": "array",
                 "items": {
-                  "$ref": "#/components/schemas/EvaluationInformation"
+                  "$ref": "#/components/schemas/EvaluationInformationListResponseDataItemLocalized"
                 }
               }
             }
@@ -6201,7 +6371,7 @@
               "data": {
                 "type": "array",
                 "items": {
-                  "$ref": "#/components/schemas/Explanation"
+                  "$ref": "#/components/schemas/ExplanationListResponseDataItemLocalized"
                 }
               }
             }
@@ -6751,7 +6921,7 @@
               "data": {
                 "type": "array",
                 "items": {
-                  "$ref": "#/components/schemas/Externallink"
+                  "$ref": "#/components/schemas/ExternallinkListResponseDataItemLocalized"
                 }
               }
             }
@@ -6792,7 +6962,7 @@
           "data": {
             "type": "object",
             "properties": {
-              "year": {
+              "samplingYear": {
                 "type": "string",
                 "pattern": "^\\d*$",
                 "example": "123456789"
@@ -6808,7 +6978,7 @@
                 ],
                 "example": "string or id"
               },
-              "sampling_objective": {
+              "samplingContext": {
                 "oneOf": [
                   {
                     "type": "integer"
@@ -6819,7 +6989,7 @@
                 ],
                 "example": "string or id"
               },
-              "sampling_point": {
+              "samplingStage": {
                 "oneOf": [
                   {
                     "type": "integer"
@@ -6830,7 +7000,7 @@
                 ],
                 "example": "string or id"
               },
-              "sampling_origin": {
+              "sampleType": {
                 "oneOf": [
                   {
                     "type": "integer"
@@ -6852,7 +7022,7 @@
                 ],
                 "example": "string or id"
               },
-              "matrix_detail": {
+              "matrixDetail": {
                 "oneOf": [
                   {
                     "type": "integer"
@@ -6863,7 +7033,7 @@
                 ],
                 "example": "string or id"
               },
-              "animal_species_production_direction_food": {
+              "animalSpeciesProductionTypeFood": {
                 "oneOf": [
                   {
                     "type": "integer"
@@ -6885,49 +7055,49 @@
                 ],
                 "example": "string or id"
               },
-              "BfR_Isolat_Nr": {
+              "bfrIsolatNr": {
                 "type": "string"
               },
-              "DB_ID": {
+              "dbId": {
                 "type": "string"
               },
-              "NRL": {
+              "nrl": {
                 "type": "string"
               },
-              "ZoMo_Programm": {
+              "zomoProgramm": {
                 "type": "string"
               },
-              "Bericht_e": {
+              "berichte": {
                 "type": "string"
               },
-              "MRSA_spa_Typ": {
+              "mrsaSpaTyp": {
                 "type": "string"
               },
-              "MRSA_Klonale_Gruppe": {
+              "mrsaKlonaleGruppe": {
                 "type": "string"
               },
-              "Entero_Spez": {
+              "enteroSpez": {
                 "type": "string"
               },
-              "Campy_Spez": {
+              "campySpez": {
                 "type": "string"
               },
-              "Listeria_Serotyp": {
+              "listeriaSerotyp": {
                 "type": "string"
               },
-              "STEC_Serotyp": {
+              "stecSerotyp": {
                 "type": "string"
               },
-              "STEC_stx1_Gen": {
+              "stx1Gen": {
                 "type": "string"
               },
-              "STEC_stx2_Gen": {
+              "stx2Gen": {
                 "type": "string"
               },
-              "STEC_eae_Gen": {
+              "eaeGen": {
                 "type": "string"
               },
-              "STEC_e_hly_Gen": {
+              "e_hlyGen": {
                 "type": "string"
               },
               "ESBL_AmpC_Carba_Phanotyp": {
@@ -7165,6 +7335,61 @@
                   }
                 ],
                 "example": "string or id"
+              },
+              "matrix_detail": {
+                "oneOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ],
+                "example": "string or id"
+              },
+              "sampling_objective": {
+                "oneOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ],
+                "example": "string or id"
+              },
+              "sampling_point": {
+                "oneOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ],
+                "example": "string or id"
+              },
+              "sampling_origin": {
+                "oneOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ],
+                "example": "string or id"
+              },
+              "animal_species_production_direction_food": {
+                "oneOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ],
+                "example": "string or id"
               }
             }
           }
@@ -7219,7 +7444,7 @@
       "Isolate": {
         "type": "object",
         "properties": {
-          "year": {
+          "samplingYear": {
             "type": "string",
             "pattern": "^\\d*$",
             "example": "123456789"
@@ -7256,7 +7481,7 @@
                                 "attributes": {
                                   "type": "object",
                                   "properties": {
-                                    "year": {
+                                    "samplingYear": {
                                       "type": "string",
                                       "pattern": "^\\d*$",
                                       "example": "123456789"
@@ -7278,7 +7503,7 @@
                                         }
                                       }
                                     },
-                                    "sampling_objective": {
+                                    "samplingContext": {
                                       "type": "object",
                                       "properties": {
                                         "data": {
@@ -7616,7 +7841,7 @@
                                         }
                                       }
                                     },
-                                    "sampling_point": {
+                                    "samplingStage": {
                                       "type": "object",
                                       "properties": {
                                         "data": {
@@ -7702,7 +7927,7 @@
                                         }
                                       }
                                     },
-                                    "sampling_origin": {
+                                    "sampleType": {
                                       "type": "object",
                                       "properties": {
                                         "data": {
@@ -7874,7 +8099,7 @@
                                         }
                                       }
                                     },
-                                    "matrix_detail": {
+                                    "matrixDetail": {
                                       "type": "object",
                                       "properties": {
                                         "data": {
@@ -7960,7 +8185,7 @@
                                         }
                                       }
                                     },
-                                    "animal_species_production_direction_food": {
+                                    "animalSpeciesProductionTypeFood": {
                                       "type": "object",
                                       "properties": {
                                         "data": {
@@ -8132,49 +8357,49 @@
                                         }
                                       }
                                     },
-                                    "BfR_Isolat_Nr": {
+                                    "bfrIsolatNr": {
                                       "type": "string"
                                     },
-                                    "DB_ID": {
+                                    "dbId": {
                                       "type": "string"
                                     },
-                                    "NRL": {
+                                    "nrl": {
                                       "type": "string"
                                     },
-                                    "ZoMo_Programm": {
+                                    "zomoProgramm": {
                                       "type": "string"
                                     },
-                                    "Bericht_e": {
+                                    "berichte": {
                                       "type": "string"
                                     },
-                                    "MRSA_spa_Typ": {
+                                    "mrsaSpaTyp": {
                                       "type": "string"
                                     },
-                                    "MRSA_Klonale_Gruppe": {
+                                    "mrsaKlonaleGruppe": {
                                       "type": "string"
                                     },
-                                    "Entero_Spez": {
+                                    "enteroSpez": {
                                       "type": "string"
                                     },
-                                    "Campy_Spez": {
+                                    "campySpez": {
                                       "type": "string"
                                     },
-                                    "Listeria_Serotyp": {
+                                    "listeriaSerotyp": {
                                       "type": "string"
                                     },
-                                    "STEC_Serotyp": {
+                                    "stecSerotyp": {
                                       "type": "string"
                                     },
-                                    "STEC_stx1_Gen": {
+                                    "stx1Gen": {
                                       "type": "string"
                                     },
-                                    "STEC_stx2_Gen": {
+                                    "stx2Gen": {
                                       "type": "string"
                                     },
-                                    "STEC_eae_Gen": {
+                                    "eaeGen": {
                                       "type": "string"
                                     },
-                                    "STEC_e_hly_Gen": {
+                                    "e_hlyGen": {
                                       "type": "string"
                                     },
                                     "ESBL_AmpC_Carba_Phanotyp": {
@@ -8488,6 +8713,91 @@
                                         }
                                       }
                                     },
+                                    "matrix_detail": {
+                                      "type": "object",
+                                      "properties": {
+                                        "data": {
+                                          "type": "object",
+                                          "properties": {
+                                            "id": {
+                                              "type": "number"
+                                            },
+                                            "attributes": {
+                                              "type": "object",
+                                              "properties": {}
+                                            }
+                                          }
+                                        }
+                                      }
+                                    },
+                                    "sampling_objective": {
+                                      "type": "object",
+                                      "properties": {
+                                        "data": {
+                                          "type": "object",
+                                          "properties": {
+                                            "id": {
+                                              "type": "number"
+                                            },
+                                            "attributes": {
+                                              "type": "object",
+                                              "properties": {}
+                                            }
+                                          }
+                                        }
+                                      }
+                                    },
+                                    "sampling_point": {
+                                      "type": "object",
+                                      "properties": {
+                                        "data": {
+                                          "type": "object",
+                                          "properties": {
+                                            "id": {
+                                              "type": "number"
+                                            },
+                                            "attributes": {
+                                              "type": "object",
+                                              "properties": {}
+                                            }
+                                          }
+                                        }
+                                      }
+                                    },
+                                    "sampling_origin": {
+                                      "type": "object",
+                                      "properties": {
+                                        "data": {
+                                          "type": "object",
+                                          "properties": {
+                                            "id": {
+                                              "type": "number"
+                                            },
+                                            "attributes": {
+                                              "type": "object",
+                                              "properties": {}
+                                            }
+                                          }
+                                        }
+                                      }
+                                    },
+                                    "animal_species_production_direction_food": {
+                                      "type": "object",
+                                      "properties": {
+                                        "data": {
+                                          "type": "object",
+                                          "properties": {
+                                            "id": {
+                                              "type": "number"
+                                            },
+                                            "attributes": {
+                                              "type": "object",
+                                              "properties": {}
+                                            }
+                                          }
+                                        }
+                                      }
+                                    },
                                     "createdAt": {
                                       "type": "string",
                                       "format": "date-time"
@@ -8585,7 +8895,7 @@
               }
             }
           },
-          "sampling_objective": {
+          "samplingContext": {
             "type": "object",
             "properties": {
               "data": {
@@ -8602,7 +8912,7 @@
               }
             }
           },
-          "sampling_point": {
+          "samplingStage": {
             "type": "object",
             "properties": {
               "data": {
@@ -8619,7 +8929,7 @@
               }
             }
           },
-          "sampling_origin": {
+          "sampleType": {
             "type": "object",
             "properties": {
               "data": {
@@ -8653,7 +8963,7 @@
               }
             }
           },
-          "matrix_detail": {
+          "matrixDetail": {
             "type": "object",
             "properties": {
               "data": {
@@ -8670,7 +8980,7 @@
               }
             }
           },
-          "animal_species_production_direction_food": {
+          "animalSpeciesProductionTypeFood": {
             "type": "object",
             "properties": {
               "data": {
@@ -8704,49 +9014,49 @@
               }
             }
           },
-          "BfR_Isolat_Nr": {
+          "bfrIsolatNr": {
             "type": "string"
           },
-          "DB_ID": {
+          "dbId": {
             "type": "string"
           },
-          "NRL": {
+          "nrl": {
             "type": "string"
           },
-          "ZoMo_Programm": {
+          "zomoProgramm": {
             "type": "string"
           },
-          "Bericht_e": {
+          "berichte": {
             "type": "string"
           },
-          "MRSA_spa_Typ": {
+          "mrsaSpaTyp": {
             "type": "string"
           },
-          "MRSA_Klonale_Gruppe": {
+          "mrsaKlonaleGruppe": {
             "type": "string"
           },
-          "Entero_Spez": {
+          "enteroSpez": {
             "type": "string"
           },
-          "Campy_Spez": {
+          "campySpez": {
             "type": "string"
           },
-          "Listeria_Serotyp": {
+          "listeriaSerotyp": {
             "type": "string"
           },
-          "STEC_Serotyp": {
+          "stecSerotyp": {
             "type": "string"
           },
-          "STEC_stx1_Gen": {
+          "stx1Gen": {
             "type": "string"
           },
-          "STEC_stx2_Gen": {
+          "stx2Gen": {
             "type": "string"
           },
-          "STEC_eae_Gen": {
+          "eaeGen": {
             "type": "string"
           },
-          "STEC_e_hly_Gen": {
+          "e_hlyGen": {
             "type": "string"
           },
           "ESBL_AmpC_Carba_Phanotyp": {
@@ -8991,6 +9301,91 @@
               }
             }
           },
+          "matrix_detail": {
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "number"
+                  },
+                  "attributes": {
+                    "type": "object",
+                    "properties": {}
+                  }
+                }
+              }
+            }
+          },
+          "sampling_objective": {
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "number"
+                  },
+                  "attributes": {
+                    "type": "object",
+                    "properties": {}
+                  }
+                }
+              }
+            }
+          },
+          "sampling_point": {
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "number"
+                  },
+                  "attributes": {
+                    "type": "object",
+                    "properties": {}
+                  }
+                }
+              }
+            }
+          },
+          "sampling_origin": {
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "number"
+                  },
+                  "attributes": {
+                    "type": "object",
+                    "properties": {}
+                  }
+                }
+              }
+            }
+          },
+          "animal_species_production_direction_food": {
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "number"
+                  },
+                  "attributes": {
+                    "type": "object",
+                    "properties": {}
+                  }
+                }
+              }
+            }
+          },
           "createdAt": {
             "type": "string",
             "format": "date-time"
@@ -9159,7 +9554,7 @@
                     "attributes": {
                       "type": "object",
                       "properties": {
-                        "year": {
+                        "samplingYear": {
                           "type": "string",
                           "pattern": "^\\d*$",
                           "example": "123456789"
@@ -9502,7 +9897,7 @@
                             }
                           }
                         },
-                        "sampling_objective": {
+                        "samplingContext": {
                           "type": "object",
                           "properties": {
                             "data": {
@@ -9588,7 +9983,7 @@
                             }
                           }
                         },
-                        "sampling_point": {
+                        "samplingStage": {
                           "type": "object",
                           "properties": {
                             "data": {
@@ -9674,7 +10069,7 @@
                             }
                           }
                         },
-                        "sampling_origin": {
+                        "sampleType": {
                           "type": "object",
                           "properties": {
                             "data": {
@@ -9846,7 +10241,7 @@
                             }
                           }
                         },
-                        "matrix_detail": {
+                        "matrixDetail": {
                           "type": "object",
                           "properties": {
                             "data": {
@@ -9932,7 +10327,7 @@
                             }
                           }
                         },
-                        "animal_species_production_direction_food": {
+                        "animalSpeciesProductionTypeFood": {
                           "type": "object",
                           "properties": {
                             "data": {
@@ -10104,49 +10499,49 @@
                             }
                           }
                         },
-                        "BfR_Isolat_Nr": {
+                        "bfrIsolatNr": {
                           "type": "string"
                         },
-                        "DB_ID": {
+                        "dbId": {
                           "type": "string"
                         },
-                        "NRL": {
+                        "nrl": {
                           "type": "string"
                         },
-                        "ZoMo_Programm": {
+                        "zomoProgramm": {
                           "type": "string"
                         },
-                        "Bericht_e": {
+                        "berichte": {
                           "type": "string"
                         },
-                        "MRSA_spa_Typ": {
+                        "mrsaSpaTyp": {
                           "type": "string"
                         },
-                        "MRSA_Klonale_Gruppe": {
+                        "mrsaKlonaleGruppe": {
                           "type": "string"
                         },
-                        "Entero_Spez": {
+                        "enteroSpez": {
                           "type": "string"
                         },
-                        "Campy_Spez": {
+                        "campySpez": {
                           "type": "string"
                         },
-                        "Listeria_Serotyp": {
+                        "listeriaSerotyp": {
                           "type": "string"
                         },
-                        "STEC_Serotyp": {
+                        "stecSerotyp": {
                           "type": "string"
                         },
-                        "STEC_stx1_Gen": {
+                        "stx1Gen": {
                           "type": "string"
                         },
-                        "STEC_stx2_Gen": {
+                        "stx2Gen": {
                           "type": "string"
                         },
-                        "STEC_eae_Gen": {
+                        "eaeGen": {
                           "type": "string"
                         },
-                        "STEC_e_hly_Gen": {
+                        "e_hlyGen": {
                           "type": "string"
                         },
                         "ESBL_AmpC_Carba_Phanotyp": {
@@ -10455,6 +10850,91 @@
                                       }
                                     }
                                   }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "matrix_detail": {
+                          "type": "object",
+                          "properties": {
+                            "data": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "number"
+                                },
+                                "attributes": {
+                                  "type": "object",
+                                  "properties": {}
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "sampling_objective": {
+                          "type": "object",
+                          "properties": {
+                            "data": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "number"
+                                },
+                                "attributes": {
+                                  "type": "object",
+                                  "properties": {}
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "sampling_point": {
+                          "type": "object",
+                          "properties": {
+                            "data": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "number"
+                                },
+                                "attributes": {
+                                  "type": "object",
+                                  "properties": {}
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "sampling_origin": {
+                          "type": "object",
+                          "properties": {
+                            "data": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "number"
+                                },
+                                "attributes": {
+                                  "type": "object",
+                                  "properties": {}
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "animal_species_production_direction_food": {
+                          "type": "object",
+                          "properties": {
+                            "data": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "number"
+                                },
+                                "attributes": {
+                                  "type": "object",
+                                  "properties": {}
                                 }
                               }
                             }
@@ -10677,7 +11157,7 @@
                     "attributes": {
                       "type": "object",
                       "properties": {
-                        "year": {
+                        "samplingYear": {
                           "type": "string",
                           "pattern": "^\\d*$",
                           "example": "123456789"
@@ -11020,7 +11500,7 @@
                             }
                           }
                         },
-                        "sampling_objective": {
+                        "samplingContext": {
                           "type": "object",
                           "properties": {
                             "data": {
@@ -11106,7 +11586,7 @@
                             }
                           }
                         },
-                        "sampling_point": {
+                        "samplingStage": {
                           "type": "object",
                           "properties": {
                             "data": {
@@ -11192,7 +11672,7 @@
                             }
                           }
                         },
-                        "sampling_origin": {
+                        "sampleType": {
                           "type": "object",
                           "properties": {
                             "data": {
@@ -11364,7 +11844,7 @@
                             }
                           }
                         },
-                        "matrix_detail": {
+                        "matrixDetail": {
                           "type": "object",
                           "properties": {
                             "data": {
@@ -11450,7 +11930,7 @@
                             }
                           }
                         },
-                        "animal_species_production_direction_food": {
+                        "animalSpeciesProductionTypeFood": {
                           "type": "object",
                           "properties": {
                             "data": {
@@ -11622,49 +12102,49 @@
                             }
                           }
                         },
-                        "BfR_Isolat_Nr": {
+                        "bfrIsolatNr": {
                           "type": "string"
                         },
-                        "DB_ID": {
+                        "dbId": {
                           "type": "string"
                         },
-                        "NRL": {
+                        "nrl": {
                           "type": "string"
                         },
-                        "ZoMo_Programm": {
+                        "zomoProgramm": {
                           "type": "string"
                         },
-                        "Bericht_e": {
+                        "berichte": {
                           "type": "string"
                         },
-                        "MRSA_spa_Typ": {
+                        "mrsaSpaTyp": {
                           "type": "string"
                         },
-                        "MRSA_Klonale_Gruppe": {
+                        "mrsaKlonaleGruppe": {
                           "type": "string"
                         },
-                        "Entero_Spez": {
+                        "enteroSpez": {
                           "type": "string"
                         },
-                        "Campy_Spez": {
+                        "campySpez": {
                           "type": "string"
                         },
-                        "Listeria_Serotyp": {
+                        "listeriaSerotyp": {
                           "type": "string"
                         },
-                        "STEC_Serotyp": {
+                        "stecSerotyp": {
                           "type": "string"
                         },
-                        "STEC_stx1_Gen": {
+                        "stx1Gen": {
                           "type": "string"
                         },
-                        "STEC_stx2_Gen": {
+                        "stx2Gen": {
                           "type": "string"
                         },
-                        "STEC_eae_Gen": {
+                        "eaeGen": {
                           "type": "string"
                         },
-                        "STEC_e_hly_Gen": {
+                        "e_hlyGen": {
                           "type": "string"
                         },
                         "ESBL_AmpC_Carba_Phanotyp": {
@@ -11973,6 +12453,91 @@
                                       }
                                     }
                                   }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "matrix_detail": {
+                          "type": "object",
+                          "properties": {
+                            "data": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "number"
+                                },
+                                "attributes": {
+                                  "type": "object",
+                                  "properties": {}
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "sampling_objective": {
+                          "type": "object",
+                          "properties": {
+                            "data": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "number"
+                                },
+                                "attributes": {
+                                  "type": "object",
+                                  "properties": {}
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "sampling_point": {
+                          "type": "object",
+                          "properties": {
+                            "data": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "number"
+                                },
+                                "attributes": {
+                                  "type": "object",
+                                  "properties": {}
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "sampling_origin": {
+                          "type": "object",
+                          "properties": {
+                            "data": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "number"
+                                },
+                                "attributes": {
+                                  "type": "object",
+                                  "properties": {}
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "animal_species_production_direction_food": {
+                          "type": "object",
+                          "properties": {
+                            "data": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "number"
+                                },
+                                "attributes": {
+                                  "type": "object",
+                                  "properties": {}
                                 }
                               }
                             }
@@ -12195,7 +12760,7 @@
                     "attributes": {
                       "type": "object",
                       "properties": {
-                        "year": {
+                        "samplingYear": {
                           "type": "string",
                           "pattern": "^\\d*$",
                           "example": "123456789"
@@ -12538,7 +13103,7 @@
                             }
                           }
                         },
-                        "sampling_objective": {
+                        "samplingContext": {
                           "type": "object",
                           "properties": {
                             "data": {
@@ -12624,7 +13189,7 @@
                             }
                           }
                         },
-                        "sampling_point": {
+                        "samplingStage": {
                           "type": "object",
                           "properties": {
                             "data": {
@@ -12710,7 +13275,7 @@
                             }
                           }
                         },
-                        "sampling_origin": {
+                        "sampleType": {
                           "type": "object",
                           "properties": {
                             "data": {
@@ -12882,7 +13447,7 @@
                             }
                           }
                         },
-                        "matrix_detail": {
+                        "matrixDetail": {
                           "type": "object",
                           "properties": {
                             "data": {
@@ -12968,7 +13533,7 @@
                             }
                           }
                         },
-                        "animal_species_production_direction_food": {
+                        "animalSpeciesProductionTypeFood": {
                           "type": "object",
                           "properties": {
                             "data": {
@@ -13140,49 +13705,49 @@
                             }
                           }
                         },
-                        "BfR_Isolat_Nr": {
+                        "bfrIsolatNr": {
                           "type": "string"
                         },
-                        "DB_ID": {
+                        "dbId": {
                           "type": "string"
                         },
-                        "NRL": {
+                        "nrl": {
                           "type": "string"
                         },
-                        "ZoMo_Programm": {
+                        "zomoProgramm": {
                           "type": "string"
                         },
-                        "Bericht_e": {
+                        "berichte": {
                           "type": "string"
                         },
-                        "MRSA_spa_Typ": {
+                        "mrsaSpaTyp": {
                           "type": "string"
                         },
-                        "MRSA_Klonale_Gruppe": {
+                        "mrsaKlonaleGruppe": {
                           "type": "string"
                         },
-                        "Entero_Spez": {
+                        "enteroSpez": {
                           "type": "string"
                         },
-                        "Campy_Spez": {
+                        "campySpez": {
                           "type": "string"
                         },
-                        "Listeria_Serotyp": {
+                        "listeriaSerotyp": {
                           "type": "string"
                         },
-                        "STEC_Serotyp": {
+                        "stecSerotyp": {
                           "type": "string"
                         },
-                        "STEC_stx1_Gen": {
+                        "stx1Gen": {
                           "type": "string"
                         },
-                        "STEC_stx2_Gen": {
+                        "stx2Gen": {
                           "type": "string"
                         },
-                        "STEC_eae_Gen": {
+                        "eaeGen": {
                           "type": "string"
                         },
-                        "STEC_e_hly_Gen": {
+                        "e_hlyGen": {
                           "type": "string"
                         },
                         "ESBL_AmpC_Carba_Phanotyp": {
@@ -13491,6 +14056,91 @@
                                       }
                                     }
                                   }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "matrix_detail": {
+                          "type": "object",
+                          "properties": {
+                            "data": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "number"
+                                },
+                                "attributes": {
+                                  "type": "object",
+                                  "properties": {}
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "sampling_objective": {
+                          "type": "object",
+                          "properties": {
+                            "data": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "number"
+                                },
+                                "attributes": {
+                                  "type": "object",
+                                  "properties": {}
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "sampling_point": {
+                          "type": "object",
+                          "properties": {
+                            "data": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "number"
+                                },
+                                "attributes": {
+                                  "type": "object",
+                                  "properties": {}
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "sampling_origin": {
+                          "type": "object",
+                          "properties": {
+                            "data": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "number"
+                                },
+                                "attributes": {
+                                  "type": "object",
+                                  "properties": {}
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "animal_species_production_direction_food": {
+                          "type": "object",
+                          "properties": {
+                            "data": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "number"
+                                },
+                                "attributes": {
+                                  "type": "object",
+                                  "properties": {}
                                 }
                               }
                             }
@@ -13871,7 +14521,7 @@
               "data": {
                 "type": "array",
                 "items": {
-                  "$ref": "#/components/schemas/ResistanceTable"
+                  "$ref": "#/components/schemas/ResistanceTableListResponseDataItemLocalized"
                 }
               }
             }
@@ -14384,7 +15034,7 @@
                     "attributes": {
                       "type": "object",
                       "properties": {
-                        "year": {
+                        "samplingYear": {
                           "type": "string",
                           "pattern": "^\\d*$",
                           "example": "123456789"
@@ -14727,7 +15377,7 @@
                             }
                           }
                         },
-                        "sampling_objective": {
+                        "samplingContext": {
                           "type": "object",
                           "properties": {
                             "data": {
@@ -14813,7 +15463,7 @@
                             }
                           }
                         },
-                        "sampling_point": {
+                        "samplingStage": {
                           "type": "object",
                           "properties": {
                             "data": {
@@ -14899,7 +15549,7 @@
                             }
                           }
                         },
-                        "sampling_origin": {
+                        "sampleType": {
                           "type": "object",
                           "properties": {
                             "data": {
@@ -15071,7 +15721,7 @@
                             }
                           }
                         },
-                        "matrix_detail": {
+                        "matrixDetail": {
                           "type": "object",
                           "properties": {
                             "data": {
@@ -15157,7 +15807,7 @@
                             }
                           }
                         },
-                        "animal_species_production_direction_food": {
+                        "animalSpeciesProductionTypeFood": {
                           "type": "object",
                           "properties": {
                             "data": {
@@ -15329,49 +15979,49 @@
                             }
                           }
                         },
-                        "BfR_Isolat_Nr": {
+                        "bfrIsolatNr": {
                           "type": "string"
                         },
-                        "DB_ID": {
+                        "dbId": {
                           "type": "string"
                         },
-                        "NRL": {
+                        "nrl": {
                           "type": "string"
                         },
-                        "ZoMo_Programm": {
+                        "zomoProgramm": {
                           "type": "string"
                         },
-                        "Bericht_e": {
+                        "berichte": {
                           "type": "string"
                         },
-                        "MRSA_spa_Typ": {
+                        "mrsaSpaTyp": {
                           "type": "string"
                         },
-                        "MRSA_Klonale_Gruppe": {
+                        "mrsaKlonaleGruppe": {
                           "type": "string"
                         },
-                        "Entero_Spez": {
+                        "enteroSpez": {
                           "type": "string"
                         },
-                        "Campy_Spez": {
+                        "campySpez": {
                           "type": "string"
                         },
-                        "Listeria_Serotyp": {
+                        "listeriaSerotyp": {
                           "type": "string"
                         },
-                        "STEC_Serotyp": {
+                        "stecSerotyp": {
                           "type": "string"
                         },
-                        "STEC_stx1_Gen": {
+                        "stx1Gen": {
                           "type": "string"
                         },
-                        "STEC_stx2_Gen": {
+                        "stx2Gen": {
                           "type": "string"
                         },
-                        "STEC_eae_Gen": {
+                        "eaeGen": {
                           "type": "string"
                         },
-                        "STEC_e_hly_Gen": {
+                        "e_hlyGen": {
                           "type": "string"
                         },
                         "ESBL_AmpC_Carba_Phanotyp": {
@@ -15680,6 +16330,91 @@
                                       }
                                     }
                                   }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "matrix_detail": {
+                          "type": "object",
+                          "properties": {
+                            "data": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "number"
+                                },
+                                "attributes": {
+                                  "type": "object",
+                                  "properties": {}
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "sampling_objective": {
+                          "type": "object",
+                          "properties": {
+                            "data": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "number"
+                                },
+                                "attributes": {
+                                  "type": "object",
+                                  "properties": {}
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "sampling_point": {
+                          "type": "object",
+                          "properties": {
+                            "data": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "number"
+                                },
+                                "attributes": {
+                                  "type": "object",
+                                  "properties": {}
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "sampling_origin": {
+                          "type": "object",
+                          "properties": {
+                            "data": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "number"
+                                },
+                                "attributes": {
+                                  "type": "object",
+                                  "properties": {}
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "animal_species_production_direction_food": {
+                          "type": "object",
+                          "properties": {
+                            "data": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "number"
+                                },
+                                "attributes": {
+                                  "type": "object",
+                                  "properties": {}
                                 }
                               }
                             }
@@ -15902,7 +16637,7 @@
                     "attributes": {
                       "type": "object",
                       "properties": {
-                        "year": {
+                        "samplingYear": {
                           "type": "string",
                           "pattern": "^\\d*$",
                           "example": "123456789"
@@ -16245,7 +16980,7 @@
                             }
                           }
                         },
-                        "sampling_objective": {
+                        "samplingContext": {
                           "type": "object",
                           "properties": {
                             "data": {
@@ -16331,7 +17066,7 @@
                             }
                           }
                         },
-                        "sampling_point": {
+                        "samplingStage": {
                           "type": "object",
                           "properties": {
                             "data": {
@@ -16417,7 +17152,7 @@
                             }
                           }
                         },
-                        "sampling_origin": {
+                        "sampleType": {
                           "type": "object",
                           "properties": {
                             "data": {
@@ -16589,7 +17324,7 @@
                             }
                           }
                         },
-                        "matrix_detail": {
+                        "matrixDetail": {
                           "type": "object",
                           "properties": {
                             "data": {
@@ -16675,7 +17410,7 @@
                             }
                           }
                         },
-                        "animal_species_production_direction_food": {
+                        "animalSpeciesProductionTypeFood": {
                           "type": "object",
                           "properties": {
                             "data": {
@@ -16847,49 +17582,49 @@
                             }
                           }
                         },
-                        "BfR_Isolat_Nr": {
+                        "bfrIsolatNr": {
                           "type": "string"
                         },
-                        "DB_ID": {
+                        "dbId": {
                           "type": "string"
                         },
-                        "NRL": {
+                        "nrl": {
                           "type": "string"
                         },
-                        "ZoMo_Programm": {
+                        "zomoProgramm": {
                           "type": "string"
                         },
-                        "Bericht_e": {
+                        "berichte": {
                           "type": "string"
                         },
-                        "MRSA_spa_Typ": {
+                        "mrsaSpaTyp": {
                           "type": "string"
                         },
-                        "MRSA_Klonale_Gruppe": {
+                        "mrsaKlonaleGruppe": {
                           "type": "string"
                         },
-                        "Entero_Spez": {
+                        "enteroSpez": {
                           "type": "string"
                         },
-                        "Campy_Spez": {
+                        "campySpez": {
                           "type": "string"
                         },
-                        "Listeria_Serotyp": {
+                        "listeriaSerotyp": {
                           "type": "string"
                         },
-                        "STEC_Serotyp": {
+                        "stecSerotyp": {
                           "type": "string"
                         },
-                        "STEC_stx1_Gen": {
+                        "stx1Gen": {
                           "type": "string"
                         },
-                        "STEC_stx2_Gen": {
+                        "stx2Gen": {
                           "type": "string"
                         },
-                        "STEC_eae_Gen": {
+                        "eaeGen": {
                           "type": "string"
                         },
-                        "STEC_e_hly_Gen": {
+                        "e_hlyGen": {
                           "type": "string"
                         },
                         "ESBL_AmpC_Carba_Phanotyp": {
@@ -17198,6 +17933,91 @@
                                       }
                                     }
                                   }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "matrix_detail": {
+                          "type": "object",
+                          "properties": {
+                            "data": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "number"
+                                },
+                                "attributes": {
+                                  "type": "object",
+                                  "properties": {}
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "sampling_objective": {
+                          "type": "object",
+                          "properties": {
+                            "data": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "number"
+                                },
+                                "attributes": {
+                                  "type": "object",
+                                  "properties": {}
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "sampling_point": {
+                          "type": "object",
+                          "properties": {
+                            "data": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "number"
+                                },
+                                "attributes": {
+                                  "type": "object",
+                                  "properties": {}
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "sampling_origin": {
+                          "type": "object",
+                          "properties": {
+                            "data": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "number"
+                                },
+                                "attributes": {
+                                  "type": "object",
+                                  "properties": {}
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "animal_species_production_direction_food": {
+                          "type": "object",
+                          "properties": {
+                            "data": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "number"
+                                },
+                                "attributes": {
+                                  "type": "object",
+                                  "properties": {}
                                 }
                               }
                             }
@@ -17420,7 +18240,7 @@
                     "attributes": {
                       "type": "object",
                       "properties": {
-                        "year": {
+                        "samplingYear": {
                           "type": "string",
                           "pattern": "^\\d*$",
                           "example": "123456789"
@@ -17763,7 +18583,7 @@
                             }
                           }
                         },
-                        "sampling_objective": {
+                        "samplingContext": {
                           "type": "object",
                           "properties": {
                             "data": {
@@ -17849,7 +18669,7 @@
                             }
                           }
                         },
-                        "sampling_point": {
+                        "samplingStage": {
                           "type": "object",
                           "properties": {
                             "data": {
@@ -17935,7 +18755,7 @@
                             }
                           }
                         },
-                        "sampling_origin": {
+                        "sampleType": {
                           "type": "object",
                           "properties": {
                             "data": {
@@ -18107,7 +18927,7 @@
                             }
                           }
                         },
-                        "matrix_detail": {
+                        "matrixDetail": {
                           "type": "object",
                           "properties": {
                             "data": {
@@ -18193,7 +19013,7 @@
                             }
                           }
                         },
-                        "animal_species_production_direction_food": {
+                        "animalSpeciesProductionTypeFood": {
                           "type": "object",
                           "properties": {
                             "data": {
@@ -18365,49 +19185,49 @@
                             }
                           }
                         },
-                        "BfR_Isolat_Nr": {
+                        "bfrIsolatNr": {
                           "type": "string"
                         },
-                        "DB_ID": {
+                        "dbId": {
                           "type": "string"
                         },
-                        "NRL": {
+                        "nrl": {
                           "type": "string"
                         },
-                        "ZoMo_Programm": {
+                        "zomoProgramm": {
                           "type": "string"
                         },
-                        "Bericht_e": {
+                        "berichte": {
                           "type": "string"
                         },
-                        "MRSA_spa_Typ": {
+                        "mrsaSpaTyp": {
                           "type": "string"
                         },
-                        "MRSA_Klonale_Gruppe": {
+                        "mrsaKlonaleGruppe": {
                           "type": "string"
                         },
-                        "Entero_Spez": {
+                        "enteroSpez": {
                           "type": "string"
                         },
-                        "Campy_Spez": {
+                        "campySpez": {
                           "type": "string"
                         },
-                        "Listeria_Serotyp": {
+                        "listeriaSerotyp": {
                           "type": "string"
                         },
-                        "STEC_Serotyp": {
+                        "stecSerotyp": {
                           "type": "string"
                         },
-                        "STEC_stx1_Gen": {
+                        "stx1Gen": {
                           "type": "string"
                         },
-                        "STEC_stx2_Gen": {
+                        "stx2Gen": {
                           "type": "string"
                         },
-                        "STEC_eae_Gen": {
+                        "eaeGen": {
                           "type": "string"
                         },
-                        "STEC_e_hly_Gen": {
+                        "e_hlyGen": {
                           "type": "string"
                         },
                         "ESBL_AmpC_Carba_Phanotyp": {
@@ -18716,6 +19536,91 @@
                                       }
                                     }
                                   }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "matrix_detail": {
+                          "type": "object",
+                          "properties": {
+                            "data": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "number"
+                                },
+                                "attributes": {
+                                  "type": "object",
+                                  "properties": {}
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "sampling_objective": {
+                          "type": "object",
+                          "properties": {
+                            "data": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "number"
+                                },
+                                "attributes": {
+                                  "type": "object",
+                                  "properties": {}
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "sampling_point": {
+                          "type": "object",
+                          "properties": {
+                            "data": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "number"
+                                },
+                                "attributes": {
+                                  "type": "object",
+                                  "properties": {}
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "sampling_origin": {
+                          "type": "object",
+                          "properties": {
+                            "data": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "number"
+                                },
+                                "attributes": {
+                                  "type": "object",
+                                  "properties": {}
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "animal_species_production_direction_food": {
+                          "type": "object",
+                          "properties": {
+                            "data": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "number"
+                                },
+                                "attributes": {
+                                  "type": "object",
+                                  "properties": {}
                                 }
                               }
                             }
@@ -18938,7 +19843,7 @@
                     "attributes": {
                       "type": "object",
                       "properties": {
-                        "year": {
+                        "samplingYear": {
                           "type": "string",
                           "pattern": "^\\d*$",
                           "example": "123456789"
@@ -19281,7 +20186,7 @@
                             }
                           }
                         },
-                        "sampling_objective": {
+                        "samplingContext": {
                           "type": "object",
                           "properties": {
                             "data": {
@@ -19367,7 +20272,7 @@
                             }
                           }
                         },
-                        "sampling_point": {
+                        "samplingStage": {
                           "type": "object",
                           "properties": {
                             "data": {
@@ -19453,7 +20358,7 @@
                             }
                           }
                         },
-                        "sampling_origin": {
+                        "sampleType": {
                           "type": "object",
                           "properties": {
                             "data": {
@@ -19625,7 +20530,7 @@
                             }
                           }
                         },
-                        "matrix_detail": {
+                        "matrixDetail": {
                           "type": "object",
                           "properties": {
                             "data": {
@@ -19711,7 +20616,7 @@
                             }
                           }
                         },
-                        "animal_species_production_direction_food": {
+                        "animalSpeciesProductionTypeFood": {
                           "type": "object",
                           "properties": {
                             "data": {
@@ -19883,49 +20788,49 @@
                             }
                           }
                         },
-                        "BfR_Isolat_Nr": {
+                        "bfrIsolatNr": {
                           "type": "string"
                         },
-                        "DB_ID": {
+                        "dbId": {
                           "type": "string"
                         },
-                        "NRL": {
+                        "nrl": {
                           "type": "string"
                         },
-                        "ZoMo_Programm": {
+                        "zomoProgramm": {
                           "type": "string"
                         },
-                        "Bericht_e": {
+                        "berichte": {
                           "type": "string"
                         },
-                        "MRSA_spa_Typ": {
+                        "mrsaSpaTyp": {
                           "type": "string"
                         },
-                        "MRSA_Klonale_Gruppe": {
+                        "mrsaKlonaleGruppe": {
                           "type": "string"
                         },
-                        "Entero_Spez": {
+                        "enteroSpez": {
                           "type": "string"
                         },
-                        "Campy_Spez": {
+                        "campySpez": {
                           "type": "string"
                         },
-                        "Listeria_Serotyp": {
+                        "listeriaSerotyp": {
                           "type": "string"
                         },
-                        "STEC_Serotyp": {
+                        "stecSerotyp": {
                           "type": "string"
                         },
-                        "STEC_stx1_Gen": {
+                        "stx1Gen": {
                           "type": "string"
                         },
-                        "STEC_stx2_Gen": {
+                        "stx2Gen": {
                           "type": "string"
                         },
-                        "STEC_eae_Gen": {
+                        "eaeGen": {
                           "type": "string"
                         },
-                        "STEC_e_hly_Gen": {
+                        "e_hlyGen": {
                           "type": "string"
                         },
                         "ESBL_AmpC_Carba_Phanotyp": {
@@ -20234,6 +21139,91 @@
                                       }
                                     }
                                   }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "matrix_detail": {
+                          "type": "object",
+                          "properties": {
+                            "data": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "number"
+                                },
+                                "attributes": {
+                                  "type": "object",
+                                  "properties": {}
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "sampling_objective": {
+                          "type": "object",
+                          "properties": {
+                            "data": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "number"
+                                },
+                                "attributes": {
+                                  "type": "object",
+                                  "properties": {}
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "sampling_point": {
+                          "type": "object",
+                          "properties": {
+                            "data": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "number"
+                                },
+                                "attributes": {
+                                  "type": "object",
+                                  "properties": {}
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "sampling_origin": {
+                          "type": "object",
+                          "properties": {
+                            "data": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "number"
+                                },
+                                "attributes": {
+                                  "type": "object",
+                                  "properties": {}
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "animal_species_production_direction_food": {
+                          "type": "object",
+                          "properties": {
+                            "data": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "number"
+                                },
+                                "attributes": {
+                                  "type": "object",
+                                  "properties": {}
                                 }
                               }
                             }
@@ -20820,7 +21810,7 @@
               "data": {
                 "type": "array",
                 "items": {
-                  "$ref": "#/components/schemas/Welcome"
+                  "$ref": "#/components/schemas/WelcomeListResponseDataItemLocalized"
                 }
               }
             }
