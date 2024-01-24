@@ -4,7 +4,8 @@
   "info": {
     "singularName": "matrix-detail",
     "pluralName": "matrix-details",
-    "displayName": "Matrix Detail"
+    "displayName": "MD Matrix Detail",
+    "description": ""
   },
   "options": {
     "draftAndPublish": false

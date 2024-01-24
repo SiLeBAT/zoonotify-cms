@@ -4,7 +4,7 @@
   "info": {
     "singularName": "sampling-objective",
     "pluralName": "sampling-objectives",
-    "displayName": "Sampling Objective",
+    "displayName": "DEPRECATED Sampling Objective",
     "description": ""
   },
   "options": {
