@@ -10,7 +10,6 @@ const { promisify } = require('util');
 const { setImmediate } = require('timers');
 const setImmediateP = promisify(setImmediate);
 
-let states;
 let microorganisms;
 let objectives;
 let salmonellas;
@@ -28,10 +27,6 @@ export default factories.createCoreService('api::isolate.isolate', ({ strapi }) 
         /**
             * Fetch master data
         */
-        states = await strapi.entityService.findMany('api::state.state', {
-            fields: ['id', 'name']
-        });
-
         microorganisms = await strapi.entityService.findMany('api::microorganism.microorganism', {
             fields: ['id', 'name']
         });
@@ -60,7 +55,7 @@ export default factories.createCoreService('api::isolate.isolate', ({ strapi }) 
             fields: ['id', 'name']
         });
 
-        categories = await strapi.entityService.findMany('api::animal-species-food-category.animal-species-food-category', {
+        categories = await strapi.entityService.findMany('api::animal-species-food-top-category.animal-species-food-top-category', {
             fields: ['id', 'name']
         });
 
@@ -110,7 +105,10 @@ export default factories.createCoreService('api::isolate.isolate', ({ strapi }) 
             keyMappings.forEach((keyEntry) => {
                 newRec[keyEntry.displayName] = rec[keyEntry.index] ? rec[keyEntry.index].toString() : "";
             });
-            recs.push(setRelationalData(newRec));
+            let newRecord = setRelationalData(newRec);
+            if(newRecord.DB_ID){
+                recs.push(newRecord);
+            }
         });
 
         console.log(`Inserting total ${recs.length} records`);
@@ -130,14 +128,7 @@ export default factories.createCoreService('api::isolate.isolate', ({ strapi }) 
 const setRelationalData = (record: any): Isolate => {
     const { Jahr, BL, Mikroorganismus, Probenahmegrund, Probenahmestelle, Probenherkunft, Tierart_Lebensmittel_Oberkategorie, Tierart_Produktionsrichtung_Lebensmittel, Matrix, Matrixdetail, Salm_Serovar, ...strippedRecord } = record;
     let newTest = new Isolate(strippedRecord as IIsolate);
-
     newTest.year = Number(record.Jahr);
-
-    if (record.BL) {
-        newTest.state = {
-            "set": [getId(states, "name", record.BL)]
-        };
-    }
 
     if (record.Mikroorganismus) {
         newTest.microorganism = {
@@ -164,7 +155,7 @@ const setRelationalData = (record: any): Isolate => {
     }
 
     if (record.Tierart_Lebensmittel_Oberkategorie) {
-        newTest.animal_species_food_upper_category = {
+        newTest.animal_species_food_top_category = {
             "set": [getId(categories, "name", record.Tierart_Lebensmittel_Oberkategorie)]
         }
     }
@@ -224,12 +215,16 @@ const mapItem = async (mapFn, currentValue, index, array) => {
     try {
         await setImmediateP()
         return {
-            status: 'fulfilled',
+            statusCode: 200,
+            id: currentValue.DB_ID,
+            status: `Successfully saved a record with DB_ID ${currentValue.DB_ID}`,
             value: await mapFn(currentValue, index, array)
         }
     } catch (reason) {
         return {
-            status: 'rejected',
+            statusCode: 500,
+            id: currentValue.DB_ID,
+            status: `Error occured for a record with DB_ID ${currentValue.DB_ID}`,
             reason
         }
     }

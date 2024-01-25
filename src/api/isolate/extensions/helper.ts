@@ -16,16 +16,14 @@ const toLinkedData = (data: IIsolateData[]): INode[] => {
             "@context": "https://schema.org",
             "@type": "MedicalStudy",
             "Year": rec.year,
-            "State": getRelationalData(rec.state),
             "Microorganism": getRelationalData(rec.microorganism),
-            "Originaleinsendenr": rec.Originaleinsendenr,
             "BfR_Isolat_Nr": rec.BfR_Isolat_Nr,
             "DB_ID": rec.DB_ID,
             "NRL": rec.NRL,
             "Sampling Reason": getRelationalData(rec.objective),
             "Sampling Point": getRelationalData(rec.sampling_point),
             "ZoMo_Programm": rec.ZoMo_Programm,
-            "Animal species/food upper category": getRelationalData(rec.animal_species_food_upper_category),
+            "Animal species/food top category": getRelationalData(rec.animal_species_food_top_category),
             "Animal species production direction/food": getRelationalData(rec.animal_species_production_direction_food),
             "Matrix": getRelationalData(rec.matrix),
             "Bericht_e": rec.Bericht_e,
@@ -50,6 +48,8 @@ const toLinkedData = (data: IIsolateData[]): INode[] => {
             "WGS": rec.WGS,
             "ESBL_AmpC_Carba_Phanotyp": rec.ESBL_AmpC_Carba_Phanotyp,
             "Sampling Origin": getRelationalData(rec.sampling_origin),
+            "Datum_der_Datenextraktion": rec.Datum_der_Datenextraktion,
+            "DB_Version": rec.DB_Version,
             "Resistance Quant": {
                 "@type": "DrugStrength",
                 "AK_Res_quant": rec.AK_Res_quant,
@@ -82,7 +82,8 @@ const toLinkedData = (data: IIsolateData[]): INode[] => {
                 "SYN_Res_quant": rec.SYN_Res_quant,
                 "FUS_Res_quant": rec.FUS_Res_quant,
                 "TMP_Res_quant": rec.TMP_Res_quant,
-                "SMX_Res_quant": rec.SMX_Res_quant
+                "SMX_Res_quant": rec.SMX_Res_quant,
+                "ETP_Res_quant": rec.ETP_Res_quant
             },
             "Resistance Qual": {
                 "@type": "DrugStrength",
@@ -116,7 +117,8 @@ const toLinkedData = (data: IIsolateData[]): INode[] => {
                 "SYN_Res_qual": rec.SYN_Res_qual,
                 "FUS_Res_qual": rec.FUS_Res_qual,
                 "TMP_Res_qual": rec.TMP_Res_qual,
-                "SMX_Res_qual": rec.SMX_Res_qual
+                "SMX_Res_qual": rec.SMX_Res_qual,
+                "ETP_Res_qual": rec.ETP_Res_qual
             }
         };
 
@@ -152,7 +154,7 @@ const getRelationalData = (obj: IRelation): string | ISubNode => {
  * @param value value for which search will be performed
  * @returns id of the matching record as a number
  */
-export const getId = (collection: any, key: string, value: string) : number => {
+export const getId = (collection: any, key: string, value: string): number => {
     var item = collection.find(item => item[key] == value);
     if (item) {
         return item.id;
@@ -165,7 +167,7 @@ export const getId = (collection: any, key: string, value: string) : number => {
  * Get current DateTime in ISO string
  * @returns DateTime in ISO string format
  */
-export const getDateTimeISOString =() : string => {
+export const getDateTimeISOString = (): string => {
     return new Date().toISOString();
 }
 

@@ -15,11 +15,6 @@
     "year": {
       "type": "biginteger"
     },
-    "state": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::state.state"
-    },
     "microorganism": {
       "type": "relation",
       "relation": "manyToOne",
@@ -56,12 +51,6 @@
       "target": "api::matrix-detail.matrix-detail",
       "inversedBy": "isolates"
     },
-    "animal_species_food_upper_category": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::animal-species-food-category.animal-species-food-category",
-      "inversedBy": "isolates"
-    },
     "animal_species_production_direction_food": {
       "type": "relation",
       "relation": "manyToOne",
@@ -73,9 +62,6 @@
       "relation": "manyToOne",
       "target": "api::salmonella.salmonella",
       "inversedBy": "isolates"
-    },
-    "Originaleinsendenr": {
-      "type": "string"
     },
     "BfR_Isolat_Nr": {
       "type": "string"
@@ -334,6 +320,24 @@
     },
     "SMX_Res_qual": {
       "type": "string"
+    },
+    "ETP_Res_qual": {
+      "type": "string"
+    },
+    "ETP_Res_quant": {
+      "type": "string"
+    },
+    "Datum_der_Datenextraktion": {
+      "type": "string"
+    },
+    "DB_Version": {
+      "type": "string"
+    },
+    "animal_species_food_top_category": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::animal-species-food-top-category.animal-species-food-top-category",
+      "inversedBy": "isolates"
     }
   }
 }

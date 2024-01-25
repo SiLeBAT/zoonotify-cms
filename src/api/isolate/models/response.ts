@@ -11,7 +11,6 @@ export interface IIsolateDataAttributes {
     year: number
     createdAt: any
     updatedAt: any
-    Originaleinsendenr: any
     BfR_Isolat_Nr: string
     DB_ID: string
     NRL: string
@@ -98,16 +97,19 @@ export interface IIsolateDataAttributes {
     FUS_Res_qual: string
     TMP_Res_qual: string
     SMX_Res_qual: string
-    state: IState
     microorganism: IMicroorganism
     objective: ISamplingObjective
     sampling_point: ISamplingPoint
     sampling_origin: ISamplingOrigin
-    animal_species_food_upper_category: IAnimalSpeciesFoodUpperCategory
+    animal_species_food_top_category: IAnimalSpeciesFoodTopCategory
     matrix: IMatrix
     salmonella: ISalmonella
     matrix_detail: IMatrixDetail
     animal_species_production_direction_food: IAnimalSpeciesProductionDirectionFood
+    ETP_Res_qual: string;
+    ETP_Res_quant: string;
+    Datum_der_Datenextraktion: string;
+    DB_Version: string;
 }
 
 export interface IRelation {
@@ -126,10 +128,6 @@ export interface IRelationDataAttributes {
     updatedAt: any
 }
 
-export interface IState extends IRelation {
-}
-
-
 export interface IMicroorganism extends IRelation {
 }
 
@@ -142,7 +140,7 @@ export interface ISamplingPoint extends IRelation {
 export interface ISamplingOrigin extends IRelation {
 }
 
-export interface IAnimalSpeciesFoodUpperCategory extends IRelation {
+export interface IAnimalSpeciesFoodTopCategory extends IRelation {
 }
 
 export interface IMatrix extends IRelation {

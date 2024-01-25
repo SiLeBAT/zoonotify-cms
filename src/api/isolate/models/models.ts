@@ -12,7 +12,6 @@ export interface IIsolate {
     year: number
     createdAt: string
     updatedAt: string
-    Originaleinsendenr: any
     BfR_Isolat_Nr: string
     DB_ID: string
     NRL: string
@@ -99,12 +98,11 @@ export interface IIsolate {
     FUS_Res_qual: string
     TMP_Res_qual: string
     SMX_Res_qual: string
-    state: IRelation
     microorganism: IRelation
     sampling_objective: IRelation
     sampling_point: IRelation
     sampling_origin: IRelation
-    animal_species_food_upper_category: IRelation
+    animal_species_food_top_category: IRelation
     animal_species_production_direction_food: IRelation
     matrix: IRelation
     matrix_detail: IRelation
@@ -116,12 +114,11 @@ export class Isolate implements IIsolate {
     constructor(data: Partial<IIsolate>) {
         Object.assign(this, data);
     }
-    state: IRelation;
     microorganism: IRelation;
     sampling_objective: IRelation;
     sampling_point: IRelation;
     sampling_origin: IRelation;
-    animal_species_food_upper_category: IRelation;
+    animal_species_food_top_category: IRelation;
     animal_species_production_direction_food: IRelation;
     matrix: IRelation;
     matrix_detail: IRelation;
@@ -129,7 +126,6 @@ export class Isolate implements IIsolate {
     year: number;
     createdAt: string;
     updatedAt: string;
-    Originaleinsendenr: any;
     BfR_Isolat_Nr: string;
     DB_ID: string;
     NRL: string;
@@ -216,6 +212,10 @@ export class Isolate implements IIsolate {
     FUS_Res_qual: string;
     TMP_Res_qual: string;
     SMX_Res_qual: string;
+    ETP_Res_qual: string;
+    ETP_Res_quant: string;
+    Datum_der_Datenextraktion: string;
+    DB_Version: string;
 
 }
 
@@ -259,6 +259,7 @@ export interface IResistanceQuant {
     FUS_Res_quant: string
     TMP_Res_quant: string
     SMX_Res_quant: string
+    ETP_Res_quant: string;
 }
 
 export interface IResistanceQual {
@@ -294,22 +295,21 @@ export interface IResistanceQual {
     FUS_Res_qual: string
     TMP_Res_qual: string
     SMX_Res_qual: string
+    ETP_Res_qual: string;
 }
 
 export interface INode {
     "@context": string
     "@type": string
     Year: number
-    State: ISubNode | string
     Microorganism: ISubNode | string
-    Originaleinsendenr: string
     BfR_Isolat_Nr: string
     DB_ID: string
     NRL: string
     "Sampling Reason": ISubNode | string
     "Sampling Point": ISubNode | string
     ZoMo_Programm: string
-    "Animal species/food upper category": ISubNode | string
+    "Animal species/food top category": ISubNode | string
     "Animal species production direction/food": ISubNode | string
     Matrix: ISubNode | string
     Bericht_e: string
@@ -336,4 +336,6 @@ export interface INode {
     "Sampling Origin": ISubNode | string
     "Resistance Quant": IResistanceQuant
     "Resistance Qual": IResistanceQual
+    Datum_der_Datenextraktion: string;
+    DB_Version: string;
 }

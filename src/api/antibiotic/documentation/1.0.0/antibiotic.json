@@ -1,5 +1,5 @@
 {
-  "/states": {
+  "/antibiotics": {
     "get": {
       "responses": {
         "200": {
@@ -7,7 +7,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/StateListResponse"
+                "$ref": "#/components/schemas/AntibioticListResponse"
               }
             }
           }
@@ -64,7 +64,7 @@
         }
       },
       "tags": [
-        "State"
+        "Antibiotic"
       ],
       "parameters": [
         {
@@ -169,7 +169,7 @@
           }
         }
       ],
-      "operationId": "get/states"
+      "operationId": "get/antibiotics"
     },
     "post": {
       "responses": {
@@ -178,7 +178,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/StateResponse"
+                "$ref": "#/components/schemas/AntibioticResponse"
               }
             }
           }
@@ -235,23 +235,23 @@
         }
       },
       "tags": [
-        "State"
+        "Antibiotic"
       ],
       "parameters": [],
-      "operationId": "post/states",
+      "operationId": "post/antibiotics",
       "requestBody": {
         "required": true,
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "#/components/schemas/StateRequest"
+              "$ref": "#/components/schemas/AntibioticRequest"
             }
           }
         }
       }
     }
   },
-  "/states/{id}": {
+  "/antibiotics/{id}": {
     "get": {
       "responses": {
         "200": {
@@ -259,7 +259,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/StateResponse"
+                "$ref": "#/components/schemas/AntibioticResponse"
               }
             }
           }
@@ -316,7 +316,7 @@
         }
       },
       "tags": [
-        "State"
+        "Antibiotic"
       ],
       "parameters": [
         {
@@ -330,7 +330,7 @@
           }
         }
       ],
-      "operationId": "get/states/{id}"
+      "operationId": "get/antibiotics/{id}"
     },
     "put": {
       "responses": {
@@ -339,7 +339,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/StateResponse"
+                "$ref": "#/components/schemas/AntibioticResponse"
               }
             }
           }
@@ -396,7 +396,7 @@
         }
       },
       "tags": [
-        "State"
+        "Antibiotic"
       ],
       "parameters": [
         {
@@ -410,13 +410,13 @@
           }
         }
       ],
-      "operationId": "put/states/{id}",
+      "operationId": "put/antibiotics/{id}",
       "requestBody": {
         "required": true,
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "#/components/schemas/StateRequest"
+              "$ref": "#/components/schemas/AntibioticRequest"
             }
           }
         }
@@ -487,7 +487,7 @@
         }
       },
       "tags": [
-        "State"
+        "Antibiotic"
       ],
       "parameters": [
         {
@@ -501,7 +501,7 @@
           }
         }
       ],
-      "operationId": "delete/states/{id}"
+      "operationId": "delete/antibiotics/{id}"
     }
   }
 }

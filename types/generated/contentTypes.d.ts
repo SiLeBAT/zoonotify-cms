@@ -482,6 +482,97 @@ export interface PluginUploadFolder extends Schema.CollectionType {
   };
 }
 
+export interface PluginContentReleasesRelease extends Schema.CollectionType {
+  collectionName: 'strapi_releases';
+  info: {
+    singularName: 'release';
+    pluralName: 'releases';
+    displayName: 'Release';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  pluginOptions: {
+    'content-manager': {
+      visible: false;
+    };
+    'content-type-builder': {
+      visible: false;
+    };
+  };
+  attributes: {
+    name: Attribute.String & Attribute.Required;
+    releasedAt: Attribute.DateTime;
+    actions: Attribute.Relation<
+      'plugin::content-releases.release',
+      'oneToMany',
+      'plugin::content-releases.release-action'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'plugin::content-releases.release',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'plugin::content-releases.release',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface PluginContentReleasesReleaseAction
+  extends Schema.CollectionType {
+  collectionName: 'strapi_release_actions';
+  info: {
+    singularName: 'release-action';
+    pluralName: 'release-actions';
+    displayName: 'Release Action';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  pluginOptions: {
+    'content-manager': {
+      visible: false;
+    };
+    'content-type-builder': {
+      visible: false;
+    };
+  };
+  attributes: {
+    type: Attribute.Enumeration<['publish', 'unpublish']> & Attribute.Required;
+    entry: Attribute.Relation<
+      'plugin::content-releases.release-action',
+      'morphToOne'
+    >;
+    contentType: Attribute.String & Attribute.Required;
+    release: Attribute.Relation<
+      'plugin::content-releases.release-action',
+      'manyToOne',
+      'plugin::content-releases.release'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'plugin::content-releases.release-action',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'plugin::content-releases.release-action',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface PluginI18NLocale extends Schema.CollectionType {
   collectionName: 'i18n_locale';
   info: {
@@ -677,13 +768,13 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
   };
 }
 
-export interface ApiAnimalSpeciesFoodCategoryAnimalSpeciesFoodCategory
+export interface ApiAnimalSpeciesFoodTopCategoryAnimalSpeciesFoodTopCategory
   extends Schema.CollectionType {
-  collectionName: 'animal_species_food_categories';
+  collectionName: 'animal_species_food_top_categories';
   info: {
-    singularName: 'animal-species-food-category';
-    pluralName: 'animal-species-food-categories';
-    displayName: 'Animal Species Food Upper Category';
+    singularName: 'animal-species-food-top-category';
+    pluralName: 'animal-species-food-top-categories';
+    displayName: 'Animal Species Food Top Category';
     description: '';
   };
   options: {
@@ -693,20 +784,20 @@ export interface ApiAnimalSpeciesFoodCategoryAnimalSpeciesFoodCategory
     name: Attribute.String;
     iri: Attribute.String;
     isolates: Attribute.Relation<
-      'api::animal-species-food-category.animal-species-food-category',
+      'api::animal-species-food-top-category.animal-species-food-top-category',
       'oneToMany',
       'api::isolate.isolate'
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
-      'api::animal-species-food-category.animal-species-food-category',
+      'api::animal-species-food-top-category.animal-species-food-top-category',
       'oneToOne',
       'admin::user'
     > &
       Attribute.Private;
     updatedBy: Attribute.Relation<
-      'api::animal-species-food-category.animal-species-food-category',
+      'api::animal-species-food-top-category.animal-species-food-top-category',
       'oneToOne',
       'admin::user'
     > &
@@ -744,6 +835,37 @@ export interface ApiAnimalSpeciesProductionDirectionFoodAnimalSpeciesProductionD
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'api::animal-species-production-direction-food.animal-species-production-direction-food',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiAntibioticAntibiotic extends Schema.CollectionType {
+  collectionName: 'antibiotics';
+  info: {
+    singularName: 'antibiotic';
+    pluralName: 'antibiotics';
+    displayName: 'Antibiotic';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    name: Attribute.String;
+    shortName: Attribute.String;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::antibiotic.antibiotic',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::antibiotic.antibiotic',
       'oneToOne',
       'admin::user'
     > &
@@ -1138,11 +1260,6 @@ export interface ApiIsolateIsolate extends Schema.CollectionType {
   };
   attributes: {
     year: Attribute.BigInteger;
-    state: Attribute.Relation<
-      'api::isolate.isolate',
-      'oneToOne',
-      'api::state.state'
-    >;
     microorganism: Attribute.Relation<
       'api::isolate.isolate',
       'manyToOne',
@@ -1173,11 +1290,6 @@ export interface ApiIsolateIsolate extends Schema.CollectionType {
       'manyToOne',
       'api::matrix-detail.matrix-detail'
     >;
-    animal_species_food_upper_category: Attribute.Relation<
-      'api::isolate.isolate',
-      'manyToOne',
-      'api::animal-species-food-category.animal-species-food-category'
-    >;
     animal_species_production_direction_food: Attribute.Relation<
       'api::isolate.isolate',
       'manyToOne',
@@ -1188,7 +1300,6 @@ export interface ApiIsolateIsolate extends Schema.CollectionType {
       'manyToOne',
       'api::salmonella.salmonella'
     >;
-    Originaleinsendenr: Attribute.String;
     BfR_Isolat_Nr: Attribute.String;
     DB_ID: Attribute.String;
     NRL: Attribute.String;
@@ -1275,6 +1386,15 @@ export interface ApiIsolateIsolate extends Schema.CollectionType {
     FUS_Res_qual: Attribute.String;
     TMP_Res_qual: Attribute.String;
     SMX_Res_qual: Attribute.String;
+    ETP_Res_qual: Attribute.String;
+    ETP_Res_quant: Attribute.String;
+    Datum_der_Datenextraktion: Attribute.String;
+    DB_Version: Attribute.String;
+    animal_species_food_top_category: Attribute.Relation<
+      'api::isolate.isolate',
+      'manyToOne',
+      'api::animal-species-food-top-category.animal-species-food-top-category'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -1434,13 +1554,6 @@ export interface ApiResistanceTableResistanceTable
           localized: true;
         };
       }>;
-    yearly_cut_off: Attribute.JSON &
-      Attribute.Required &
-      Attribute.SetPluginOptions<{
-        i18n: {
-          localized: false;
-        };
-      }>;
     title: Attribute.RichText &
       Attribute.Required &
       Attribute.SetPluginOptions<{
@@ -1450,6 +1563,15 @@ export interface ApiResistanceTableResistanceTable
       }> &
       Attribute.SetMinMaxLength<{
         maxLength: 100;
+      }>;
+    cut_offs: Attribute.Component<
+      'antibiotic-data.antibiotic-cut-off-data',
+      true
+    > &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
       }>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
@@ -1617,36 +1739,6 @@ export interface ApiSamplingPointSamplingPoint extends Schema.CollectionType {
   };
 }
 
-export interface ApiStateState extends Schema.CollectionType {
-  collectionName: 'states';
-  info: {
-    singularName: 'state';
-    pluralName: 'states';
-    displayName: 'state';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    name: Attribute.String;
-    iri: Attribute.String;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<
-      'api::state.state',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<
-      'api::state.state',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-  };
-}
-
 export interface ApiWelcomeWelcome extends Schema.SingleType {
   collectionName: 'welcomes';
   info: {
@@ -1712,12 +1804,15 @@ declare module '@strapi/types' {
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'plugin::upload.file': PluginUploadFile;
       'plugin::upload.folder': PluginUploadFolder;
+      'plugin::content-releases.release': PluginContentReleasesRelease;
+      'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
       'plugin::i18n.locale': PluginI18NLocale;
       'plugin::users-permissions.permission': PluginUsersPermissionsPermission;
       'plugin::users-permissions.role': PluginUsersPermissionsRole;
       'plugin::users-permissions.user': PluginUsersPermissionsUser;
-      'api::animal-species-food-category.animal-species-food-category': ApiAnimalSpeciesFoodCategoryAnimalSpeciesFoodCategory;
+      'api::animal-species-food-top-category.animal-species-food-top-category': ApiAnimalSpeciesFoodTopCategoryAnimalSpeciesFoodTopCategory;
       'api::animal-species-production-direction-food.animal-species-production-direction-food': ApiAnimalSpeciesProductionDirectionFoodAnimalSpeciesProductionDirectionFood;
+      'api::antibiotic.antibiotic': ApiAntibioticAntibiotic;
       'api::configuration.configuration': ApiConfigurationConfiguration;
       'api::evaluation.evaluation': ApiEvaluationEvaluation;
       'api::evaluation-information.evaluation-information': ApiEvaluationInformationEvaluationInformation;
@@ -1732,7 +1827,6 @@ declare module '@strapi/types' {
       'api::sampling-objective.sampling-objective': ApiSamplingObjectiveSamplingObjective;
       'api::sampling-origin.sampling-origin': ApiSamplingOriginSamplingOrigin;
       'api::sampling-point.sampling-point': ApiSamplingPointSamplingPoint;
-      'api::state.state': ApiStateState;
       'api::welcome.welcome': ApiWelcomeWelcome;
     }
   }

@@ -1,10 +1,11 @@
 {
   "kind": "collectionType",
-  "collectionName": "states",
+  "collectionName": "antibiotics",
   "info": {
-    "singularName": "state",
-    "pluralName": "states",
-    "displayName": "state"
+    "singularName": "antibiotic",
+    "pluralName": "antibiotics",
+    "displayName": "Antibiotic",
+    "description": ""
   },
   "options": {
     "draftAndPublish": false
@@ -14,7 +15,7 @@
     "name": {
       "type": "string"
     },
-    "iri": {
+    "shortName": {
       "type": "string"
     }
   }

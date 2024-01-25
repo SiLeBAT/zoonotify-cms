@@ -1,10 +1,10 @@
 {
   "kind": "collectionType",
-  "collectionName": "animal_species_food_categories",
+  "collectionName": "animal_species_food_top_categories",
   "info": {
-    "singularName": "animal-species-food-category",
-    "pluralName": "animal-species-food-categories",
-    "displayName": "Animal Species Food Upper Category",
+    "singularName": "animal-species-food-top-category",
+    "pluralName": "animal-species-food-top-categories",
+    "displayName": "Animal Species Food Top Category",
     "description": ""
   },
   "options": {
@@ -22,7 +22,7 @@
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::isolate.isolate",
-      "mappedBy": "animal_species_food_upper_category"
+      "mappedBy": "animal_species_food_top_category"
     }
   }
 }
