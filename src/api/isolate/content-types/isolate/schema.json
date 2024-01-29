@@ -357,12 +357,6 @@
       "target": "api::sampling-point.sampling-point",
       "inversedBy": "isolates"
     },
-    "sampling_origin": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::sampling-origin.sampling-origin",
-      "inversedBy": "isolates"
-    },
     "animal_species_production_direction_food": {
       "type": "relation",
       "relation": "manyToOne",

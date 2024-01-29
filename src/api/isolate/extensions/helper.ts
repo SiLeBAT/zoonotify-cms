@@ -47,7 +47,7 @@ const toLinkedData = (data: IIsolateData[]): INode[] => {
             "Gene_noch_zu_bestimmen": rec.Gene_noch_zu_bestimmen,
             "WGS": rec.WGS,
             "ESBL_AmpC_Carba_Phanotyp": rec.ESBL_AmpC_Carba_Phanotyp,
-            "Sampling Origin": getRelationalData(rec.sampling_origin),
+            "Sample Type": getRelationalData(rec.sampleType),
             "Datum_der_Datenextraktion": rec.Datum_der_Datenextraktion,
             "DB_Version": rec.DB_Version,
             "Resistance Quant": {
@@ -156,6 +156,22 @@ const getRelationalData = (obj: IRelation): string | ISubNode => {
  */
 export const getId = (collection: any, key: string, value: string): number => {
     var item = collection.find(item => item[key] == value);
+    if (item) {
+        return item.id;
+    } else {
+        return null;
+    }
+}
+
+/**
+ * Get id of the record from the collection's ontology tuple using the key and value passed
+ * @param collection list of the data on which search will be performed
+ * @param key key by which search will be performed
+ * @param value value for which search will be performed
+ * @returns id of the matching record as a number
+ */
+export const getOntologyTupleId = (collection: any, key: string, value: string): number => {
+    var item = collection.find(item => item["ontology_tuple"][key] == value);
     if (item) {
         return item.id;
     } else {

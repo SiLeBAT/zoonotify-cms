@@ -4,7 +4,8 @@
   "info": {
     "singularName": "sample-type",
     "pluralName": "sample-types",
-    "displayName": "MD Sample Type"
+    "displayName": "MD Sample Type",
+    "description": ""
   },
   "options": {
     "draftAndPublish": false
@@ -13,7 +14,7 @@
   "attributes": {
     "ontology_tuple": {
       "type": "component",
-      "repeatable": true,
+      "repeatable": false,
       "component": "kida.ontology-term",
       "required": true
     },
