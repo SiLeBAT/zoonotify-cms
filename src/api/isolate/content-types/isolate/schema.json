@@ -36,7 +36,7 @@
     "sampleType": {
       "type": "relation",
       "relation": "manyToOne",
-      "target": "api::sampling-origin.sampling-origin",
+      "target": "api::sample-type.sample-type",
       "inversedBy": "isolates"
     },
     "matrix": {
