@@ -1268,7 +1268,7 @@ export interface ApiIsolateIsolate extends Schema.CollectionType {
     samplingContext: Attribute.Relation<
       'api::isolate.isolate',
       'manyToOne',
-      'api::sampling-objective.sampling-objective'
+      'api::sampling-context.sampling-context'
     >;
     samplingStage: Attribute.Relation<
       'api::isolate.isolate',
@@ -1691,6 +1691,42 @@ export interface ApiSampleTypeSampleType extends Schema.CollectionType {
   };
 }
 
+export interface ApiSamplingContextSamplingContext
+  extends Schema.CollectionType {
+  collectionName: 'sampling_contexts';
+  info: {
+    singularName: 'sampling-context';
+    pluralName: 'sampling-contexts';
+    displayName: 'MD Sampling Context';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    ontology_tuple: Attribute.Component<'kida.ontology-term'> &
+      Attribute.Required;
+    isolates: Attribute.Relation<
+      'api::sampling-context.sampling-context',
+      'oneToMany',
+      'api::isolate.isolate'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::sampling-context.sampling-context',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::sampling-context.sampling-context',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiSamplingObjectiveSamplingObjective
   extends Schema.CollectionType {
   collectionName: 'sampling_objectives';
@@ -1886,6 +1922,7 @@ declare module '@strapi/types' {
       'api::resistance-table.resistance-table': ApiResistanceTableResistanceTable;
       'api::salmonella.salmonella': ApiSalmonellaSalmonella;
       'api::sample-type.sample-type': ApiSampleTypeSampleType;
+      'api::sampling-context.sampling-context': ApiSamplingContextSamplingContext;
       'api::sampling-objective.sampling-objective': ApiSamplingObjectiveSamplingObjective;
       'api::sampling-origin.sampling-origin': ApiSamplingOriginSamplingOrigin;
       'api::sampling-point.sampling-point': ApiSamplingPointSamplingPoint;

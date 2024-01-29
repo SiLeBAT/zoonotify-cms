@@ -24,7 +24,7 @@
     "samplingContext": {
       "type": "relation",
       "relation": "manyToOne",
-      "target": "api::sampling-objective.sampling-objective",
+      "target": "api::sampling-context.sampling-context",
       "inversedBy": "isolates"
     },
     "samplingStage": {
