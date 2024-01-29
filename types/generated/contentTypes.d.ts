@@ -1278,7 +1278,7 @@ export interface ApiIsolateIsolate extends Schema.CollectionType {
     sampleType: Attribute.Relation<
       'api::isolate.isolate',
       'manyToOne',
-      'api::sampling-origin.sampling-origin'
+      'api::sample-type.sample-type'
     >;
     matrix: Attribute.Relation<
       'api::isolate.isolate',
@@ -1660,6 +1660,41 @@ export interface ApiSalmonellaSalmonella extends Schema.CollectionType {
   };
 }
 
+export interface ApiSampleTypeSampleType extends Schema.CollectionType {
+  collectionName: 'sample_types';
+  info: {
+    singularName: 'sample-type';
+    pluralName: 'sample-types';
+    displayName: 'MD Sample Type';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    ontology_tuple: Attribute.Component<'kida.ontology-term', true> &
+      Attribute.Required;
+    isolates: Attribute.Relation<
+      'api::sample-type.sample-type',
+      'oneToMany',
+      'api::isolate.isolate'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::sample-type.sample-type',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::sample-type.sample-type',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiSamplingObjectiveSamplingObjective
   extends Schema.CollectionType {
   collectionName: 'sampling_objectives';
@@ -1854,6 +1889,7 @@ declare module '@strapi/types' {
       'api::microorganism.microorganism': ApiMicroorganismMicroorganism;
       'api::resistance-table.resistance-table': ApiResistanceTableResistanceTable;
       'api::salmonella.salmonella': ApiSalmonellaSalmonella;
+      'api::sample-type.sample-type': ApiSampleTypeSampleType;
       'api::sampling-objective.sampling-objective': ApiSamplingObjectiveSamplingObjective;
       'api::sampling-origin.sampling-origin': ApiSamplingOriginSamplingOrigin;
       'api::sampling-point.sampling-point': ApiSamplingPointSamplingPoint;

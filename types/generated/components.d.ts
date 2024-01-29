@@ -56,10 +56,23 @@ export interface AntibioticDataAntibioticCutOffData extends Schema.Component {
   };
 }
 
+export interface KidaOntologyTerm extends Schema.Component {
+  collectionName: 'components_kida_ontology_terms';
+  info: {
+    displayName: 'Ontology Term';
+    icon: 'manyToMany';
+  };
+  attributes: {
+    token: Attribute.String & Attribute.Required;
+    iri: Attribute.String;
+  };
+}
+
 declare module '@strapi/types' {
   export module Shared {
     export interface Components {
       'antibiotic-data.antibiotic-cut-off-data': AntibioticDataAntibioticCutOffData;
+      'kida.ontology-term': KidaOntologyTerm;
     }
   }
 }

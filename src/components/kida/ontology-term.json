@@ -1,0 +1,18 @@
+{
+  "collectionName": "components_kida_ontology_terms",
+  "info": {
+    "displayName": "Ontology Term",
+    "icon": "manyToMany"
+  },
+  "options": {},
+  "attributes": {
+    "token": {
+      "type": "string",
+      "required": true,
+      "unique": false
+    },
+    "iri": {
+      "type": "string"
+    }
+  }
+}
