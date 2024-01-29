@@ -3,7 +3,7 @@
  */
 import { factories } from '@strapi/strapi';
 import { IKeys, IIsolate, Isolate } from '../models/models';
-import { getDateTimeISOString, getId } from './../extensions/helper';
+import { getDateTimeISOString, getId, getOntologyTupleId } from './../extensions/helper';
 const fs = require('fs');
 import xlsx from 'node-xlsx';
 const { promisify } = require('util');
@@ -39,8 +39,8 @@ export default factories.createCoreService('api::isolate.isolate', ({ strapi }) 
             fields: ['id', 'name']
         });
 
-        origins = await strapi.entityService.findMany('api::sampling-origin.sampling-origin', {
-            fields: ['id', 'name']
+        origins = await strapi.entityService.findMany('api::sample-type.sample-type', {
+            populate: { ontology_tuple: true }
         });
 
         points = await strapi.entityService.findMany('api::sampling-point.sampling-point', {
@@ -106,7 +106,7 @@ export default factories.createCoreService('api::isolate.isolate', ({ strapi }) 
                 newRec[keyEntry.displayName] = rec[keyEntry.index] ? rec[keyEntry.index].toString() : "";
             });
             let newRecord = setRelationalData(newRec);
-            if(newRecord.DB_ID){
+            if (newRecord.DB_ID) {
                 recs.push(newRecord);
             }
         });
@@ -149,8 +149,8 @@ const setRelationalData = (record: any): Isolate => {
     }
 
     if (record.Probenherkunft) {
-        newTest.sampling_origin = {
-            "set": [getId(origins, "name", record.Probenherkunft)]
+        newTest.sampleType = {
+            "set": [getOntologyTupleId(origins, "token", record.Probenherkunft)]
         }
     }
 

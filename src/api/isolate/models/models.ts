@@ -101,12 +101,13 @@ export interface IIsolate {
     microorganism: IRelation
     sampling_objective: IRelation
     sampling_point: IRelation
-    sampling_origin: IRelation
     animal_species_food_top_category: IRelation
     animal_species_production_direction_food: IRelation
     matrix: IRelation
     matrix_detail: IRelation
     salmonella: IRelation
+    sampleType: IRelation
+
 }
 
 export class Isolate implements IIsolate {
@@ -114,10 +115,10 @@ export class Isolate implements IIsolate {
     constructor(data: Partial<IIsolate>) {
         Object.assign(this, data);
     }
+    sampleType: IRelation;
     microorganism: IRelation;
     sampling_objective: IRelation;
     sampling_point: IRelation;
-    sampling_origin: IRelation;
     animal_species_food_top_category: IRelation;
     animal_species_production_direction_food: IRelation;
     matrix: IRelation;
@@ -333,7 +334,7 @@ export interface INode {
     Gene_noch_zu_bestimmen: string
     WGS: string
     ESBL_AmpC_Carba_Phanotyp: string
-    "Sampling Origin": ISubNode | string
+    "Sample Type": ISubNode | string
     "Resistance Quant": IResistanceQuant
     "Resistance Qual": IResistanceQual
     Datum_der_Datenextraktion: string;

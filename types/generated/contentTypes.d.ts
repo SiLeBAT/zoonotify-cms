@@ -1410,11 +1410,6 @@ export interface ApiIsolateIsolate extends Schema.CollectionType {
       'manyToOne',
       'api::sampling-point.sampling-point'
     >;
-    sampling_origin: Attribute.Relation<
-      'api::isolate.isolate',
-      'manyToOne',
-      'api::sampling-origin.sampling-origin'
-    >;
     animal_species_production_direction_food: Attribute.Relation<
       'api::isolate.isolate',
       'manyToOne',
@@ -1666,12 +1661,13 @@ export interface ApiSampleTypeSampleType extends Schema.CollectionType {
     singularName: 'sample-type';
     pluralName: 'sample-types';
     displayName: 'MD Sample Type';
+    description: '';
   };
   options: {
     draftAndPublish: false;
   };
   attributes: {
-    ontology_tuple: Attribute.Component<'kida.ontology-term', true> &
+    ontology_tuple: Attribute.Component<'kida.ontology-term'> &
       Attribute.Required;
     isolates: Attribute.Relation<
       'api::sample-type.sample-type',

@@ -100,7 +100,7 @@ export interface IIsolateDataAttributes {
     microorganism: IMicroorganism
     objective: ISamplingObjective
     sampling_point: ISamplingPoint
-    sampling_origin: ISamplingOrigin
+    sampleType: ISampleType
     animal_species_food_top_category: IAnimalSpeciesFoodTopCategory
     matrix: IMatrix
     salmonella: ISalmonella
@@ -137,7 +137,7 @@ export interface ISamplingObjective extends IRelation {
 export interface ISamplingPoint extends IRelation {
 }
 
-export interface ISamplingOrigin extends IRelation {
+export interface ISampleType extends IRelation {
 }
 
 export interface IAnimalSpeciesFoodTopCategory extends IRelation {
