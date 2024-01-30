@@ -54,8 +54,8 @@
     "animalSpeciesProductionTypeFood": {
       "type": "relation",
       "relation": "manyToOne",
-      "target": "api::animal-species-production-direction-food.animal-species-production-direction-food",
-      "inversedBy": "direction_isolates"
+      "target": "api::animal-species-production-type-food.animal-species-production-type-food",
+      "inversedBy": "isolates"
     },
     "salmonella": {
       "type": "relation",
