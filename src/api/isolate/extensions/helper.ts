@@ -20,7 +20,7 @@ const toLinkedData = (data: IIsolateData[]): INode[] => {
             "BfR_Isolat_Nr": rec.BfR_Isolat_Nr,
             "DB_ID": rec.DB_ID,
             "NRL": rec.NRL,
-            "Sampling Reason": getRelationalData(rec.objective),
+            "Sampling Context": getRelationalData(rec.context),
             "Sampling Point": getRelationalData(rec.sampling_point),
             "ZoMo_Programm": rec.ZoMo_Programm,
             "Animal species/food top category": getRelationalData(rec.animal_species_food_top_category),

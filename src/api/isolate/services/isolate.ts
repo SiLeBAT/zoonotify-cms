@@ -31,8 +31,8 @@ export default factories.createCoreService('api::isolate.isolate', ({ strapi }) 
             fields: ['id', 'name']
         });
 
-        objectives = await strapi.entityService.findMany('api::sampling-objective.sampling-objective', {
-            fields: ['id', 'name']
+        objectives = await strapi.entityService.findMany('api::sampling-context.sampling-context', {
+            populate: { ontology_tuple: true }
         });
 
         salmonellas = await strapi.entityService.findMany('api::salmonella.salmonella', {
@@ -137,8 +137,8 @@ const setRelationalData = (record: any): Isolate => {
     }
 
     if (record.Probenahmegrund) {
-        newTest.sampling_objective = {
-            "set": [getId(objectives, "name", record.Probenahmegrund)]
+        newTest.samplingContext = {
+            "set": [getOntologyTupleId(objectives, "token", record.Probenahmegrund)]
         }
     }
 

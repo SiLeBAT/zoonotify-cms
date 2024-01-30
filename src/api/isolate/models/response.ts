@@ -98,7 +98,7 @@ export interface IIsolateDataAttributes {
     TMP_Res_qual: string
     SMX_Res_qual: string
     microorganism: IMicroorganism
-    objective: ISamplingObjective
+    context: ISamplingContext
     sampling_point: ISamplingPoint
     sampleType: ISampleType
     animal_species_food_top_category: IAnimalSpeciesFoodTopCategory
@@ -131,7 +131,7 @@ export interface IRelationDataAttributes {
 export interface IMicroorganism extends IRelation {
 }
 
-export interface ISamplingObjective extends IRelation {
+export interface ISamplingContext extends IRelation {
 }
 
 export interface ISamplingPoint extends IRelation {
