@@ -100,7 +100,7 @@ export interface IIsolate {
     SMX_Res_qual: string
     microorganism: IRelation
     samplingContext: IRelation
-    sampling_point: IRelation
+    samplingStage: IRelation
     animal_species_food_top_category: IRelation
     animal_species_production_direction_food: IRelation
     matrix: IRelation
@@ -118,7 +118,7 @@ export class Isolate implements IIsolate {
     sampleType: IRelation;
     microorganism: IRelation;
     samplingContext: IRelation;
-    sampling_point: IRelation;
+    samplingStage: IRelation;
     animal_species_food_top_category: IRelation;
     animal_species_production_direction_food: IRelation;
     matrix: IRelation;
@@ -308,7 +308,7 @@ export interface INode {
     DB_ID: string
     NRL: string
     "Sampling Context": ISubNode | string
-    "Sampling Point": ISubNode | string
+    "Sampling Stage": ISubNode | string
     ZoMo_Programm: string
     "Animal species/food top category": ISubNode | string
     "Animal species production direction/food": ISubNode | string

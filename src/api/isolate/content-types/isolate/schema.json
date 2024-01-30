@@ -345,12 +345,6 @@
       "target": "api::matrix-detail.matrix-detail",
       "inversedBy": "isolates"
     },
-    "sampling_point": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::sampling-point.sampling-point",
-      "inversedBy": "isolates"
-    },
     "animal_species_production_direction_food": {
       "type": "relation",
       "relation": "manyToOne",
