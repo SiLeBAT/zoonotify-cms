@@ -30,7 +30,7 @@
     "samplingStage": {
       "type": "relation",
       "relation": "manyToOne",
-      "target": "api::sampling-point.sampling-point",
+      "target": "api::sampling-stage.sampling-stage",
       "inversedBy": "isolates"
     },
     "sampleType": {

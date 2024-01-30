@@ -1273,7 +1273,7 @@ export interface ApiIsolateIsolate extends Schema.CollectionType {
     samplingStage: Attribute.Relation<
       'api::isolate.isolate',
       'manyToOne',
-      'api::sampling-point.sampling-point'
+      'api::sampling-stage.sampling-stage'
     >;
     sampleType: Attribute.Relation<
       'api::isolate.isolate',
@@ -1831,6 +1831,41 @@ export interface ApiSamplingPointSamplingPoint extends Schema.CollectionType {
   };
 }
 
+export interface ApiSamplingStageSamplingStage extends Schema.CollectionType {
+  collectionName: 'sampling_stages';
+  info: {
+    singularName: 'sampling-stage';
+    pluralName: 'sampling-stages';
+    displayName: 'MD Sampling Stage';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    ontology_tuple: Attribute.Component<'kida.ontology-term'> &
+      Attribute.Required;
+    isolates: Attribute.Relation<
+      'api::sampling-stage.sampling-stage',
+      'oneToMany',
+      'api::isolate.isolate'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::sampling-stage.sampling-stage',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::sampling-stage.sampling-stage',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiWelcomeWelcome extends Schema.SingleType {
   collectionName: 'welcomes';
   info: {
@@ -1921,6 +1956,7 @@ declare module '@strapi/types' {
       'api::sampling-objective.sampling-objective': ApiSamplingObjectiveSamplingObjective;
       'api::sampling-origin.sampling-origin': ApiSamplingOriginSamplingOrigin;
       'api::sampling-point.sampling-point': ApiSamplingPointSamplingPoint;
+      'api::sampling-stage.sampling-stage': ApiSamplingStageSamplingStage;
       'api::welcome.welcome': ApiWelcomeWelcome;
     }
   }
