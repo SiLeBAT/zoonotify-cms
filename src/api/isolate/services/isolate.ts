@@ -11,10 +11,10 @@ const { setImmediate } = require('timers');
 const setImmediateP = promisify(setImmediate);
 
 let microorganisms;
-let objectives;
+let contexts;
 let salmonellas;
-let origins;
-let points;
+let types;
+let stages;
 let matrices;
 let matrixDetails;
 let categories;
@@ -31,7 +31,7 @@ export default factories.createCoreService('api::isolate.isolate', ({ strapi }) 
             fields: ['id', 'name']
         });
 
-        objectives = await strapi.entityService.findMany('api::sampling-context.sampling-context', {
+        contexts = await strapi.entityService.findMany('api::sampling-context.sampling-context', {
             populate: { ontology_tuple: true }
         });
 
@@ -39,12 +39,12 @@ export default factories.createCoreService('api::isolate.isolate', ({ strapi }) 
             fields: ['id', 'name']
         });
 
-        origins = await strapi.entityService.findMany('api::sample-type.sample-type', {
+        types = await strapi.entityService.findMany('api::sample-type.sample-type', {
             populate: { ontology_tuple: true }
         });
 
-        points = await strapi.entityService.findMany('api::sampling-point.sampling-point', {
-            fields: ['id', 'name']
+        stages = await strapi.entityService.findMany('api::sampling-stage.sampling-stage', {
+            populate: { ontology_tuple: true }
         });
 
         matrices = await strapi.entityService.findMany('api::matrix.matrix', {
@@ -138,19 +138,19 @@ const setRelationalData = (record: any): Isolate => {
 
     if (record.Probenahmegrund) {
         newTest.samplingContext = {
-            "set": [getOntologyTupleId(objectives, "token", record.Probenahmegrund)]
+            "set": [getOntologyTupleId(contexts, "token", record.Probenahmegrund)]
         }
     }
 
     if (record.Probenahmestelle) {
-        newTest.sampling_point = {
-            "set": [getId(points, "name", record.Probenahmestelle)]
+        newTest.samplingStage = {
+            "set": [getOntologyTupleId(stages, "token", record.Probenahmestelle)]
         }
     }
 
     if (record.Probenherkunft) {
         newTest.sampleType = {
-            "set": [getOntologyTupleId(origins, "token", record.Probenherkunft)]
+            "set": [getOntologyTupleId(types, "token", record.Probenherkunft)]
         }
     }
 

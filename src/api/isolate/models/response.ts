@@ -99,7 +99,7 @@ export interface IIsolateDataAttributes {
     SMX_Res_qual: string
     microorganism: IMicroorganism
     context: ISamplingContext
-    sampling_point: ISamplingPoint
+    samplingStage: ISamplingStage
     sampleType: ISampleType
     animal_species_food_top_category: IAnimalSpeciesFoodTopCategory
     matrix: IMatrix
@@ -134,7 +134,7 @@ export interface IMicroorganism extends IRelation {
 export interface ISamplingContext extends IRelation {
 }
 
-export interface ISamplingPoint extends IRelation {
+export interface ISamplingStage extends IRelation {
 }
 
 export interface ISampleType extends IRelation {

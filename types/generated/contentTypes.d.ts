@@ -1400,11 +1400,6 @@ export interface ApiIsolateIsolate extends Schema.CollectionType {
       'manyToOne',
       'api::matrix-detail.matrix-detail'
     >;
-    sampling_point: Attribute.Relation<
-      'api::isolate.isolate',
-      'manyToOne',
-      'api::sampling-point.sampling-point'
-    >;
     animal_species_production_direction_food: Attribute.Relation<
       'api::isolate.isolate',
       'manyToOne',
