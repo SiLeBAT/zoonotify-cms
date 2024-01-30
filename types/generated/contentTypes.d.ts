@@ -768,6 +768,42 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
   };
 }
 
+export interface ApiAnimalSpeciesFoodCategoryAnimalSpeciesFoodCategory
+  extends Schema.CollectionType {
+  collectionName: 'animal_species_food_categories';
+  info: {
+    singularName: 'animal-species-food-category';
+    pluralName: 'animal-species-food-categories';
+    displayName: 'MD Animal Species/ Food category';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    ontology_tuple: Attribute.Component<'kida.ontology-term'> &
+      Attribute.Required;
+    isolates: Attribute.Relation<
+      'api::animal-species-food-category.animal-species-food-category',
+      'oneToMany',
+      'api::isolate.isolate'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::animal-species-food-category.animal-species-food-category',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::animal-species-food-category.animal-species-food-category',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiAnimalSpeciesFoodTopCategoryAnimalSpeciesFoodTopCategory
   extends Schema.CollectionType {
   collectionName: 'animal_species_food_top_categories';
@@ -783,11 +819,6 @@ export interface ApiAnimalSpeciesFoodTopCategoryAnimalSpeciesFoodTopCategory
   attributes: {
     name: Attribute.String;
     iri: Attribute.String;
-    isolates: Attribute.Relation<
-      'api::animal-species-food-top-category.animal-species-food-top-category',
-      'oneToMany',
-      'api::isolate.isolate'
-    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -1390,10 +1421,10 @@ export interface ApiIsolateIsolate extends Schema.CollectionType {
     ETP_Res_quant: Attribute.String;
     Datum_der_Datenextraktion: Attribute.String;
     DB_Version: Attribute.String;
-    animal_species_food_top_category: Attribute.Relation<
+    animalSpeciesFoodCategory: Attribute.Relation<
       'api::isolate.isolate',
       'manyToOne',
-      'api::animal-species-food-top-category.animal-species-food-top-category'
+      'api::animal-species-food-category.animal-species-food-category'
     >;
     matrix_detail: Attribute.Relation<
       'api::isolate.isolate',
@@ -1937,6 +1968,7 @@ declare module '@strapi/types' {
       'plugin::users-permissions.permission': PluginUsersPermissionsPermission;
       'plugin::users-permissions.role': PluginUsersPermissionsRole;
       'plugin::users-permissions.user': PluginUsersPermissionsUser;
+      'api::animal-species-food-category.animal-species-food-category': ApiAnimalSpeciesFoodCategoryAnimalSpeciesFoodCategory;
       'api::animal-species-food-top-category.animal-species-food-top-category': ApiAnimalSpeciesFoodTopCategoryAnimalSpeciesFoodTopCategory;
       'api::animal-species-production-direction-food.animal-species-production-direction-food': ApiAnimalSpeciesProductionDirectionFoodAnimalSpeciesProductionDirectionFood;
       'api::antibiotic.antibiotic': ApiAntibioticAntibiotic;

@@ -333,10 +333,10 @@
     "DB_Version": {
       "type": "string"
     },
-    "animal_species_food_top_category": {
+    "animalSpeciesFoodCategory": {
       "type": "relation",
       "relation": "manyToOne",
-      "target": "api::animal-species-food-top-category.animal-species-food-top-category",
+      "target": "api::animal-species-food-category.animal-species-food-category",
       "inversedBy": "isolates"
     },
     "matrix_detail": {

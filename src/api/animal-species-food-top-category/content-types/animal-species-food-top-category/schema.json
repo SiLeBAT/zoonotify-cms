@@ -17,12 +17,6 @@
     },
     "iri": {
       "type": "string"
-    },
-    "isolates": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::isolate.isolate",
-      "mappedBy": "animal_species_food_top_category"
     }
   }
 }
