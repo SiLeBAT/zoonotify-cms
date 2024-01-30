@@ -1,0 +1,27 @@
+{
+  "kind": "collectionType",
+  "collectionName": "animal_species_production_type_foods",
+  "info": {
+    "singularName": "animal-species-production-type-food",
+    "pluralName": "animal-species-production-type-foods",
+    "displayName": "MD Animal species Production type/Food"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "ontology_tuple": {
+      "type": "component",
+      "repeatable": false,
+      "component": "kida.ontology-term",
+      "required": true
+    },
+    "isolates": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::isolate.isolate",
+      "mappedBy": "animalSpeciesProductionTypeFood"
+    }
+  }
+}

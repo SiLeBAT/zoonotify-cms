@@ -873,6 +873,42 @@ export interface ApiAnimalSpeciesProductionDirectionFoodAnimalSpeciesProductionD
   };
 }
 
+export interface ApiAnimalSpeciesProductionTypeFoodAnimalSpeciesProductionTypeFood
+  extends Schema.CollectionType {
+  collectionName: 'animal_species_production_type_foods';
+  info: {
+    singularName: 'animal-species-production-type-food';
+    pluralName: 'animal-species-production-type-foods';
+    displayName: 'MD Animal species Production type/Food';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    ontology_tuple: Attribute.Component<'kida.ontology-term'> &
+      Attribute.Required;
+    isolates: Attribute.Relation<
+      'api::animal-species-production-type-food.animal-species-production-type-food',
+      'oneToMany',
+      'api::isolate.isolate'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::animal-species-production-type-food.animal-species-production-type-food',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::animal-species-production-type-food.animal-species-production-type-food',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiAntibioticAntibiotic extends Schema.CollectionType {
   collectionName: 'antibiotics';
   info: {
@@ -1324,7 +1360,7 @@ export interface ApiIsolateIsolate extends Schema.CollectionType {
     animalSpeciesProductionTypeFood: Attribute.Relation<
       'api::isolate.isolate',
       'manyToOne',
-      'api::animal-species-production-direction-food.animal-species-production-direction-food'
+      'api::animal-species-production-type-food.animal-species-production-type-food'
     >;
     salmonella: Attribute.Relation<
       'api::isolate.isolate',
@@ -1966,6 +2002,7 @@ declare module '@strapi/types' {
       'api::animal-species-food-category.animal-species-food-category': ApiAnimalSpeciesFoodCategoryAnimalSpeciesFoodCategory;
       'api::animal-species-food-top-category.animal-species-food-top-category': ApiAnimalSpeciesFoodTopCategoryAnimalSpeciesFoodTopCategory;
       'api::animal-species-production-direction-food.animal-species-production-direction-food': ApiAnimalSpeciesProductionDirectionFoodAnimalSpeciesProductionDirectionFood;
+      'api::animal-species-production-type-food.animal-species-production-type-food': ApiAnimalSpeciesProductionTypeFoodAnimalSpeciesProductionTypeFood;
       'api::antibiotic.antibiotic': ApiAntibioticAntibiotic;
       'api::configuration.configuration': ApiConfigurationConfiguration;
       'api::evaluation.evaluation': ApiEvaluationEvaluation;
