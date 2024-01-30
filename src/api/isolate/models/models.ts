@@ -99,7 +99,7 @@ export interface IIsolate {
     TMP_Res_qual: string
     SMX_Res_qual: string
     microorganism: IRelation
-    sampling_objective: IRelation
+    samplingContext: IRelation
     sampling_point: IRelation
     animal_species_food_top_category: IRelation
     animal_species_production_direction_food: IRelation
@@ -117,7 +117,7 @@ export class Isolate implements IIsolate {
     }
     sampleType: IRelation;
     microorganism: IRelation;
-    sampling_objective: IRelation;
+    samplingContext: IRelation;
     sampling_point: IRelation;
     animal_species_food_top_category: IRelation;
     animal_species_production_direction_food: IRelation;
@@ -307,7 +307,7 @@ export interface INode {
     BfR_Isolat_Nr: string
     DB_ID: string
     NRL: string
-    "Sampling Reason": ISubNode | string
+    "Sampling Context": ISubNode | string
     "Sampling Point": ISubNode | string
     ZoMo_Programm: string
     "Animal species/food top category": ISubNode | string
