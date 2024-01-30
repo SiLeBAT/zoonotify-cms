@@ -344,12 +344,6 @@
       "relation": "manyToOne",
       "target": "api::matrix-detail.matrix-detail",
       "inversedBy": "isolates"
-    },
-    "animal_species_production_direction_food": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::animal-species-production-direction-food.animal-species-production-direction-food",
-      "inversedBy": "direction_isolates"
     }
   }
 }

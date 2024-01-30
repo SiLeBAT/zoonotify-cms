@@ -102,7 +102,7 @@ export interface IIsolate {
     samplingContext: IRelation
     samplingStage: IRelation
     animalSpeciesFoodCategory: IRelation
-    animal_species_production_direction_food: IRelation
+    animalSpeciesProductionTypeFood: IRelation
     matrix: IRelation
     matrix_detail: IRelation
     salmonella: IRelation
@@ -120,7 +120,7 @@ export class Isolate implements IIsolate {
     samplingContext: IRelation;
     samplingStage: IRelation;
     animalSpeciesFoodCategory: IRelation;
-    animal_species_production_direction_food: IRelation;
+    animalSpeciesProductionTypeFood: IRelation;
     matrix: IRelation;
     matrix_detail: IRelation;
     salmonella: IRelation;
@@ -311,7 +311,7 @@ export interface INode {
     "Sampling Stage": ISubNode | string
     ZoMo_Programm: string
     "Animal Species/ Food category": ISubNode | string
-    "Animal species production direction/food": ISubNode | string
+    "Animal species Production type/Food": ISubNode | string
     Matrix: ISubNode | string
     Bericht_e: string
     MRSA_spa_Typ: string
