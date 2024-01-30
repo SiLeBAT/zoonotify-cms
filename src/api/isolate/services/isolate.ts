@@ -55,8 +55,8 @@ export default factories.createCoreService('api::isolate.isolate', ({ strapi }) 
             fields: ['id', 'name']
         });
 
-        categories = await strapi.entityService.findMany('api::animal-species-food-top-category.animal-species-food-top-category', {
-            fields: ['id', 'name']
+        categories = await strapi.entityService.findMany('api::animal-species-food-category.animal-species-food-category', {
+            populate: { ontology_tuple: true }
         });
 
         productions = await strapi.entityService.findMany('api::animal-species-production-direction-food.animal-species-production-direction-food', {
@@ -155,8 +155,8 @@ const setRelationalData = (record: any): Isolate => {
     }
 
     if (record.Tierart_Lebensmittel_Oberkategorie) {
-        newTest.animal_species_food_top_category = {
-            "set": [getId(categories, "name", record.Tierart_Lebensmittel_Oberkategorie)]
+        newTest.animalSpeciesFoodCategory = {
+            "set": [getOntologyTupleId(categories, "token", record.Tierart_Lebensmittel_Oberkategorie)]
         }
     }
 

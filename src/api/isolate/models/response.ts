@@ -101,7 +101,7 @@ export interface IIsolateDataAttributes {
     context: ISamplingContext
     samplingStage: ISamplingStage
     sampleType: ISampleType
-    animal_species_food_top_category: IAnimalSpeciesFoodTopCategory
+    animalSpeciesFoodCategory: IAnimalSpeciesFoodCategory
     matrix: IMatrix
     salmonella: ISalmonella
     matrix_detail: IMatrixDetail
@@ -140,7 +140,7 @@ export interface ISamplingStage extends IRelation {
 export interface ISampleType extends IRelation {
 }
 
-export interface IAnimalSpeciesFoodTopCategory extends IRelation {
+export interface IAnimalSpeciesFoodCategory extends IRelation {
 }
 
 export interface IMatrix extends IRelation {
