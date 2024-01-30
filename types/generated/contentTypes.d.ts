@@ -1467,11 +1467,6 @@ export interface ApiIsolateIsolate extends Schema.CollectionType {
       'manyToOne',
       'api::matrix-detail.matrix-detail'
     >;
-    animal_species_production_direction_food: Attribute.Relation<
-      'api::isolate.isolate',
-      'manyToOne',
-      'api::animal-species-production-direction-food.animal-species-production-direction-food'
-    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
