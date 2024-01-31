@@ -15,7 +15,7 @@ const toLinkedData = (data: IIsolateData[]): INode[] => {
         let newRec: INode = {
             "@context": "https://schema.org",
             "@type": "MedicalStudy",
-            "Year": rec.year,
+            "Sampling Year": rec.samplingYear,
             "Microorganism": getRelationalData(rec.microorganism),
             "BfR_Isolat_Nr": rec.BfR_Isolat_Nr,
             "DB_ID": rec.DB_ID,

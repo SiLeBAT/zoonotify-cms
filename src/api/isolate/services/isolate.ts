@@ -128,7 +128,7 @@ export default factories.createCoreService('api::isolate.isolate', ({ strapi }) 
 const setRelationalData = (record: any): Isolate => {
     const { Jahr, BL, Mikroorganismus, Probenahmegrund, Probenahmestelle, Probenherkunft, Tierart_Lebensmittel_Oberkategorie, Tierart_Produktionsrichtung_Lebensmittel, Matrix, Matrixdetail, Salm_Serovar, ...strippedRecord } = record;
     let newTest = new Isolate(strippedRecord as IIsolate);
-    newTest.year = Number(record.Jahr);
+    newTest.samplingYear = Number(record.Jahr);
 
     if (record.Mikroorganismus) {
         newTest.microorganism = {

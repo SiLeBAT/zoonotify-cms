@@ -4,7 +4,7 @@
   "info": {
     "singularName": "isolate",
     "pluralName": "isolates",
-    "displayName": "DEPRECATED isolate",
+    "displayName": "isolate",
     "description": ""
   },
   "options": {

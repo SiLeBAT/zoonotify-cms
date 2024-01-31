@@ -804,75 +804,6 @@ export interface ApiAnimalSpeciesFoodCategoryAnimalSpeciesFoodCategory
   };
 }
 
-export interface ApiAnimalSpeciesFoodTopCategoryAnimalSpeciesFoodTopCategory
-  extends Schema.CollectionType {
-  collectionName: 'animal_species_food_top_categories';
-  info: {
-    singularName: 'animal-species-food-top-category';
-    pluralName: 'animal-species-food-top-categories';
-    displayName: 'DEPRECATED Animal Species Food Top Category';
-    description: '';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    name: Attribute.String;
-    iri: Attribute.String;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<
-      'api::animal-species-food-top-category.animal-species-food-top-category',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<
-      'api::animal-species-food-top-category.animal-species-food-top-category',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-  };
-}
-
-export interface ApiAnimalSpeciesProductionDirectionFoodAnimalSpeciesProductionDirectionFood
-  extends Schema.CollectionType {
-  collectionName: 'animal-species-production-direction-foods';
-  info: {
-    singularName: 'animal-species-production-direction-food';
-    pluralName: 'animal-species-production-direction-foods';
-    displayName: 'DEPRECATED Animal Species Production Direction Food';
-    description: '';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    name: Attribute.String;
-    iri: Attribute.String;
-    direction_isolates: Attribute.Relation<
-      'api::animal-species-production-direction-food.animal-species-production-direction-food',
-      'oneToMany',
-      'api::isolate.isolate'
-    >;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<
-      'api::animal-species-production-direction-food.animal-species-production-direction-food',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<
-      'api::animal-species-production-direction-food.animal-species-production-direction-food',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-  };
-}
-
 export interface ApiAnimalSpeciesProductionTypeFoodAnimalSpeciesProductionTypeFood
   extends Schema.CollectionType {
   collectionName: 'animal_species_production_type_foods';
@@ -1319,7 +1250,7 @@ export interface ApiIsolateIsolate extends Schema.CollectionType {
   info: {
     singularName: 'isolate';
     pluralName: 'isolates';
-    displayName: 'DEPRECATED isolate';
+    displayName: 'isolate';
     description: '';
   };
   options: {
@@ -1779,115 +1710,6 @@ export interface ApiSamplingContextSamplingContext
   };
 }
 
-export interface ApiSamplingObjectiveSamplingObjective
-  extends Schema.CollectionType {
-  collectionName: 'sampling_objectives';
-  info: {
-    singularName: 'sampling-objective';
-    pluralName: 'sampling-objectives';
-    displayName: 'DEPRECATED Sampling Objective';
-    description: '';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    name: Attribute.String;
-    iri: Attribute.String;
-    isolates: Attribute.Relation<
-      'api::sampling-objective.sampling-objective',
-      'oneToMany',
-      'api::isolate.isolate'
-    >;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<
-      'api::sampling-objective.sampling-objective',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<
-      'api::sampling-objective.sampling-objective',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-  };
-}
-
-export interface ApiSamplingOriginSamplingOrigin extends Schema.CollectionType {
-  collectionName: 'sampling_origins';
-  info: {
-    singularName: 'sampling-origin';
-    pluralName: 'sampling-origins';
-    displayName: 'DEPRECATED  Sampling Origin';
-    description: '';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    name: Attribute.String;
-    iri: Attribute.String;
-    isolates: Attribute.Relation<
-      'api::sampling-origin.sampling-origin',
-      'oneToMany',
-      'api::isolate.isolate'
-    >;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<
-      'api::sampling-origin.sampling-origin',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<
-      'api::sampling-origin.sampling-origin',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-  };
-}
-
-export interface ApiSamplingPointSamplingPoint extends Schema.CollectionType {
-  collectionName: 'sampling_points';
-  info: {
-    singularName: 'sampling-point';
-    pluralName: 'sampling-points';
-    displayName: 'DEPRECATED  sampling point';
-    description: '';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    name: Attribute.String;
-    iri: Attribute.String;
-    isolates: Attribute.Relation<
-      'api::sampling-point.sampling-point',
-      'oneToMany',
-      'api::isolate.isolate'
-    >;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<
-      'api::sampling-point.sampling-point',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<
-      'api::sampling-point.sampling-point',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-  };
-}
-
 export interface ApiSamplingStageSamplingStage extends Schema.CollectionType {
   collectionName: 'sampling_stages';
   info: {
@@ -1995,8 +1817,6 @@ declare module '@strapi/types' {
       'plugin::users-permissions.role': PluginUsersPermissionsRole;
       'plugin::users-permissions.user': PluginUsersPermissionsUser;
       'api::animal-species-food-category.animal-species-food-category': ApiAnimalSpeciesFoodCategoryAnimalSpeciesFoodCategory;
-      'api::animal-species-food-top-category.animal-species-food-top-category': ApiAnimalSpeciesFoodTopCategoryAnimalSpeciesFoodTopCategory;
-      'api::animal-species-production-direction-food.animal-species-production-direction-food': ApiAnimalSpeciesProductionDirectionFoodAnimalSpeciesProductionDirectionFood;
       'api::animal-species-production-type-food.animal-species-production-type-food': ApiAnimalSpeciesProductionTypeFoodAnimalSpeciesProductionTypeFood;
       'api::antibiotic.antibiotic': ApiAntibioticAntibiotic;
       'api::configuration.configuration': ApiConfigurationConfiguration;
@@ -2012,9 +1832,6 @@ declare module '@strapi/types' {
       'api::salmonella.salmonella': ApiSalmonellaSalmonella;
       'api::sample-type.sample-type': ApiSampleTypeSampleType;
       'api::sampling-context.sampling-context': ApiSamplingContextSamplingContext;
-      'api::sampling-objective.sampling-objective': ApiSamplingObjectiveSamplingObjective;
-      'api::sampling-origin.sampling-origin': ApiSamplingOriginSamplingOrigin;
-      'api::sampling-point.sampling-point': ApiSamplingPointSamplingPoint;
       'api::sampling-stage.sampling-stage': ApiSamplingStageSamplingStage;
       'api::welcome.welcome': ApiWelcomeWelcome;
     }

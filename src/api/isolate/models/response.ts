@@ -8,7 +8,7 @@ export interface IIsolateData {
 }
 
 export interface IIsolateDataAttributes {
-    year: number
+    samplingYear: number
     createdAt: any
     updatedAt: any
     BfR_Isolat_Nr: string
