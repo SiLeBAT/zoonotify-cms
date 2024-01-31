@@ -9,7 +9,7 @@ export interface IRelation {
 }
 
 export interface IIsolate {
-    year: number
+    samplingYear: number
     createdAt: string
     updatedAt: string
     BfR_Isolat_Nr: string
@@ -124,7 +124,7 @@ export class Isolate implements IIsolate {
     matrix: IRelation;
     matrix_detail: IRelation;
     salmonella: IRelation;
-    year: number;
+    samplingYear: number;
     createdAt: string;
     updatedAt: string;
     BfR_Isolat_Nr: string;
@@ -302,7 +302,7 @@ export interface IResistanceQual {
 export interface INode {
     "@context": string
     "@type": string
-    Year: number
+    "Sampling Year": number
     Microorganism: ISubNode | string
     BfR_Isolat_Nr: string
     DB_ID: string
