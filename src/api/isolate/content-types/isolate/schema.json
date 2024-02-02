@@ -64,16 +64,19 @@
       "inversedBy": "isolates"
     },
     "bfrIsolatNr": {
-      "type": "string"
+      "type": "string",
+      "private": true
     },
     "dbId": {
-      "type": "string"
+      "type": "string",
+      "private": true
     },
     "nrl": {
       "type": "string"
     },
     "zomoProgramm": {
-      "type": "string"
+      "type": "string",
+      "private": true
     },
     "berichte": {
       "type": "string"
@@ -331,7 +334,8 @@
       "type": "string"
     },
     "DB_Version": {
-      "type": "string"
+      "type": "string",
+      "private": true
     },
     "animalSpeciesFoodCategory": {
       "type": "relation",
