@@ -1298,10 +1298,10 @@ export interface ApiIsolateIsolate extends Schema.CollectionType {
       'manyToOne',
       'api::salmonella.salmonella'
     >;
-    bfrIsolatNr: Attribute.String;
-    dbId: Attribute.String;
+    bfrIsolatNr: Attribute.String & Attribute.Private;
+    dbId: Attribute.String & Attribute.Private;
     nrl: Attribute.String;
-    zomoProgramm: Attribute.String;
+    zomoProgramm: Attribute.String & Attribute.Private;
     berichte: Attribute.String;
     mrsaSpaTyp: Attribute.String;
     mrsaKlonaleGruppe: Attribute.String;
@@ -1387,7 +1387,7 @@ export interface ApiIsolateIsolate extends Schema.CollectionType {
     ETP_Res_qual: Attribute.String;
     ETP_Res_quant: Attribute.String;
     Datum_der_Datenextraktion: Attribute.String;
-    DB_Version: Attribute.String;
+    DB_Version: Attribute.String & Attribute.Private;
     animalSpeciesFoodCategory: Attribute.Relation<
       'api::isolate.isolate',
       'manyToOne',
