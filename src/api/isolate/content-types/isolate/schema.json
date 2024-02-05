@@ -342,12 +342,6 @@
       "relation": "manyToOne",
       "target": "api::animal-species-food-category.animal-species-food-category",
       "inversedBy": "isolates"
-    },
-    "matrix_detail": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::matrix-detail.matrix-detail",
-      "inversedBy": "isolates"
     }
   }
 }

@@ -17,27 +17,25 @@ const toLinkedData = (data: IIsolateData[]): INode[] => {
             "@type": "MedicalStudy",
             "Sampling Year": rec.samplingYear,
             "Microorganism": getRelationalData(rec.microorganism),
-            "BfR_Isolat_Nr": rec.BfR_Isolat_Nr,
-            "DB_ID": rec.DB_ID,
-            "NRL": rec.NRL,
+            "nrl": rec.nrl,
             "Sampling Context": getRelationalData(rec.context),
             "Sampling Stage": getRelationalData(rec.samplingStage),
-            "ZoMo_Programm": rec.ZoMo_Programm,
+            "zomoProgramm": rec.zomoProgramm,
             "Animal Species/ Food category": getRelationalData(rec.animalSpeciesFoodCategory),
             "Animal species Production type/Food": getRelationalData(rec.animalSpeciesProductionTypeFood),
             "Matrix": getRelationalData(rec.matrix),
-            "Bericht_e": rec.Bericht_e,
-            "MRSA_spa_Typ": rec.MRSA_spa_Typ,
-            "MRSA_Klonale_Gruppe": rec.MRSA_Klonale_Gruppe,
-            "Entero_Spez": rec.Entero_Spez,
-            "Campy_Spez": rec.Campy_Spez,
+            "berichte": rec.berichte,
+            "mrsaSpaTyp": rec.mrsaSpaTyp,
+            "mrsaKlonaleGruppe": rec.mrsaKlonaleGruppe,
+            "enteroSpez": rec.enteroSpez,
+            "campySpez": rec.campySpez,
             "Salmonella": getRelationalData(rec.salmonella),
-            "Listeria_Serotyp": rec.Listeria_Serotyp,
-            "STEC_Serotyp": rec.STEC_Serotyp,
-            "STEC_stx1_Gen": rec.STEC_stx1_Gen,
-            "STEC_stx2_Gen": rec.STEC_stx2_Gen,
-            "STEC_eae_Gen": rec.STEC_eae_Gen,
-            "STEC_e_hly_Gen": rec.STEC_e_hly_Gen,
+            "listeriaSerotyp": rec.listeriaSerotyp,
+            "stecSerotyp": rec.stecSerotyp,
+            "stx1Gen": rec.stx1Gen,
+            "stx2Gen": rec.stx2Gen,
+            "eaeGen": rec.eaeGen,
+            "e_hlyGen": rec.e_hlyGen,
             "keine_Gene_oder_Mutationen_gefunden": rec.keine_Gene_oder_Mutationen_gefunden,
             "ESBL_Gene": rec.ESBL_Gene,
             "Nicht_ESBL_Beta_Laktamase_Gene": rec.nicht_ESBL_Beta_Laktamase_Gene,
@@ -49,7 +47,6 @@ const toLinkedData = (data: IIsolateData[]): INode[] => {
             "ESBL_AmpC_Carba_Phanotyp": rec.ESBL_AmpC_Carba_Phanotyp,
             "Sample Type": getRelationalData(rec.sampleType),
             "Datum_der_Datenextraktion": rec.Datum_der_Datenextraktion,
-            "DB_Version": rec.DB_Version,
             "Resistance Quant": {
                 "@type": "DrugStrength",
                 "AK_Res_quant": rec.AK_Res_quant,
@@ -171,7 +168,10 @@ export const getId = (collection: any, key: string, value: string): number => {
  * @returns id of the matching record as a number
  */
 export const getOntologyTupleId = (collection: any, key: string, value: string): number => {
-    var item = collection.find(item => item["ontology_tuple"][key] == value);
+
+    var item = collection.find(item => {
+        return item["ontology_tuple"] && item["ontology_tuple"][key] == value;
+    });
     if (item) {
         return item.id;
     } else {

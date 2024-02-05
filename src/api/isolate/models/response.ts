@@ -11,21 +11,21 @@ export interface IIsolateDataAttributes {
     samplingYear: number
     createdAt: any
     updatedAt: any
-    BfR_Isolat_Nr: string
-    DB_ID: string
-    NRL: string
-    ZoMo_Programm: string
-    Bericht_e: string
-    MRSA_spa_Typ: string
-    MRSA_Klonale_Gruppe: string
-    Entero_Spez: string
-    Campy_Spez: string
-    Listeria_Serotyp: string
-    STEC_Serotyp: string
-    STEC_stx1_Gen: string
-    STEC_stx2_Gen: string
-    STEC_eae_Gen: string
-    STEC_e_hly_Gen: string
+    bfrIsolatNr: string
+    dbId: string
+    nrl: string
+    zomoProgramm: string
+    berichte: string
+    mrsaSpaTyp: string
+    mrsaKlonaleGruppe: string
+    enteroSpez: string
+    campySpez: string
+    listeriaSerotyp: string
+    stecSerotyp: string
+    stx1Gen: string
+    stx2Gen: string
+    eaeGen: string
+    e_hlyGen: string
     ESBL_AmpC_Carba_Phanotyp: any
     WGS: string
     keine_Gene_oder_Mutationen_gefunden: string
@@ -104,7 +104,7 @@ export interface IIsolateDataAttributes {
     animalSpeciesFoodCategory: IAnimalSpeciesFoodCategory
     matrix: IMatrix
     salmonella: ISalmonella
-    matrix_detail: IMatrixDetail
+    matrixDetail: IMatrixDetail
     animalSpeciesProductionTypeFood: IAnimalSpeciesProductionDirectionFood
     ETP_Res_qual: string;
     ETP_Res_quant: string;
