@@ -1,0 +1,1 @@
+yarn run strapi export --no-encrypt -f ../backup/cms-$(date -d "today" +"%Y%m%d%H%M")
