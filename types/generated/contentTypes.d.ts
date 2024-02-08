@@ -1518,6 +1518,82 @@ export interface ApiMicroorganismMicroorganism extends Schema.CollectionType {
   };
 }
 
+export interface ApiPrevalencePrevalence extends Schema.CollectionType {
+  collectionName: 'prevalences';
+  info: {
+    singularName: 'prevalence';
+    pluralName: 'prevalences';
+    displayName: 'Prevalence';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    samplingYear: Attribute.Integer;
+    zomoProgramm: Attribute.String & Attribute.Private;
+    weitereDetails: Attribute.Text;
+    anzahlProbenN: Attribute.String;
+    positiveProbenN: Attribute.String;
+    posProbenProz: Attribute.String;
+    konfintervallMin: Attribute.String;
+    konfintervallMax: Attribute.String;
+    samplingContext: Attribute.Relation<
+      'api::prevalence.prevalence',
+      'oneToOne',
+      'api::sampling-context.sampling-context'
+    >;
+    samplingStage: Attribute.Relation<
+      'api::prevalence.prevalence',
+      'oneToOne',
+      'api::sampling-stage.sampling-stage'
+    >;
+    sampleType: Attribute.Relation<
+      'api::prevalence.prevalence',
+      'oneToOne',
+      'api::sample-type.sample-type'
+    >;
+    animalSpeciesFoodCategory: Attribute.Relation<
+      'api::prevalence.prevalence',
+      'oneToOne',
+      'api::animal-species-food-category.animal-species-food-category'
+    >;
+    animalSpeciesProductionTypeFood: Attribute.Relation<
+      'api::prevalence.prevalence',
+      'oneToOne',
+      'api::animal-species-production-type-food.animal-species-production-type-food'
+    >;
+    matrix: Attribute.Relation<
+      'api::prevalence.prevalence',
+      'oneToOne',
+      'api::matrix.matrix'
+    >;
+    matrixDetail: Attribute.Relation<
+      'api::prevalence.prevalence',
+      'oneToOne',
+      'api::matrix-detail.matrix-detail'
+    >;
+    microorganism: Attribute.Relation<
+      'api::prevalence.prevalence',
+      'oneToOne',
+      'api::microorganism.microorganism'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::prevalence.prevalence',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::prevalence.prevalence',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiResistanceTableResistanceTable
   extends Schema.CollectionType {
   collectionName: 'resistance_tables';
@@ -1823,6 +1899,7 @@ declare module '@strapi/types' {
       'api::matrix.matrix': ApiMatrixMatrix;
       'api::matrix-detail.matrix-detail': ApiMatrixDetailMatrixDetail;
       'api::microorganism.microorganism': ApiMicroorganismMicroorganism;
+      'api::prevalence.prevalence': ApiPrevalencePrevalence;
       'api::resistance-table.resistance-table': ApiResistanceTableResistanceTable;
       'api::salmonella.salmonella': ApiSalmonellaSalmonella;
       'api::sample-type.sample-type': ApiSampleTypeSampleType;
