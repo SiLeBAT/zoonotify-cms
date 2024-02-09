@@ -22,19 +22,19 @@
       "type": "text"
     },
     "numberOfSamples": {
-      "type": "string"
+      "type": "integer"
     },
     "numberOfPositive": {
-      "type": "string"
+      "type": "integer"
     },
     "percentageOfPositive": {
-      "type": "string"
+      "type": "decimal"
     },
     "ciMin": {
-      "type": "string"
+      "type": "decimal"
     },
     "ciMax": {
-      "type": "string"
+      "type": "decimal"
     },
     "samplingContext": {
       "type": "relation",
