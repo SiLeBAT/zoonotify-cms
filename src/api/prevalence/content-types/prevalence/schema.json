@@ -14,26 +14,26 @@
     "samplingYear": {
       "type": "integer"
     },
-    "zomoProgramm": {
+    "zomoProgram": {
       "type": "string",
       "private": true
     },
-    "weitereDetails": {
+    "furtherDetails": {
       "type": "text"
     },
-    "anzahlProbenN": {
+    "numberOfSamples": {
       "type": "string"
     },
-    "positiveProbenN": {
+    "numberOfPositive": {
       "type": "string"
     },
-    "posProbenProz": {
+    "percentageOfPositive": {
       "type": "string"
     },
-    "konfintervallMin": {
+    "ciMin": {
       "type": "string"
     },
-    "konfintervallMax": {
+    "ciMax": {
       "type": "string"
     },
     "samplingContext": {
