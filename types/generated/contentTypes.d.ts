@@ -1532,11 +1532,11 @@ export interface ApiPrevalencePrevalence extends Schema.CollectionType {
     samplingYear: Attribute.Integer;
     zomoProgram: Attribute.String & Attribute.Private;
     furtherDetails: Attribute.Text;
-    numberOfSamples: Attribute.String;
-    numberOfPositive: Attribute.String;
-    percentageOfPositive: Attribute.String;
-    ciMin: Attribute.String;
-    ciMax: Attribute.String;
+    numberOfSamples: Attribute.Integer;
+    numberOfPositive: Attribute.Integer;
+    percentageOfPositive: Attribute.Decimal;
+    ciMin: Attribute.Decimal;
+    ciMax: Attribute.Decimal;
     samplingContext: Attribute.Relation<
       'api::prevalence.prevalence',
       'oneToOne',
