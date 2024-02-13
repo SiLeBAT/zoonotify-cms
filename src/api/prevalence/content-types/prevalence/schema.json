@@ -11,6 +11,10 @@
   },
   "pluginOptions": {},
   "attributes": {
+    "dbId": {
+      "type": "string",
+      "private": true
+    },
     "samplingYear": {
       "type": "integer"
     },
