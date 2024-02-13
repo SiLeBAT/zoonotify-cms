@@ -1529,6 +1529,7 @@ export interface ApiPrevalencePrevalence extends Schema.CollectionType {
     draftAndPublish: false;
   };
   attributes: {
+    dbId: Attribute.String & Attribute.Private;
     samplingYear: Attribute.Integer;
     zomoProgram: Attribute.String & Attribute.Private;
     furtherDetails: Attribute.Text;
