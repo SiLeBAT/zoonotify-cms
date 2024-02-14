@@ -6,9 +6,7 @@ const fs = require('fs');
 import xlsx from 'node-xlsx';
 import { getId, getOntologyTupleId } from '../../isolate/extensions/helper';
 import { IKeys } from '../../isolate/models/models';
-const { promisify } = require('util');
-const { setImmediate } = require('timers');
-const setImmediateP = promisify(setImmediate);
+import { mapAllSettled } from '../../../extensions/helper';
 
 let microorganisms;
 let contexts;
@@ -313,10 +311,9 @@ export default factories.createCoreService('api::prevalence.prevalence', ({ stra
             }
         }
 
-
         console.log(`Inserting total ${recs.length} records`);
         console.time('mapAllSettled');
-        const results = await mapAllSettled(recs, savePrevalence, 100);
+        const results = await mapAllSettled(recs, savePrevalence, 100, "ID");
         console.timeEnd('mapAllSettled');
         console.timeEnd('Import');
         return results;
@@ -453,86 +450,6 @@ const savePrevalence = async (rec, i) => {
         return response.id;
     }
 
-}
-
-/**
- * Return promise for a record my calling a save action function
- * @param mapFn Function which does actual ddatabase save call
- * @param currentValue Current record which needs to be saved
- * @param index Indedx of the current record
- * @param array Collections of the records need to be saved
- * @returns Promise with either Id of the saved record or the error
- */
-const mapItem = async (mapFn, currentValue, index, array) => {
-    try {
-        await setImmediateP()
-        return {
-            statusCode: 200,
-            id: currentValue.ID,
-            status: `Successfully saved a record with ID ${currentValue.ID}`,
-            value: await mapFn(currentValue, index, array)
-        }
-    } catch (reason) {
-        return {
-            statusCode: 500,
-            id: currentValue.ID,
-            status: `Error occured for a record with ID ${currentValue.ID}`,
-            reason
-        }
-    }
-}
-
-/**
- * Call mapItem for each record inside an array for a worker
- * @param id Id of the worker under execution
- * @param gen Array chunk specific to the worker
- * @param mapFn Function which does actual ddatabase save call
- * @param result Array holding final result
- */
-const worker = async (id, gen, mapFn, result) => {
-    console.time(`Worker ${id}`);
-    for (let [currentValue, index, array] of gen) {
-        console.time(`Worker ${id} --- index ${index} item ${currentValue}`);
-        result[index] = await mapItem(mapFn, currentValue, index, array);
-        console.timeEnd(`Worker ${id} --- index ${index} item ${currentValue}`);
-    }
-    console.timeEnd(`Worker ${id}`);
-}
-
-/**
- * A generator function to get chunk of the huge array
- * @param array Original huge array that holds records to be saved
- */
-function* arrayGenerator(array) {
-    for (let index = 0; index < array.length; index++) {
-        const currentValue = array[index];
-        yield [currentValue, index, array];
-    }
-}
-
-/**
- * 
- * @param arr Original huge array that holds records to be saved
- * @param mapFn Function which does actual ddatabase save call
- * @param limit Max number of workers to be used
- * @returns A promise containing all individual results
- */
-const mapAllSettled = async (arr, mapFn, limit = arr.length) => {
-    const result = [];
-    if (arr.length === 0) {
-        return result;
-    }
-
-    const gen = arrayGenerator(arr);
-    limit = Math.min(limit, arr.length);
-    const workers = new Array(limit);
-
-    for (let i = 0; i < limit; i++) {
-        workers.push(worker(i, gen, mapFn, result));
-    }
-    console.log(`Initialized ${limit} workers`);
-    await Promise.all(workers);
-    return result;
 }
 
 export interface PrevalenceData {
