@@ -1,7 +1,7 @@
 /**
- * animal-species-production-direction-food router
+ * animal-species-food-category router
  */
 
 import { factories } from '@strapi/strapi';
 
-export default factories.createCoreRouter('api::animal-species-production-direction-food.animal-species-production-direction-food');
+export default factories.createCoreRouter('api::animal-species-food-category.animal-species-food-category');

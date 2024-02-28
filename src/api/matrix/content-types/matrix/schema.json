@@ -4,7 +4,8 @@
   "info": {
     "singularName": "matrix",
     "pluralName": "matrices",
-    "displayName": "Matrix"
+    "displayName": "MD Matrix",
+    "description": ""
   },
   "options": {
     "draftAndPublish": false

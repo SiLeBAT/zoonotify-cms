@@ -15,31 +15,27 @@ const toLinkedData = (data: IIsolateData[]): INode[] => {
         let newRec: INode = {
             "@context": "https://schema.org",
             "@type": "MedicalStudy",
-            "Year": rec.year,
-            "State": getRelationalData(rec.state),
+            "Sampling Year": rec.samplingYear,
             "Microorganism": getRelationalData(rec.microorganism),
-            "Originaleinsendenr": rec.Originaleinsendenr,
-            "BfR_Isolat_Nr": rec.BfR_Isolat_Nr,
-            "DB_ID": rec.DB_ID,
-            "NRL": rec.NRL,
-            "Sampling Reason": getRelationalData(rec.objective),
-            "Sampling Point": getRelationalData(rec.sampling_point),
-            "ZoMo_Programm": rec.ZoMo_Programm,
-            "Animal species/food upper category": getRelationalData(rec.animal_species_food_upper_category),
-            "Animal species production direction/food": getRelationalData(rec.animal_species_production_direction_food),
+            "nrl": rec.nrl,
+            "Sampling Context": getRelationalData(rec.context),
+            "Sampling Stage": getRelationalData(rec.samplingStage),
+            "zomoProgramm": rec.zomoProgramm,
+            "Animal Species/ Food category": getRelationalData(rec.animalSpeciesFoodCategory),
+            "Animal species Production type/Food": getRelationalData(rec.animalSpeciesProductionTypeFood),
             "Matrix": getRelationalData(rec.matrix),
-            "Bericht_e": rec.Bericht_e,
-            "MRSA_spa_Typ": rec.MRSA_spa_Typ,
-            "MRSA_Klonale_Gruppe": rec.MRSA_Klonale_Gruppe,
-            "Entero_Spez": rec.Entero_Spez,
-            "Campy_Spez": rec.Campy_Spez,
+            "berichte": rec.berichte,
+            "mrsaSpaTyp": rec.mrsaSpaTyp,
+            "mrsaKlonaleGruppe": rec.mrsaKlonaleGruppe,
+            "enteroSpez": rec.enteroSpez,
+            "campySpez": rec.campySpez,
             "Salmonella": getRelationalData(rec.salmonella),
-            "Listeria_Serotyp": rec.Listeria_Serotyp,
-            "STEC_Serotyp": rec.STEC_Serotyp,
-            "STEC_stx1_Gen": rec.STEC_stx1_Gen,
-            "STEC_stx2_Gen": rec.STEC_stx2_Gen,
-            "STEC_eae_Gen": rec.STEC_eae_Gen,
-            "STEC_e_hly_Gen": rec.STEC_e_hly_Gen,
+            "listeriaSerotyp": rec.listeriaSerotyp,
+            "stecSerotyp": rec.stecSerotyp,
+            "stx1Gen": rec.stx1Gen,
+            "stx2Gen": rec.stx2Gen,
+            "eaeGen": rec.eaeGen,
+            "e_hlyGen": rec.e_hlyGen,
             "keine_Gene_oder_Mutationen_gefunden": rec.keine_Gene_oder_Mutationen_gefunden,
             "ESBL_Gene": rec.ESBL_Gene,
             "Nicht_ESBL_Beta_Laktamase_Gene": rec.nicht_ESBL_Beta_Laktamase_Gene,
@@ -49,7 +45,8 @@ const toLinkedData = (data: IIsolateData[]): INode[] => {
             "Gene_noch_zu_bestimmen": rec.Gene_noch_zu_bestimmen,
             "WGS": rec.WGS,
             "ESBL_AmpC_Carba_Phanotyp": rec.ESBL_AmpC_Carba_Phanotyp,
-            "Sampling Origin": getRelationalData(rec.sampling_origin),
+            "Sample Type": getRelationalData(rec.sampleType),
+            "Datum_der_Datenextraktion": rec.Datum_der_Datenextraktion,
             "Resistance Quant": {
                 "@type": "DrugStrength",
                 "AK_Res_quant": rec.AK_Res_quant,
@@ -82,7 +79,8 @@ const toLinkedData = (data: IIsolateData[]): INode[] => {
                 "SYN_Res_quant": rec.SYN_Res_quant,
                 "FUS_Res_quant": rec.FUS_Res_quant,
                 "TMP_Res_quant": rec.TMP_Res_quant,
-                "SMX_Res_quant": rec.SMX_Res_quant
+                "SMX_Res_quant": rec.SMX_Res_quant,
+                "ETP_Res_quant": rec.ETP_Res_quant
             },
             "Resistance Qual": {
                 "@type": "DrugStrength",
@@ -116,7 +114,8 @@ const toLinkedData = (data: IIsolateData[]): INode[] => {
                 "SYN_Res_qual": rec.SYN_Res_qual,
                 "FUS_Res_qual": rec.FUS_Res_qual,
                 "TMP_Res_qual": rec.TMP_Res_qual,
-                "SMX_Res_qual": rec.SMX_Res_qual
+                "SMX_Res_qual": rec.SMX_Res_qual,
+                "ETP_Res_qual": rec.ETP_Res_qual
             }
         };
 
@@ -152,8 +151,27 @@ const getRelationalData = (obj: IRelation): string | ISubNode => {
  * @param value value for which search will be performed
  * @returns id of the matching record as a number
  */
-export const getId = (collection: any, key: string, value: string) : number => {
+export const getId = (collection: any, key: string, value: string): number => {
     var item = collection.find(item => item[key] == value);
+    if (item) {
+        return item.id;
+    } else {
+        return null;
+    }
+}
+
+/**
+ * Get id of the record from the collection's ontology tuple using the key and value passed
+ * @param collection list of the data on which search will be performed
+ * @param key key by which search will be performed
+ * @param value value for which search will be performed
+ * @returns id of the matching record as a number
+ */
+export const getOntologyTupleId = (collection: any, key: string, value: string): number => {
+
+    var item = collection.find(item => {
+        return item["ontology_tuple"] && item["ontology_tuple"][key] == value;
+    });
     if (item) {
         return item.id;
     } else {
@@ -165,7 +183,7 @@ export const getId = (collection: any, key: string, value: string) : number => {
  * Get current DateTime in ISO string
  * @returns DateTime in ISO string format
  */
-export const getDateTimeISOString =() : string => {
+export const getDateTimeISOString = (): string => {
     return new Date().toISOString();
 }
 

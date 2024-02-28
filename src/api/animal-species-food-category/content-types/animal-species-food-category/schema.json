@@ -4,25 +4,24 @@
   "info": {
     "singularName": "animal-species-food-category",
     "pluralName": "animal-species-food-categories",
-    "displayName": "Animal Species Food Upper Category",
-    "description": ""
+    "displayName": "MD Animal Species/ Food category"
   },
   "options": {
     "draftAndPublish": false
   },
   "pluginOptions": {},
   "attributes": {
-    "name": {
-      "type": "string"
-    },
-    "iri": {
-      "type": "string"
+    "ontology_tuple": {
+      "type": "component",
+      "repeatable": false,
+      "component": "kida.ontology-term",
+      "required": true
     },
     "isolates": {
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::isolate.isolate",
-      "mappedBy": "animal_species_food_upper_category"
+      "mappedBy": "animalSpeciesFoodCategory"
     }
   }
 }

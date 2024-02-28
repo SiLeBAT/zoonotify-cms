@@ -1,0 +1,66 @@
+{
+  "collectionName": "components_antibiotic_cut_off",
+  "info": {
+    "displayName": "AntibioticCutOffData",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "year": {
+      "type": "integer"
+    },
+    "antibiotic": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::antibiotic.antibiotic"
+    },
+    "substanzklasse": {
+      "type": "enumeration",
+      "enum": [
+        "Aminoglycoside",
+        "Amphenicole",
+        "Penicilline",
+        "Cephalosporine",
+        "Carbapeneme",
+        "(Fluor)chinolone",
+        "Polymyxine",
+        "Tetrazykline",
+        "Glycylcycline",
+        "Azalide",
+        "Folatsynthesehemmer",
+        "Sulfonamide",
+        "Makrolide",
+        "Ansamycine",
+        "Lincosamide",
+        "Glykopeptide",
+        "Oxazolidinone",
+        "Pleuromutiline",
+        "Pseudomonische Säuren",
+        "Streptogramine",
+        "Triterpensäuren",
+        "Lipopeptide"
+      ]
+    },
+    "bacteria": {
+      "type": "enumeration",
+      "enum": [
+        "Escherichia coli",
+        "Salmonella spp",
+        "Campylobacter jejuni",
+        "Campylobacter coli",
+        "methicillin-resistant Staphylococcus aureus",
+        "Enterococcus faecalis",
+        "Enterococcus faecium"
+      ]
+    },
+    "min": {
+      "type": "decimal"
+    },
+    "max": {
+      "type": "decimal"
+    },
+    "cutOff": {
+      "type": "string"
+    }
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "kind": "collectionType",
+  "collectionName": "sampling_contexts",
+  "info": {
+    "singularName": "sampling-context",
+    "pluralName": "sampling-contexts",
+    "displayName": "MD Sampling Context"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "ontology_tuple": {
+      "type": "component",
+      "repeatable": false,
+      "component": "kida.ontology-term",
+      "required": true
+    },
+    "isolates": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::isolate.isolate",
+      "mappedBy": "samplingContext"
+    }
+  }
+}

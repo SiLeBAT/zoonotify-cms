@@ -3,23 +3,30 @@
  */
 import { factories } from '@strapi/strapi';
 import { IKeys, IIsolate, Isolate } from '../models/models';
-import { getDateTimeISOString, getId } from './../extensions/helper';
+import { getDateTimeISOString, getId, getOntologyTupleId } from './../extensions/helper';
 const fs = require('fs');
 import xlsx from 'node-xlsx';
-const { promisify } = require('util');
-const { setImmediate } = require('timers');
-const setImmediateP = promisify(setImmediate);
+import { mapAllSettled } from '../../../extensions/helper';
 
-let states;
 let microorganisms;
-let objectives;
+let contexts;
 let salmonellas;
-let origins;
-let points;
+let types;
+let stages;
 let matrices;
 let matrixDetails;
 let categories;
 let productions;
+
+let newMicroorganisms;
+let newContexts;
+let newSalmonellas;
+let newTypes;
+let newStages;
+let newMatrices;
+let newMatrixDetails;
+let newCategories;
+let newProductions;
 
 export default factories.createCoreService('api::isolate.isolate', ({ strapi }) => ({
     async import(ctx) {
@@ -28,28 +35,24 @@ export default factories.createCoreService('api::isolate.isolate', ({ strapi }) 
         /**
             * Fetch master data
         */
-        states = await strapi.entityService.findMany('api::state.state', {
-            fields: ['id', 'name']
-        });
-
         microorganisms = await strapi.entityService.findMany('api::microorganism.microorganism', {
             fields: ['id', 'name']
         });
 
-        objectives = await strapi.entityService.findMany('api::sampling-objective.sampling-objective', {
-            fields: ['id', 'name']
+        contexts = await strapi.entityService.findMany('api::sampling-context.sampling-context', {
+            populate: { ontology_tuple: true }
         });
 
         salmonellas = await strapi.entityService.findMany('api::salmonella.salmonella', {
             fields: ['id', 'name']
         });
 
-        origins = await strapi.entityService.findMany('api::sampling-origin.sampling-origin', {
-            fields: ['id', 'name']
+        types = await strapi.entityService.findMany('api::sample-type.sample-type', {
+            populate: { ontology_tuple: true }
         });
 
-        points = await strapi.entityService.findMany('api::sampling-point.sampling-point', {
-            fields: ['id', 'name']
+        stages = await strapi.entityService.findMany('api::sampling-stage.sampling-stage', {
+            populate: { ontology_tuple: true }
         });
 
         matrices = await strapi.entityService.findMany('api::matrix.matrix', {
@@ -61,11 +64,11 @@ export default factories.createCoreService('api::isolate.isolate', ({ strapi }) 
         });
 
         categories = await strapi.entityService.findMany('api::animal-species-food-category.animal-species-food-category', {
-            fields: ['id', 'name']
+            populate: { ontology_tuple: true }
         });
 
-        productions = await strapi.entityService.findMany('api::animal-species-production-direction-food.animal-species-production-direction-food', {
-            fields: ['id', 'name']
+        productions = await strapi.entityService.findMany('api::animal-species-production-type-food.animal-species-production-type-food', {
+            populate: { ontology_tuple: true }
         });
 
         /**
@@ -105,17 +108,254 @@ export default factories.createCoreService('api::isolate.isolate', ({ strapi }) 
             });
         });
 
-        dataFromFirstSheet.forEach((rec) => {
+        let recList: any[] = [];
+        dataFromFirstSheet.forEach(async (rec, index) => {
             let newRec = {};
             keyMappings.forEach((keyEntry) => {
                 newRec[keyEntry.displayName] = rec[keyEntry.index] ? rec[keyEntry.index].toString() : "";
             });
-            recs.push(setRelationalData(newRec));
+            recList.push(newRec);
         });
+
+        newMicroorganisms = new Set(recList
+            .filter((r) => { return r.Mikroorganismus && !getId(microorganisms, "name", r.Mikroorganismus); })
+            .map((m) => { return m.Mikroorganismus; }));
+
+        newContexts = new Set(recList
+            .filter((r) => { return r.Probenahmegrund && !getOntologyTupleId(contexts, "token", r.Probenahmegrund); })
+            .map((m) => { return m.Probenahmegrund; }));
+
+        newSalmonellas = new Set(recList
+            .filter((r) => { return r.Salm_Serovar && !getId(salmonellas, "name", r.Salm_Serovar); })
+            .map((m) => { return m.Salm_Serovar; }));
+
+        newTypes = new Set(recList
+            .filter((r) => { return r.Probenherkunft && !getOntologyTupleId(types, "token", r.Probenherkunft); })
+            .map((m) => { return m.Probenherkunft; }));
+
+        newStages = new Set(recList
+            .filter((r) => { return r.Probenahmestelle && !getOntologyTupleId(stages, "token", r.Probenahmestelle); })
+            .map((m) => { return m.Probenahmestelle; }));
+
+        newMatrices = new Set(recList
+            .filter((r) => { return r.Matrix && !getId(matrices, "name", r.Matrix); })
+            .map((m) => { return m.Matrix; }));
+
+        newMatrixDetails = new Set(recList
+            .filter((r) => { return r.Matrixdetail && !getId(matrixDetails, "name", r.Matrixdetail); })
+            .map((m) => { return m.Matrixdetail; }));
+
+        newCategories = new Set(recList
+            .filter((r) => { return r.Tierart_Lebensmittel_Oberkategorie && !getOntologyTupleId(categories, "token", r.Tierart_Lebensmittel_Oberkategorie); })
+            .map((m) => { return m.Tierart_Lebensmittel_Oberkategorie; }));
+
+        newProductions = new Set(recList
+            .filter((r) => { return r.Tierart_Produktionsrichtung_Lebensmittel && !getOntologyTupleId(productions, "token", r.Tierart_Produktionsrichtung_Lebensmittel); })
+            .map((m) => { return m.Tierart_Produktionsrichtung_Lebensmittel; }));
+
+        // Add microorganism
+        if (newMicroorganisms.size > 0) {
+            let newMD = [];
+            newMicroorganisms.forEach((rec: string) => {
+                newMD.push({
+                    name: rec
+                });
+            });
+            let newMDRes = await addBulkMasterData('api::microorganism.microorganism', newMD);
+            newMDRes.ids.forEach((id: number, index: number) => {
+                microorganisms.push({ id, name: newMD[index].name });
+            });
+        }
+
+        // Add sampling-context
+        if (newContexts.size > 0) {
+            let newSC = [];
+            newContexts.forEach((rec: string) => {
+                newSC.push({
+                    ontology_tuple: {
+                        token: rec
+                    }
+                });
+            });
+
+            for (let i = 0; i < newSC.length; i++) {
+                const entry = await strapi.entityService.create('api::sampling-context.sampling-context', {
+                    data: newSC[i],
+                });
+                contexts.push(
+                    {
+                        id: entry.id, ontology_tuple: newSC[i].ontology_tuple
+                    }
+                );
+            }
+
+        }
+
+        // Add salmonellas
+        if (newSalmonellas.size > 0) {
+            let newS = [];
+            newSalmonellas.forEach((rec: string) => {
+                newS.push({
+                    name: rec
+                });
+            });
+            let newSRes = await addBulkMasterData('api::salmonella.salmonella', newS);
+            newSRes.ids.forEach((id: number, index: number) => {
+                salmonellas.push({ id, name: newS[index].name });
+            });
+        }
+
+
+        // Add sample-types
+        if (newTypes.size > 0) {
+            let newT = [];
+            newTypes.forEach((rec: string) => {
+                newT.push({
+                    ontology_tuple: {
+                        token: rec
+                    }
+                });
+            });
+            for (let i = 0; i < newT.length; i++) {
+                const entry = await strapi.entityService.create('api::sample-type.sample-type', {
+                    data: newT[i],
+                });
+                types.push(
+                    {
+                        id: entry.id, ontology_tuple: newT[i].ontology_tuple
+                    }
+                );
+            }
+        }
+
+        // Add sampling-stage
+        if (newStages.size > 0) {
+            let newSt = [];
+            newStages.forEach((rec: string) => {
+                newSt.push({
+                    ontology_tuple: {
+                        token: rec
+                    }
+                });
+            });
+            for (let i = 0; i < newSt.length; i++) {
+                const entry = await strapi.entityService.create('api::sampling-stage.sampling-stage', {
+                    data: newSt[i],
+                });
+                stages.push(
+                    {
+                        id: entry.id, ontology_tuple: newSt[i].ontology_tuple
+                    }
+                );
+            }
+        }
+
+        // Add matrix
+        if (newMatrices.size > 0) {
+            let newM = [];
+            newMatrices.forEach((rec: string) => {
+                newM.push({
+                    name: rec
+                });
+            });
+            let newMRes = await addBulkMasterData('api::matrix.matrix', newM);
+            let newMatricesArr = Array.from(newMatrices);
+            newMRes.ids.forEach((id: number, index: number) => {
+                matrices.push({ id, name: newM[index].name });
+            });
+        }
+
+        // Add matrix-details
+        if (newMatrixDetails.size > 0) {
+            let newMDD = [];
+            newMatrixDetails.forEach((rec: string) => {
+                newMDD.push({
+                    name: rec
+                });
+            });
+
+            let newMDDRes = await addBulkMasterData('api::matrix-detail.matrix-detail', newMDD);
+            newMDDRes.ids.forEach((id: number, index: number) => {
+                matrixDetails.push({ id, name: newMDD[index].name });
+            });
+        }
+
+        // Add categories
+        if (newCategories.size > 0) {
+            let newC = [];
+            newCategories.forEach((rec: string) => {
+                newC.push({
+                    ontology_tuple: {
+                        token: rec
+                    }
+                });
+            });
+            for (let i = 0; i < newC.length; i++) {
+                const entry = await strapi.entityService.create('api::animal-species-food-category.animal-species-food-category', {
+                    data: newC[i],
+                });
+                categories.push(
+                    {
+                        id: entry.id, ontology_tuple: newC[i].ontology_tuple
+                    }
+                );
+            }
+        }
+
+        // Add productions
+        if (newProductions.size > 0) {
+            let newP = [];
+            newProductions.forEach((rec: string) => {
+                newP.push({
+                    ontology_tuple: {
+                        token: rec
+                    }
+                });
+            });
+            for (let i = 0; i < newP.length; i++) {
+                const entry = await strapi.entityService.create('api::animal-species-production-type-food.animal-species-production-type-food', {
+                    data: newP[i],
+                });
+                productions.push(
+                    {
+                        id: entry.id, ontology_tuple: newP[i].ontology_tuple
+                    }
+                );
+            }
+        }
+
+        for (let index = 0; index < dataFromFirstSheet.length; index++) {
+            const rec = dataFromFirstSheet[index];
+            let newRec = {};
+            keyMappings.forEach((keyEntry) => {
+                newRec[keyEntry.displayName] = rec[keyEntry.index] ? rec[keyEntry.index].toString() : "";
+            });
+            let newRecord = await setRelationalData(newRec);
+            newRecord.bfrIsolatNr = newRecord.BfR_Isolat_Nr;
+            newRecord.dbId = newRecord.DB_ID;
+            newRecord.nrl = newRecord.NRL;
+            newRecord.zomoProgramm = newRecord.ZoMo_Programm;
+            newRecord.berichte = newRecord.Bericht_e;
+            newRecord.mrsaSpaTyp = newRecord.MRSA_spa_Typ;
+            newRecord.mrsaKlonaleGruppe = newRecord.MRSA_Klonale_Gruppe;
+            newRecord.enteroSpez = newRecord.Entero_Spez;
+            newRecord.campySpez = newRecord.Campy_Spez;
+            newRecord.listeriaSerotyp = newRecord.Listeria_Serotyp;
+            newRecord.stecSerotyp = newRecord.STEC_Serotyp;
+            newRecord.stx1Gen = newRecord.STEC_stx1_Gen;
+            newRecord.stx2Gen = newRecord.STEC_stx2_Gen;
+            newRecord.eaeGen = newRecord.STEC_eae_Gen;
+            newRecord.e_hlyGen = newRecord.STEC_e_hly_Gen;
+
+            if (newRecord.dbId) {
+                recs.push(newRecord);
+            }
+        }
+
 
         console.log(`Inserting total ${recs.length} records`);
         console.time('mapAllSettled');
-        const results = await mapAllSettled(recs, saveIsolate, 100);
+        const results = await mapAllSettled(recs, saveIsolate, 100, "dbId");
         console.timeEnd('mapAllSettled');
         console.timeEnd('Import');
         return results;
@@ -127,69 +367,98 @@ export default factories.createCoreService('api::isolate.isolate', ({ strapi }) 
  * @param record object received from the imported excel
  * @returns new object of type LabTest
  */
-const setRelationalData = (record: any): Isolate => {
+const setRelationalData = async (record: any): Promise<Isolate> => {
     const { Jahr, BL, Mikroorganismus, Probenahmegrund, Probenahmestelle, Probenherkunft, Tierart_Lebensmittel_Oberkategorie, Tierart_Produktionsrichtung_Lebensmittel, Matrix, Matrixdetail, Salm_Serovar, ...strippedRecord } = record;
     let newTest = new Isolate(strippedRecord as IIsolate);
+    newTest.samplingYear = Number(record.Jahr);
 
-    newTest.year = Number(record.Jahr);
-
-    if (record.BL) {
-        newTest.state = {
-            "set": [getId(states, "name", record.BL)]
-        };
-    }
-
-    if (record.Mikroorganismus) {
+    if (Mikroorganismus) {
+        let id = getId(microorganisms, "name", Mikroorganismus);
+        if (!id) {
+            console.log(`Mikroorganismus ${Mikroorganismus} not found in the master data`);
+        }
         newTest.microorganism = {
-            "set": [getId(microorganisms, "name", record.Mikroorganismus)]
+            "set": [id]
         }
     }
 
-    if (record.Probenahmegrund) {
-        newTest.sampling_objective = {
-            "set": [getId(objectives, "name", record.Probenahmegrund)]
+    if (Probenahmegrund) {
+        let id = getOntologyTupleId(contexts, "token", Probenahmegrund);
+        if (!id) {
+            console.log(`Context ${Probenahmegrund} not found in the master data`);
+        }
+        newTest.samplingContext = {
+            "set": [id]
         }
     }
 
-    if (record.Probenahmestelle) {
-        newTest.sampling_point = {
-            "set": [getId(points, "name", record.Probenahmestelle)]
+    if (Probenahmestelle) {
+        let id = getOntologyTupleId(stages, "token", Probenahmestelle);
+        if (!id) {
+            console.log(`Stage ${Probenahmestelle} not found in the master data`);
+        }
+        newTest.samplingStage = {
+            "set": [id]
         }
     }
 
-    if (record.Probenherkunft) {
-        newTest.sampling_origin = {
-            "set": [getId(origins, "name", record.Probenherkunft)]
+    if (Probenherkunft) {
+        let id = getOntologyTupleId(types, "token", Probenherkunft);
+        if (!id) {
+            console.log(`Type ${Probenherkunft} not found in the master data`);
+        }
+        newTest.sampleType = {
+            "set": [id]
         }
     }
 
-    if (record.Tierart_Lebensmittel_Oberkategorie) {
-        newTest.animal_species_food_upper_category = {
-            "set": [getId(categories, "name", record.Tierart_Lebensmittel_Oberkategorie)]
+    if (Tierart_Lebensmittel_Oberkategorie) {
+        let id = getOntologyTupleId(categories, "token", Tierart_Lebensmittel_Oberkategorie);
+        if (!id) {
+            console.log(`Category ${Tierart_Lebensmittel_Oberkategorie} not found in the master data`);
+        }
+        newTest.animalSpeciesFoodCategory = {
+            "set": [id]
         }
     }
 
-    if (record.Tierart_Produktionsrichtung_Lebensmittel) {
-        newTest.animal_species_production_direction_food = {
-            "set": [getId(productions, "name", record.Tierart_Produktionsrichtung_Lebensmittel)]
+    if (Tierart_Produktionsrichtung_Lebensmittel) {
+        let id = getOntologyTupleId(productions, "token", Tierart_Produktionsrichtung_Lebensmittel);
+        if (!id) {
+            console.log(`Productions ${Tierart_Produktionsrichtung_Lebensmittel} not found in the master data`);
+        }
+        newTest.animalSpeciesProductionTypeFood = {
+            "set": [id]
         }
     }
 
-    if (record.Matrix) {
+    if (Matrix) {
+        let id = getId(matrices, "name", Matrix);
+        if (!id) {
+            console.log(`Matrices ${Matrix} not found in the master data`);
+        }
         newTest.matrix = {
-            "set": [getId(matrices, "name", record.Matrix)]
+            "set": [id]
         }
     }
 
-    if (record.Matrixdetail) {
-        newTest.matrix_detail = {
-            "set": [getId(matrixDetails, "name", record.Matrixdetail)]
+    if (Matrixdetail) {
+        let id = getId(matrixDetails, "name", Matrixdetail);
+        if (!id) {
+            console.log(`Matrix-Detail ${Matrixdetail} not found in the master data`);
+        }
+        newTest.matrixDetail = {
+            "set": [id]
         }
     }
 
-    if (record.Salm_Serovar) {
+    if (Salm_Serovar) {
+        let id = getId(salmonellas, "name", Salm_Serovar);
+        if (!id) {
+            console.log(`Salmonella ${Salm_Serovar} not found in the master data`);
+        }
         newTest.salmonella = {
-            "set": [getId(salmonellas, "name", record.Salm_Serovar)]
+            "set": [id]
         }
     }
 
@@ -199,6 +468,13 @@ const setRelationalData = (record: any): Isolate => {
     return newTest;
 }
 
+const addBulkMasterData = async (endpoint: string, data: any) => {
+    let response = await strapi.db.query(endpoint).createMany({
+        data: data
+    });
+    return response;
+}
+
 /**
  * Save isolate data using db query
  * @param rec Individual isolate record to be saved
@@ -206,84 +482,21 @@ const setRelationalData = (record: any): Isolate => {
  * @returns Id of the newly added record
  */
 const saveIsolate = async (rec, i) => {
+    if (rec.Modified_record) {
+        const [entries, count] = await strapi.db.query("api::isolate.isolate").findWithCount({
+            select: ['id'],
+            where: { dbId: rec.dbId }
+        });
+        if (count > 0) {
+            const entry = await strapi.entityService.update("api::isolate.isolate", entries[0].id, {
+                data: JSON.parse(JSON.stringify(rec))
+            });
+            return entries[0].id;
+        }
+
+    }
     let response = await strapi.db.query("api::isolate.isolate").create({
         data: JSON.parse(JSON.stringify(rec))
     });
     return response.id;
-}
-
-/**
- * Return promise for a record my calling a save action function
- * @param mapFn Function which does actual ddatabase save call
- * @param currentValue Current record which needs to be saved
- * @param index Indedx of the current record
- * @param array Collections of the records need to be saved
- * @returns Promise with either Id of the saved record or the error
- */
-const mapItem = async (mapFn, currentValue, index, array) => {
-    try {
-        await setImmediateP()
-        return {
-            status: 'fulfilled',
-            value: await mapFn(currentValue, index, array)
-        }
-    } catch (reason) {
-        return {
-            status: 'rejected',
-            reason
-        }
-    }
-}
-
-/**
- * Call mapItem for each record inside an array for a worker
- * @param id Id of the worker under execution
- * @param gen Array chunk specific to the worker
- * @param mapFn Function which does actual ddatabase save call
- * @param result Array holding final result
- */
-const worker = async (id, gen, mapFn, result) => {
-    console.time(`Worker ${id}`);
-    for (let [currentValue, index, array] of gen) {
-        console.time(`Worker ${id} --- index ${index} item ${currentValue}`);
-        result[index] = await mapItem(mapFn, currentValue, index, array);
-        console.timeEnd(`Worker ${id} --- index ${index} item ${currentValue}`);
-    }
-    console.timeEnd(`Worker ${id}`);
-}
-
-/**
- * A generator function to get chunk of the huge array
- * @param array Original huge array that holds records to be saved
- */
-function* arrayGenerator(array) {
-    for (let index = 0; index < array.length; index++) {
-        const currentValue = array[index];
-        yield [currentValue, index, array];
-    }
-}
-
-/**
- * 
- * @param arr Original huge array that holds records to be saved
- * @param mapFn Function which does actual ddatabase save call
- * @param limit Max number of workers to be used
- * @returns A promise containing all individual results
- */
-const mapAllSettled = async (arr, mapFn, limit = arr.length) => {
-    const result = [];
-    if (arr.length === 0) {
-        return result;
-    }
-
-    const gen = arrayGenerator(arr);
-    limit = Math.min(limit, arr.length);
-    const workers = new Array(limit);
-
-    for (let i = 0; i < limit; i++) {
-        workers.push(worker(i, gen, mapFn, result));
-    }
-    console.log(`Initialized ${limit} workers`);
-    await Promise.all(workers);
-    return result;
 }

@@ -8,25 +8,24 @@ export interface IIsolateData {
 }
 
 export interface IIsolateDataAttributes {
-    year: number
+    samplingYear: number
     createdAt: any
     updatedAt: any
-    Originaleinsendenr: any
-    BfR_Isolat_Nr: string
-    DB_ID: string
-    NRL: string
-    ZoMo_Programm: string
-    Bericht_e: string
-    MRSA_spa_Typ: string
-    MRSA_Klonale_Gruppe: string
-    Entero_Spez: string
-    Campy_Spez: string
-    Listeria_Serotyp: string
-    STEC_Serotyp: string
-    STEC_stx1_Gen: string
-    STEC_stx2_Gen: string
-    STEC_eae_Gen: string
-    STEC_e_hly_Gen: string
+    bfrIsolatNr: string
+    dbId: string
+    nrl: string
+    zomoProgramm: string
+    berichte: string
+    mrsaSpaTyp: string
+    mrsaKlonaleGruppe: string
+    enteroSpez: string
+    campySpez: string
+    listeriaSerotyp: string
+    stecSerotyp: string
+    stx1Gen: string
+    stx2Gen: string
+    eaeGen: string
+    e_hlyGen: string
     ESBL_AmpC_Carba_Phanotyp: any
     WGS: string
     keine_Gene_oder_Mutationen_gefunden: string
@@ -98,16 +97,19 @@ export interface IIsolateDataAttributes {
     FUS_Res_qual: string
     TMP_Res_qual: string
     SMX_Res_qual: string
-    state: IState
     microorganism: IMicroorganism
-    objective: ISamplingObjective
-    sampling_point: ISamplingPoint
-    sampling_origin: ISamplingOrigin
-    animal_species_food_upper_category: IAnimalSpeciesFoodUpperCategory
+    context: ISamplingContext
+    samplingStage: ISamplingStage
+    sampleType: ISampleType
+    animalSpeciesFoodCategory: IAnimalSpeciesFoodCategory
     matrix: IMatrix
     salmonella: ISalmonella
-    matrix_detail: IMatrixDetail
-    animal_species_production_direction_food: IAnimalSpeciesProductionDirectionFood
+    matrixDetail: IMatrixDetail
+    animalSpeciesProductionTypeFood: IAnimalSpeciesProductionDirectionFood
+    ETP_Res_qual: string;
+    ETP_Res_quant: string;
+    Datum_der_Datenextraktion: string;
+    DB_Version: string;
 }
 
 export interface IRelation {
@@ -126,23 +128,19 @@ export interface IRelationDataAttributes {
     updatedAt: any
 }
 
-export interface IState extends IRelation {
-}
-
-
 export interface IMicroorganism extends IRelation {
 }
 
-export interface ISamplingObjective extends IRelation {
+export interface ISamplingContext extends IRelation {
 }
 
-export interface ISamplingPoint extends IRelation {
+export interface ISamplingStage extends IRelation {
 }
 
-export interface ISamplingOrigin extends IRelation {
+export interface ISampleType extends IRelation {
 }
 
-export interface IAnimalSpeciesFoodUpperCategory extends IRelation {
+export interface IAnimalSpeciesFoodCategory extends IRelation {
 }
 
 export interface IMatrix extends IRelation {

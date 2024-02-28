@@ -1,0 +1,84 @@
+{
+  "kind": "collectionType",
+  "collectionName": "prevalences",
+  "info": {
+    "singularName": "prevalence",
+    "pluralName": "prevalences",
+    "displayName": "Prevalence"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "dbId": {
+      "type": "string",
+      "private": true
+    },
+    "samplingYear": {
+      "type": "integer"
+    },
+    "zomoProgram": {
+      "type": "string",
+      "private": true
+    },
+    "furtherDetails": {
+      "type": "text"
+    },
+    "numberOfSamples": {
+      "type": "integer"
+    },
+    "numberOfPositive": {
+      "type": "integer"
+    },
+    "percentageOfPositive": {
+      "type": "decimal"
+    },
+    "ciMin": {
+      "type": "decimal"
+    },
+    "ciMax": {
+      "type": "decimal"
+    },
+    "samplingContext": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::sampling-context.sampling-context"
+    },
+    "samplingStage": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::sampling-stage.sampling-stage"
+    },
+    "sampleType": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::sample-type.sample-type"
+    },
+    "animalSpeciesFoodCategory": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::animal-species-food-category.animal-species-food-category"
+    },
+    "animalSpeciesProductionTypeFood": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::animal-species-production-type-food.animal-species-production-type-food"
+    },
+    "matrix": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::matrix.matrix"
+    },
+    "matrixDetail": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::matrix-detail.matrix-detail"
+    },
+    "microorganism": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::microorganism.microorganism"
+    }
+  }
+}

@@ -12,13 +12,8 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "year": {
+    "samplingYear": {
       "type": "biginteger"
-    },
-    "state": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::state.state"
     },
     "microorganism": {
       "type": "relation",
@@ -26,22 +21,22 @@
       "target": "api::microorganism.microorganism",
       "inversedBy": "isolates"
     },
-    "sampling_objective": {
+    "samplingContext": {
       "type": "relation",
       "relation": "manyToOne",
-      "target": "api::sampling-objective.sampling-objective",
+      "target": "api::sampling-context.sampling-context",
       "inversedBy": "isolates"
     },
-    "sampling_point": {
+    "samplingStage": {
       "type": "relation",
       "relation": "manyToOne",
-      "target": "api::sampling-point.sampling-point",
+      "target": "api::sampling-stage.sampling-stage",
       "inversedBy": "isolates"
     },
-    "sampling_origin": {
+    "sampleType": {
       "type": "relation",
       "relation": "manyToOne",
-      "target": "api::sampling-origin.sampling-origin",
+      "target": "api::sample-type.sample-type",
       "inversedBy": "isolates"
     },
     "matrix": {
@@ -50,23 +45,17 @@
       "target": "api::matrix.matrix",
       "inversedBy": "isolates"
     },
-    "matrix_detail": {
+    "matrixDetail": {
       "type": "relation",
       "relation": "manyToOne",
       "target": "api::matrix-detail.matrix-detail",
       "inversedBy": "isolates"
     },
-    "animal_species_food_upper_category": {
+    "animalSpeciesProductionTypeFood": {
       "type": "relation",
       "relation": "manyToOne",
-      "target": "api::animal-species-food-category.animal-species-food-category",
+      "target": "api::animal-species-production-type-food.animal-species-production-type-food",
       "inversedBy": "isolates"
-    },
-    "animal_species_production_direction_food": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::animal-species-production-direction-food.animal-species-production-direction-food",
-      "inversedBy": "direction_isolates"
     },
     "salmonella": {
       "type": "relation",
@@ -74,52 +63,52 @@
       "target": "api::salmonella.salmonella",
       "inversedBy": "isolates"
     },
-    "Originaleinsendenr": {
+    "bfrIsolatNr": {
+      "type": "string",
+      "private": true
+    },
+    "dbId": {
+      "type": "string",
+      "private": true
+    },
+    "nrl": {
       "type": "string"
     },
-    "BfR_Isolat_Nr": {
+    "zomoProgramm": {
+      "type": "string",
+      "private": true
+    },
+    "berichte": {
       "type": "string"
     },
-    "DB_ID": {
+    "mrsaSpaTyp": {
       "type": "string"
     },
-    "NRL": {
+    "mrsaKlonaleGruppe": {
       "type": "string"
     },
-    "ZoMo_Programm": {
+    "enteroSpez": {
       "type": "string"
     },
-    "Bericht_e": {
+    "campySpez": {
       "type": "string"
     },
-    "MRSA_spa_Typ": {
+    "listeriaSerotyp": {
       "type": "string"
     },
-    "MRSA_Klonale_Gruppe": {
+    "stecSerotyp": {
       "type": "string"
     },
-    "Entero_Spez": {
+    "stx1Gen": {
       "type": "string"
     },
-    "Campy_Spez": {
+    "stx2Gen": {
       "type": "string"
     },
-    "Listeria_Serotyp": {
+    "eaeGen": {
       "type": "string"
     },
-    "STEC_Serotyp": {
-      "type": "string"
-    },
-    "STEC_stx1_Gen": {
-      "type": "string"
-    },
-    "STEC_stx2_Gen": {
-      "type": "string"
-    },
-    "STEC_eae_Gen": {
-      "type": "string"
-    },
-    "STEC_e_hly_Gen": {
+    "e_hlyGen": {
       "type": "string"
     },
     "ESBL_AmpC_Carba_Phanotyp": {
@@ -334,6 +323,25 @@
     },
     "SMX_Res_qual": {
       "type": "string"
+    },
+    "ETP_Res_qual": {
+      "type": "string"
+    },
+    "ETP_Res_quant": {
+      "type": "string"
+    },
+    "Datum_der_Datenextraktion": {
+      "type": "string"
+    },
+    "DB_Version": {
+      "type": "string",
+      "private": true
+    },
+    "animalSpeciesFoodCategory": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::animal-species-food-category.animal-species-food-category",
+      "inversedBy": "isolates"
     }
   }
 }
