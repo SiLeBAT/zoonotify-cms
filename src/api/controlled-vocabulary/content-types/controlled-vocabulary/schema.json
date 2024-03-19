@@ -1,0 +1,25 @@
+{
+  "kind": "collectionType",
+  "collectionName": "controlled_vocabularies",
+  "info": {
+    "singularName": "controlled-vocabulary",
+    "pluralName": "controlled-vocabularies",
+    "displayName": "Controlled Vocabulary"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "de": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "en": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    }
+  }
+}
