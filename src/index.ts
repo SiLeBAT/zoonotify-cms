@@ -348,14 +348,14 @@ async function importControlledVocabularyTranslations(strapi) {
  const fs = require('fs');
  const path = require('path');
   
-  let filePath = path.join(__dirname, '../../data//master-data/ZooNotify_DB_translation (1).xlsx');
+  let filePath = path.join(__dirname, '../../data//master-data/ZooNotify_DB_translation .xlsx');
 
   if (fs.existsSync(filePath)) {
     const buffer = fs.readFileSync(filePath);
     const dataFromExcel = xlsx.parse(buffer); // Parse the Excel file
     const translationData = dataFromExcel.find(sheet => sheet.name === 'translation'); // Find the 'translation' sheet
 
-    // Assuming your Controlled Vocabulary collection type is correctly defined in Strapi as outlined before
+
     let dataList = translationData.data.slice(1).map(row => { // Skip header row
       return {
         de: row[1], // German translation
