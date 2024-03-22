@@ -1,0 +1,27 @@
+{
+  "kind": "singleType",
+  "collectionName": "data_protection_declarations",
+  "info": {
+    "singularName": "data-protection-declaration",
+    "pluralName": "data-protection-declarations",
+    "displayName": "Data Protection Declaration"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+
+"pluginOptions": {
+  "i18n": {
+    "localized": true
+  }
+},
+  "attributes": {
+    "subheading": {
+      "type": "text"
+    },
+    "content": {
+      "type": "richtext",
+      "required": true
+    }
+  }
+}
