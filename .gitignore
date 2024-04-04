@@ -114,6 +114,7 @@ exports
 *.cache
 dist
 build
+data
 .strapi-updater.json
 export_20*
 src/extensions/documentation/
