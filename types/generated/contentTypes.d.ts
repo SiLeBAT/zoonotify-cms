@@ -916,6 +916,80 @@ export interface ApiConfigurationConfiguration extends Schema.SingleType {
   };
 }
 
+export interface ApiControlledVocabularyControlledVocabulary
+  extends Schema.CollectionType {
+  collectionName: 'controlled_vocabularies';
+  info: {
+    singularName: 'controlled-vocabulary';
+    pluralName: 'controlled-vocabularies';
+    displayName: 'Controlled Vocabulary';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    de: Attribute.String & Attribute.Required & Attribute.Unique;
+    en: Attribute.String & Attribute.Required & Attribute.Unique;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::controlled-vocabulary.controlled-vocabulary',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::controlled-vocabulary.controlled-vocabulary',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiDataProtectionDeclarationDataProtectionDeclaration
+  extends Schema.SingleType {
+  collectionName: 'data_protection_declarations';
+  info: {
+    singularName: 'data-protection-declaration';
+    pluralName: 'data-protection-declarations';
+    displayName: 'Data Protection Declaration';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
+  };
+  attributes: {
+    subheading: Attribute.Text;
+    content: Attribute.RichText & Attribute.Required;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::data-protection-declaration.data-protection-declaration',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::data-protection-declaration.data-protection-declaration',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    localizations: Attribute.Relation<
+      'api::data-protection-declaration.data-protection-declaration',
+      'oneToMany',
+      'api::data-protection-declaration.data-protection-declaration'
+    >;
+    locale: Attribute.String;
+  };
+}
+
 export interface ApiEvaluationEvaluation extends Schema.CollectionType {
   collectionName: 'evaluations';
   info: {
@@ -1907,6 +1981,8 @@ declare module '@strapi/types' {
       'api::animal-species-production-type-food.animal-species-production-type-food': ApiAnimalSpeciesProductionTypeFoodAnimalSpeciesProductionTypeFood;
       'api::antibiotic.antibiotic': ApiAntibioticAntibiotic;
       'api::configuration.configuration': ApiConfigurationConfiguration;
+      'api::controlled-vocabulary.controlled-vocabulary': ApiControlledVocabularyControlledVocabulary;
+      'api::data-protection-declaration.data-protection-declaration': ApiDataProtectionDeclarationDataProtectionDeclaration;
       'api::evaluation.evaluation': ApiEvaluationEvaluation;
       'api::evaluation-information.evaluation-information': ApiEvaluationInformationEvaluationInformation;
       'api::explanation.explanation': ApiExplanationExplanation;
