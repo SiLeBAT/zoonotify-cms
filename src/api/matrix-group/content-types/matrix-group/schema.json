@@ -1,0 +1,22 @@
+{
+  "kind": "collectionType",
+  "collectionName": "matrix_groups",
+  "info": {
+    "singularName": "matrix-group",
+    "pluralName": "matrix-groups",
+    "displayName": "MD Matrix Group",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "iri": {
+      "type": "string"
+    }
+  }
+}

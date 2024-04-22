@@ -1571,6 +1571,38 @@ export interface ApiMatrixDetailMatrixDetail extends Schema.CollectionType {
   };
 }
 
+export interface ApiMatrixGroupMatrixGroup extends Schema.CollectionType {
+  collectionName: 'matrix_groups';
+  info: {
+    singularName: 'matrix-group';
+    pluralName: 'matrix-groups';
+    displayName: 'MD Matrix Group';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    name: Attribute.String;
+    iri: Attribute.String;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::matrix-group.matrix-group',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::matrix-group.matrix-group',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiMicroorganismMicroorganism extends Schema.CollectionType {
   collectionName: 'microorganisms';
   info: {
@@ -1613,6 +1645,7 @@ export interface ApiPrevalencePrevalence extends Schema.CollectionType {
     singularName: 'prevalence';
     pluralName: 'prevalences';
     displayName: 'Prevalence';
+    description: '';
   };
   options: {
     draftAndPublish: false;
@@ -1627,31 +1660,6 @@ export interface ApiPrevalencePrevalence extends Schema.CollectionType {
     percentageOfPositive: Attribute.Decimal;
     ciMin: Attribute.Decimal;
     ciMax: Attribute.Decimal;
-    samplingContext: Attribute.Relation<
-      'api::prevalence.prevalence',
-      'oneToOne',
-      'api::sampling-context.sampling-context'
-    >;
-    samplingStage: Attribute.Relation<
-      'api::prevalence.prevalence',
-      'oneToOne',
-      'api::sampling-stage.sampling-stage'
-    >;
-    sampleType: Attribute.Relation<
-      'api::prevalence.prevalence',
-      'oneToOne',
-      'api::sample-type.sample-type'
-    >;
-    animalSpeciesFoodCategory: Attribute.Relation<
-      'api::prevalence.prevalence',
-      'oneToOne',
-      'api::animal-species-food-category.animal-species-food-category'
-    >;
-    animalSpeciesProductionTypeFood: Attribute.Relation<
-      'api::prevalence.prevalence',
-      'oneToOne',
-      'api::animal-species-production-type-food.animal-species-production-type-food'
-    >;
     matrix: Attribute.Relation<
       'api::prevalence.prevalence',
       'oneToOne',
@@ -1666,6 +1674,31 @@ export interface ApiPrevalencePrevalence extends Schema.CollectionType {
       'api::prevalence.prevalence',
       'oneToOne',
       'api::microorganism.microorganism'
+    >;
+    matrixGroup: Attribute.Relation<
+      'api::prevalence.prevalence',
+      'oneToOne',
+      'api::matrix-group.matrix-group'
+    >;
+    superCategorySampleOrigin: Attribute.Relation<
+      'api::prevalence.prevalence',
+      'oneToOne',
+      'api::super-category-sample-origin.super-category-sample-origin'
+    >;
+    sampleOrigin: Attribute.Relation<
+      'api::prevalence.prevalence',
+      'oneToOne',
+      'api::sample-origin.sample-origin'
+    >;
+    sampleType: Attribute.Relation<
+      'api::prevalence.prevalence',
+      'oneToOne',
+      'api::sample-type.sample-type'
+    >;
+    samplingStage: Attribute.Relation<
+      'api::prevalence.prevalence',
+      'oneToOne',
+      'api::sampling-stage.sampling-stage'
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
@@ -1799,6 +1832,37 @@ export interface ApiSalmonellaSalmonella extends Schema.CollectionType {
   };
 }
 
+export interface ApiSampleOriginSampleOrigin extends Schema.CollectionType {
+  collectionName: 'sample_origins';
+  info: {
+    singularName: 'sample-origin';
+    pluralName: 'sample-origins';
+    displayName: 'MD Sample Origin';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    name: Attribute.String;
+    iri: Attribute.String;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::sample-origin.sample-origin',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::sample-origin.sample-origin',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiSampleTypeSampleType extends Schema.CollectionType {
   collectionName: 'sample_types';
   info: {
@@ -1811,13 +1875,13 @@ export interface ApiSampleTypeSampleType extends Schema.CollectionType {
     draftAndPublish: false;
   };
   attributes: {
-    ontology_tuple: Attribute.Component<'kida.ontology-term'> &
-      Attribute.Required;
     isolates: Attribute.Relation<
       'api::sample-type.sample-type',
       'oneToMany',
       'api::isolate.isolate'
     >;
+    name: Attribute.String;
+    iri: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -1877,18 +1941,19 @@ export interface ApiSamplingStageSamplingStage extends Schema.CollectionType {
     singularName: 'sampling-stage';
     pluralName: 'sampling-stages';
     displayName: 'MD Sampling Stage';
+    description: '';
   };
   options: {
     draftAndPublish: false;
   };
   attributes: {
-    ontology_tuple: Attribute.Component<'kida.ontology-term'> &
-      Attribute.Required;
     isolates: Attribute.Relation<
       'api::sampling-stage.sampling-stage',
       'oneToMany',
       'api::isolate.isolate'
     >;
+    name: Attribute.String;
+    iri: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -1899,6 +1964,38 @@ export interface ApiSamplingStageSamplingStage extends Schema.CollectionType {
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'api::sampling-stage.sampling-stage',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiSuperCategorySampleOriginSuperCategorySampleOrigin
+  extends Schema.CollectionType {
+  collectionName: 'super_category_sample_origins';
+  info: {
+    singularName: 'super-category-sample-origin';
+    pluralName: 'super-category-sample-origins';
+    displayName: 'MD Super Category Sample Origin';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    name: Attribute.String;
+    iri: Attribute.String;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::super-category-sample-origin.super-category-sample-origin',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::super-category-sample-origin.super-category-sample-origin',
       'oneToOne',
       'admin::user'
     > &
@@ -1990,13 +2087,16 @@ declare module '@strapi/types' {
       'api::isolate.isolate': ApiIsolateIsolate;
       'api::matrix.matrix': ApiMatrixMatrix;
       'api::matrix-detail.matrix-detail': ApiMatrixDetailMatrixDetail;
+      'api::matrix-group.matrix-group': ApiMatrixGroupMatrixGroup;
       'api::microorganism.microorganism': ApiMicroorganismMicroorganism;
       'api::prevalence.prevalence': ApiPrevalencePrevalence;
       'api::resistance-table.resistance-table': ApiResistanceTableResistanceTable;
       'api::salmonella.salmonella': ApiSalmonellaSalmonella;
+      'api::sample-origin.sample-origin': ApiSampleOriginSampleOrigin;
       'api::sample-type.sample-type': ApiSampleTypeSampleType;
       'api::sampling-context.sampling-context': ApiSamplingContextSamplingContext;
       'api::sampling-stage.sampling-stage': ApiSamplingStageSamplingStage;
+      'api::super-category-sample-origin.super-category-sample-origin': ApiSuperCategorySampleOriginSuperCategorySampleOrigin;
       'api::welcome.welcome': ApiWelcomeWelcome;
     }
   }
