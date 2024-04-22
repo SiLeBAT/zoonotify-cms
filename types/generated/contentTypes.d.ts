@@ -1577,17 +1577,15 @@ export interface ApiMatrixGroupMatrixGroup extends Schema.CollectionType {
     singularName: 'matrix-group';
     pluralName: 'matrix-groups';
     displayName: 'MD Matrix Group';
-    description: '';
   };
   options: {
-    draftAndPublish: true;
+    draftAndPublish: false;
   };
   attributes: {
     name: Attribute.String;
     iri: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
-    publishedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
       'api::matrix-group.matrix-group',
       'oneToOne',
@@ -1675,21 +1673,6 @@ export interface ApiPrevalencePrevalence extends Schema.CollectionType {
       'oneToOne',
       'api::microorganism.microorganism'
     >;
-    matrixGroup: Attribute.Relation<
-      'api::prevalence.prevalence',
-      'oneToOne',
-      'api::matrix-group.matrix-group'
-    >;
-    superCategorySampleOrigin: Attribute.Relation<
-      'api::prevalence.prevalence',
-      'oneToOne',
-      'api::super-category-sample-origin.super-category-sample-origin'
-    >;
-    sampleOrigin: Attribute.Relation<
-      'api::prevalence.prevalence',
-      'oneToOne',
-      'api::sample-origin.sample-origin'
-    >;
     sampleType: Attribute.Relation<
       'api::prevalence.prevalence',
       'oneToOne',
@@ -1699,6 +1682,21 @@ export interface ApiPrevalencePrevalence extends Schema.CollectionType {
       'api::prevalence.prevalence',
       'oneToOne',
       'api::sampling-stage.sampling-stage'
+    >;
+    sampleOrigin: Attribute.Relation<
+      'api::prevalence.prevalence',
+      'oneToOne',
+      'api::sample-origin.sample-origin'
+    >;
+    matrixGroup: Attribute.Relation<
+      'api::prevalence.prevalence',
+      'oneToOne',
+      'api::matrix-group.matrix-group'
+    >;
+    superCategorySampleOrigin: Attribute.Relation<
+      'api::prevalence.prevalence',
+      'oneToOne',
+      'api::super-category-sample-origin.super-category-sample-origin'
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
@@ -1838,16 +1836,16 @@ export interface ApiSampleOriginSampleOrigin extends Schema.CollectionType {
     singularName: 'sample-origin';
     pluralName: 'sample-origins';
     displayName: 'MD Sample Origin';
+    description: '';
   };
   options: {
-    draftAndPublish: true;
+    draftAndPublish: false;
   };
   attributes: {
     name: Attribute.String;
     iri: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
-    publishedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
       'api::sample-origin.sample-origin',
       'oneToOne',
@@ -1980,14 +1978,13 @@ export interface ApiSuperCategorySampleOriginSuperCategorySampleOrigin
     displayName: 'MD Super Category Sample Origin';
   };
   options: {
-    draftAndPublish: true;
+    draftAndPublish: false;
   };
   attributes: {
     name: Attribute.String;
     iri: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
-    publishedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
       'api::super-category-sample-origin.super-category-sample-origin',
       'oneToOne',

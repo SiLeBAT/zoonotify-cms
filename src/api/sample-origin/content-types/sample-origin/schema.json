@@ -4,10 +4,11 @@
   "info": {
     "singularName": "sample-origin",
     "pluralName": "sample-origins",
-    "displayName": "MD Sample Origin"
+    "displayName": "MD Sample Origin",
+    "description": ""
   },
   "options": {
-    "draftAndPublish": true
+    "draftAndPublish": false
   },
   "pluginOptions": {},
   "attributes": {
