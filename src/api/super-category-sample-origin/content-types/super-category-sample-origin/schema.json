@@ -1,0 +1,21 @@
+{
+  "kind": "collectionType",
+  "collectionName": "super_category_sample_origins",
+  "info": {
+    "singularName": "super-category-sample-origin",
+    "pluralName": "super-category-sample-origins",
+    "displayName": "MD Super Category Sample Origin"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "iri": {
+      "type": "string"
+    }
+  }
+}

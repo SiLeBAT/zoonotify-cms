@@ -4,7 +4,8 @@
   "info": {
     "singularName": "prevalence",
     "pluralName": "prevalences",
-    "displayName": "Prevalence"
+    "displayName": "Prevalence",
+    "description": ""
   },
   "options": {
     "draftAndPublish": false
@@ -40,31 +41,6 @@
     "ciMax": {
       "type": "decimal"
     },
-    "samplingContext": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::sampling-context.sampling-context"
-    },
-    "samplingStage": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::sampling-stage.sampling-stage"
-    },
-    "sampleType": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::sample-type.sample-type"
-    },
-    "animalSpeciesFoodCategory": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::animal-species-food-category.animal-species-food-category"
-    },
-    "animalSpeciesProductionTypeFood": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::animal-species-production-type-food.animal-species-production-type-food"
-    },
     "matrix": {
       "type": "relation",
       "relation": "oneToOne",
@@ -79,6 +55,31 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::microorganism.microorganism"
+    },
+    "sampleType": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::sample-type.sample-type"
+    },
+    "samplingStage": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::sampling-stage.sampling-stage"
+    },
+    "sampleOrigin": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::sample-origin.sample-origin"
+    },
+    "matrixGroup": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::matrix-group.matrix-group"
+    },
+    "superCategorySampleOrigin": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::super-category-sample-origin.super-category-sample-origin"
     }
   }
 }
