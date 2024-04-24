@@ -1,7 +1,18 @@
 import { importControlledVocabularyTranslations } from './data_import/controlled-vocab-translations.import';
 import { importCutOffData } from './data_import/cut-off.import';
-import { importPrevalenceData } from './data_import/prevalence.import';
+import { importPrevalences  } from './data_import/prevalence.import';
 import { importResistanceData } from './data_import/resistance.import';
+import { importMatrixGroups } from './data_import/matrix-group.import';
+import { importSampleTypes } from './data_import/sample-type.import';
+import { importSamplingStages } from './data_import/sampling-stage.import';
+import { importMatrixDetails } from './data_import/matrix-detail.import';
+import { importSampleOrigins } from './data_import/sample-origin.import';
+import { importSuperCategorySampleOrigins } from './data_import/super-category-sample-origin.import';
+import { importMicroorganisms } from './data_import/microorganism.import';
+import { importMatrix } from './data_import/matrix.import';
+
+
+
 
 export default {
   /**
@@ -494,7 +505,15 @@ export default {
     await importCutOffData(strapi);
 
     // Import data for prevalence
-    await importPrevalenceData(strapi);
+    await importPrevalences (strapi);
+    await importMatrixGroups(strapi);
+    await importSampleTypes(strapi);
+    await importSamplingStages(strapi);
+    await importMatrixDetails(strapi);
+    await importSampleOrigins(strapi);
+    await importSuperCategorySampleOrigins(strapi);
+    await importMicroorganisms(strapi);
+    await importMatrix(strapi);
 
     // Add this line to call your new import function
     await importControlledVocabularyTranslations(strapi);

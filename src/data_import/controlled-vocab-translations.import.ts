@@ -4,7 +4,7 @@ async function importControlledVocabularyTranslations(strapi) {
     const fs = require('fs');
     const path = require('path');
 
-    let filePath = path.join(__dirname, '../../data//master-data/ZooNotify_DB_translation .xlsx');
+    let filePath = path.join(__dirname, '../../../data//master-data/ZooNotify_DB_translation.xlsx');
 
     if (fs.existsSync(filePath)) {
         const buffer = fs.readFileSync(filePath);
