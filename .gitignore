@@ -119,3 +119,4 @@ data
 export_20*
 src/extensions/documentation/
 src/api/*/documentation/
+types/generated/*
