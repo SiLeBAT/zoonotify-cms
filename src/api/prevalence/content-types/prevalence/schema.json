@@ -23,9 +23,6 @@
       "type": "string",
       "private": true
     },
-    "furtherDetails": {
-      "type": "text"
-    },
     "numberOfSamples": {
       "type": "integer"
     },
@@ -46,20 +43,10 @@
       "relation": "oneToOne",
       "target": "api::matrix.matrix"
     },
-    "matrixDetail": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::matrix-detail.matrix-detail"
-    },
     "microorganism": {
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::microorganism.microorganism"
-    },
-    "sampleType": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::sample-type.sample-type"
     },
     "samplingStage": {
       "type": "relation",
