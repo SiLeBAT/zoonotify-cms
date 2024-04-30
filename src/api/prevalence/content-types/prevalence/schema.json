@@ -53,11 +53,6 @@
       "relation": "oneToOne",
       "target": "api::sampling-stage.sampling-stage"
     },
-    "sampleOrigin": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::sample-origin.sample-origin"
-    },
     "matrixGroup": {
       "type": "relation",
       "relation": "oneToOne",
@@ -67,6 +62,11 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::super-category-sample-origin.super-category-sample-origin"
+    },
+    "sampleOrigin": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::sample-origin.sample-origin"
     }
   }
 }
