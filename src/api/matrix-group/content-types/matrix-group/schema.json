@@ -4,7 +4,8 @@
   "info": {
     "singularName": "matrix-group",
     "pluralName": "matrix-groups",
-    "displayName": "MD Matrix Group"
+    "displayName": "MD Matrix Group",
+    "description": ""
   },
   "options": {
     "draftAndPublish": false
@@ -12,7 +13,9 @@
   "pluginOptions": {},
   "attributes": {
     "name": {
-      "type": "string"
+      "type": "string",
+      "required": true,
+      "unique": true
     },
     "iri": {
       "type": "string"

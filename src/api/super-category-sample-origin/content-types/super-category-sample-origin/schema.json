@@ -4,7 +4,8 @@
   "info": {
     "singularName": "super-category-sample-origin",
     "pluralName": "super-category-sample-origins",
-    "displayName": "MD Super Category Sample Origin"
+    "displayName": "MD Super Category Sample Origin",
+    "description": ""
   },
   "options": {
     "draftAndPublish": false
@@ -12,7 +13,9 @@
   "pluginOptions": {},
   "attributes": {
     "name": {
-      "type": "string"
+      "type": "string",
+      "required": true,
+      "unique": true
     },
     "iri": {
       "type": "string"
