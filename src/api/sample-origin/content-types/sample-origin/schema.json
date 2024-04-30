@@ -4,8 +4,7 @@
   "info": {
     "singularName": "sample-origin",
     "pluralName": "sample-origins",
-    "displayName": "MD Sample Origin",
-    "description": ""
+    "displayName": "MD Sample Origin"
   },
   "options": {
     "draftAndPublish": false
@@ -13,7 +12,9 @@
   "pluginOptions": {},
   "attributes": {
     "name": {
-      "type": "string"
+      "type": "string",
+      "required": true,
+      "unique": true
     },
     "iri": {
       "type": "string"
