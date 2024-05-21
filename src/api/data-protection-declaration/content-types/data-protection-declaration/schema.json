@@ -4,24 +4,29 @@
   "info": {
     "singularName": "data-protection-declaration",
     "pluralName": "data-protection-declarations",
-    "displayName": "Data Protection Declaration"
+    "displayName": "Data Protection Declaration",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
   },
-
-"pluginOptions": {
-  "i18n": {
-    "localized": true
-  }
-},
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
   "attributes": {
     "subheading": {
       "type": "text"
     },
     "content": {
       "type": "richtext",
-      "required": true
+      "required": true,
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     }
   }
 }
