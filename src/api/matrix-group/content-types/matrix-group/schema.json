@@ -1,10 +1,10 @@
 {
   "kind": "collectionType",
-  "collectionName": "matrices",
+  "collectionName": "matrix_groups",
   "info": {
-    "singularName": "matrix",
-    "pluralName": "matrices",
-    "displayName": "MD Matrix",
+    "singularName": "matrix-group",
+    "pluralName": "matrix-groups",
+    "displayName": "MD Matrix Group",
     "description": ""
   },
   "options": {
@@ -19,12 +19,6 @@
     },
     "iri": {
       "type": "string"
-    },
-    "isolates": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::isolate.isolate",
-      "mappedBy": "matrix"
     }
   }
 }

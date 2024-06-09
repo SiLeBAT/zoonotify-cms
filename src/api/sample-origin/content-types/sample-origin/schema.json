@@ -1,0 +1,23 @@
+{
+  "kind": "collectionType",
+  "collectionName": "sample_origins",
+  "info": {
+    "singularName": "sample-origin",
+    "pluralName": "sample-origins",
+    "displayName": "MD Sample Origin"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "iri": {
+      "type": "string"
+    }
+  }
+}

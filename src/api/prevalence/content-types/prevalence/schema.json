@@ -4,7 +4,8 @@
   "info": {
     "singularName": "prevalence",
     "pluralName": "prevalences",
-    "displayName": "Prevalence"
+    "displayName": "Prevalence",
+    "description": ""
   },
   "options": {
     "draftAndPublish": false
@@ -22,9 +23,6 @@
       "type": "string",
       "private": true
     },
-    "furtherDetails": {
-      "type": "text"
-    },
     "numberOfSamples": {
       "type": "integer"
     },
@@ -40,45 +38,35 @@
     "ciMax": {
       "type": "decimal"
     },
-    "samplingContext": {
+    "matrix": {
       "type": "relation",
       "relation": "oneToOne",
-      "target": "api::sampling-context.sampling-context"
+      "target": "api::matrix.matrix"
+    },
+    "microorganism": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::microorganism.microorganism"
     },
     "samplingStage": {
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::sampling-stage.sampling-stage"
     },
-    "sampleType": {
+    "matrixGroup": {
       "type": "relation",
       "relation": "oneToOne",
-      "target": "api::sample-type.sample-type"
+      "target": "api::matrix-group.matrix-group"
     },
-    "animalSpeciesFoodCategory": {
+    "superCategorySampleOrigin": {
       "type": "relation",
       "relation": "oneToOne",
-      "target": "api::animal-species-food-category.animal-species-food-category"
+      "target": "api::super-category-sample-origin.super-category-sample-origin"
     },
-    "animalSpeciesProductionTypeFood": {
+    "sampleOrigin": {
       "type": "relation",
       "relation": "oneToOne",
-      "target": "api::animal-species-production-type-food.animal-species-production-type-food"
-    },
-    "matrix": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::matrix.matrix"
-    },
-    "matrixDetail": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::matrix-detail.matrix-detail"
-    },
-    "microorganism": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::microorganism.microorganism"
+      "target": "api::sample-origin.sample-origin"
     }
   }
 }

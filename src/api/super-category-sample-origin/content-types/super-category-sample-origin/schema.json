@@ -1,10 +1,10 @@
 {
   "kind": "collectionType",
-  "collectionName": "matrices",
+  "collectionName": "super_category_sample_origins",
   "info": {
-    "singularName": "matrix",
-    "pluralName": "matrices",
-    "displayName": "MD Matrix",
+    "singularName": "super-category-sample-origin",
+    "pluralName": "super-category-sample-origins",
+    "displayName": "MD Super Category Sample Origin",
     "description": ""
   },
   "options": {
@@ -19,12 +19,6 @@
     },
     "iri": {
       "type": "string"
-    },
-    "isolates": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::isolate.isolate",
-      "mappedBy": "matrix"
     }
   }
 }
