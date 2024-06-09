@@ -1,15 +1,15 @@
 import { importControlledVocabularyTranslations } from './data_import/controlled-vocab-translations.import';
 import { importCutOffData } from './data_import/cut-off.import';
-import { importPrevalences  } from './data_import/prevalence.import';
-import { importResistanceData } from './data_import/resistance.import';
+import { importMatrixDetails } from './data_import/matrix-detail.import';
 import { importMatrixGroups } from './data_import/matrix-group.import';
+import { importMatrix } from './data_import/matrix.import';
+import { importMicroorganisms } from './data_import/microorganism.import';
+import { importPrevalences } from './data_import/prevalence.import';
+import { importResistanceData } from './data_import/resistance.import';
+import { importSampleOrigins } from './data_import/sample-origin.import';
 import { importSampleTypes } from './data_import/sample-type.import';
 import { importSamplingStages } from './data_import/sampling-stage.import';
-import { importMatrixDetails } from './data_import/matrix-detail.import';
-import { importSampleOrigins } from './data_import/sample-origin.import';
 import { importSuperCategorySampleOrigins } from './data_import/super-category-sample-origin.import';
-import { importMicroorganisms } from './data_import/microorganism.import';
-import { importMatrix } from './data_import/matrix.import';
 
 
 
@@ -24,7 +24,7 @@ export default {
   register({ strapi }) {
     if (strapi.plugin('documentation')) {
       const override = {
-        info: { version: '2.1.0' },
+        info: { version: '2.2.0' },
         paths: {
           "/evaluations": {
             "get": {
@@ -281,7 +281,517 @@ export default {
               "operationId": "get/evaluations/{id}"
             }
           },
-          "/evaluations/{id}/localizations": {
+          "/evaluations/{id}/localizations": {},
+          "/informations": {
+            "get": {
+              "responses": {
+                "200": {
+                  "description": "OK",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/InformationListResponse"
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Bad Request",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "401": {
+                  "description": "Unauthorized",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "403": {
+                  "description": "Forbidden",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "404": {
+                  "description": "Not Found",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "500": {
+                  "description": "Internal Server Error",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                }
+              },
+              "tags": [
+                "Information"
+              ],
+              "parameters": [
+                {
+                  "name": "sort",
+                  "in": "query",
+                  "description": "Sort by attributes ascending (asc) or descending (desc)",
+                  "deprecated": false,
+                  "required": false,
+                  "schema": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "name": "pagination[withCount]",
+                  "in": "query",
+                  "description": "Return page/pageSize (default: true)",
+                  "deprecated": false,
+                  "required": false,
+                  "schema": {
+                    "type": "boolean"
+                  }
+                },
+                {
+                  "name": "pagination[page]",
+                  "in": "query",
+                  "description": "Page number (default: 0)",
+                  "deprecated": false,
+                  "required": false,
+                  "schema": {
+                    "type": "integer"
+                  }
+                },
+                {
+                  "name": "pagination[pageSize]",
+                  "in": "query",
+                  "description": "Page size (default: 25)",
+                  "deprecated": false,
+                  "required": false,
+                  "schema": {
+                    "type": "integer"
+                  }
+                },
+                {
+                  "name": "pagination[start]",
+                  "in": "query",
+                  "description": "Offset value (default: 0)",
+                  "deprecated": false,
+                  "required": false,
+                  "schema": {
+                    "type": "integer"
+                  }
+                },
+                {
+                  "name": "pagination[limit]",
+                  "in": "query",
+                  "description": "Number of entities to return (default: 25)",
+                  "deprecated": false,
+                  "required": false,
+                  "schema": {
+                    "type": "integer"
+                  }
+                },
+                {
+                  "name": "fields",
+                  "in": "query",
+                  "description": "Fields to return (ex: title,author)",
+                  "deprecated": false,
+                  "required": false,
+                  "schema": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "name": "populate",
+                  "in": "query",
+                  "description": "Relations to return",
+                  "deprecated": false,
+                  "required": false,
+                  "schema": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "name": "filters",
+                  "in": "query",
+                  "description": "Filters to apply",
+                  "deprecated": false,
+                  "required": false,
+                  "schema": {
+                    "type": "object"
+                  },
+                  "style": "deepObject"
+                },
+                {
+                  "name": "locale",
+                  "in": "query",
+                  "description": "Locale to apply",
+                  "deprecated": false,
+                  "required": false,
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              ],
+              "operationId": "get/informations"
+            }
+          },
+          "/informations/{id}": {
+            "get": {
+              "responses": {
+                "200": {
+                  "description": "OK",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/InformationResponse"
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Bad Request",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "401": {
+                  "description": "Unauthorized",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "403": {
+                  "description": "Forbidden",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "404": {
+                  "description": "Not Found",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "500": {
+                  "description": "Internal Server Error",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                }
+              },
+              "tags": [
+                "Information"
+              ],
+              "parameters": [
+                {
+                  "name": "id",
+                  "in": "path",
+                  "description": "",
+                  "deprecated": false,
+                  "required": true,
+                  "schema": {
+                    "type": "number"
+                  }
+                }
+              ],
+              "operationId": "get/informations/{id}"
+            }
+          },
+          "/informations/{id}/localizations": {},
+          "/prevalences": {
+            "get": {
+              "responses": {
+                "200": {
+                  "description": "OK",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/PrevalenceListResponse"
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Bad Request",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "401": {
+                  "description": "Unauthorized",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "403": {
+                  "description": "Forbidden",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "404": {
+                  "description": "Not Found",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "500": {
+                  "description": "Internal Server Error",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                }
+              },
+              "tags": [
+                "Prevalence"
+              ],
+              "parameters": [
+                {
+                  "name": "sort",
+                  "in": "query",
+                  "description": "Sort by attributes ascending (asc) or descending (desc)",
+                  "deprecated": false,
+                  "required": false,
+                  "schema": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "name": "pagination[withCount]",
+                  "in": "query",
+                  "description": "Return page/pageSize (default: true)",
+                  "deprecated": false,
+                  "required": false,
+                  "schema": {
+                    "type": "boolean"
+                  }
+                },
+                {
+                  "name": "pagination[page]",
+                  "in": "query",
+                  "description": "Page number (default: 0)",
+                  "deprecated": false,
+                  "required": false,
+                  "schema": {
+                    "type": "integer"
+                  }
+                },
+                {
+                  "name": "pagination[pageSize]",
+                  "in": "query",
+                  "description": "Page size (default: 25)",
+                  "deprecated": false,
+                  "required": false,
+                  "schema": {
+                    "type": "integer"
+                  }
+                },
+                {
+                  "name": "pagination[start]",
+                  "in": "query",
+                  "description": "Offset value (default: 0)",
+                  "deprecated": false,
+                  "required": false,
+                  "schema": {
+                    "type": "integer"
+                  }
+                },
+                {
+                  "name": "pagination[limit]",
+                  "in": "query",
+                  "description": "Number of entities to return (default: 25)",
+                  "deprecated": false,
+                  "required": false,
+                  "schema": {
+                    "type": "integer"
+                  }
+                },
+                {
+                  "name": "fields",
+                  "in": "query",
+                  "description": "Fields to return (ex: title,author)",
+                  "deprecated": false,
+                  "required": false,
+                  "schema": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "name": "populate",
+                  "in": "query",
+                  "description": "Relations to return",
+                  "deprecated": false,
+                  "required": false,
+                  "schema": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "name": "filters",
+                  "in": "query",
+                  "description": "Filters to apply",
+                  "deprecated": false,
+                  "required": false,
+                  "schema": {
+                    "type": "object"
+                  },
+                  "style": "deepObject"
+                },
+                {
+                  "name": "locale",
+                  "in": "query",
+                  "description": "Locale to apply",
+                  "deprecated": false,
+                  "required": false,
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              ],
+              "operationId": "get/prevalences"
+            }
+          },
+          "/prevalences/{id}": {
+            "get": {
+              "responses": {
+                "200": {
+                  "description": "OK",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/PrevalenceResponse"
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Bad Request",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "401": {
+                  "description": "Unauthorized",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "403": {
+                  "description": "Forbidden",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "404": {
+                  "description": "Not Found",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "500": {
+                  "description": "Internal Server Error",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                }
+              },
+              "tags": [
+                "Prevalence"
+              ],
+              "parameters": [
+                {
+                  "name": "id",
+                  "in": "path",
+                  "description": "",
+                  "deprecated": false,
+                  "required": true,
+                  "schema": {
+                    "type": "number"
+                  }
+                }
+              ],
+              "operationId": "get/prevalences/{id}"
+            }
           },
           "/welcome": {
             "get": {
@@ -454,9 +964,7 @@ export default {
                 }
               ],
               "operationId": "get/welcome"
-            },
-          },
-          "/welcome/localizations": {
+            }
           }
         }
       }
@@ -466,6 +974,13 @@ export default {
         .service('override')
         .registerOverride(override, {
           excludeFromGeneration: [
+            "evaluations",
+            "prevalences",
+            "informations",
+            "super-category-sample-origin",
+            "matrix-group",
+            "sample-origin",
+            "welcome",
             "antibiotic",
             "isolate",
             "matrix",
@@ -480,7 +995,6 @@ export default {
             "explanation",
             "externallink",
             "matrix-detail",
-            "prevalence",
             "resistance-table",
             "sample-type",
             "sampling-context",
@@ -505,7 +1019,7 @@ export default {
     await importCutOffData(strapi);
 
     // Import data for prevalence
-    await importPrevalences (strapi);
+    await importPrevalences(strapi);
     await importMatrixGroups(strapi);
     await importSampleTypes(strapi);
     await importSamplingStages(strapi);

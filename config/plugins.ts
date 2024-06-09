@@ -4,7 +4,7 @@ export default ({ env }) => ({
     enabled: true,
     config: {
       info: {
-        version: '2.1.0',
+        version: '2.2.0',
         title: 'Zoonotify API Documentation',
         description: '',
         termsOfService: '',
