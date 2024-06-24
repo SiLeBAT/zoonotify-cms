@@ -3,10 +3,10 @@ name: CI/CD Pipeline for QA
 on:
   push:
     branches:
-      - testBranch92
+      - develop
   pull_request:
     branches:
-      -develop
+      - develop
 
 jobs:
   build:
