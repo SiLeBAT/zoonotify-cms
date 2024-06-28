@@ -46,6 +46,10 @@ jobs:
             cd ${{ secrets.QA_PATH }}
             git checkout ${{ steps.extract_branch.outputs.branch }}
             git pull
-            ./deploy.sh ${{ steps.extract_branch.outputs.branch }}
+            yarn
+            yarn build
+            ./node_modules/.bin/pm2 stop all
+            killall node
+            ./node_modules/.bin/pm2 start /usr/home/zoono/zoonotify-cms/ecosystem.config.js
 
 
