@@ -25,16 +25,17 @@ jobs:
     name: 'Deploy to QA'
     runs-on: ubuntu-latest
     needs: build
-
+    timeout-minutes: 5
     steps:
-
-
-    - uses: JimCronqvist/action-ssh@7737f1192ddd8376686e9d6354dea44592c942bf
-      name: Execute SSH commmands on remote server
+    - name: Deploy to QA
+      uses: appleboy/ssh-action@v0.1.10
       with:
-        hosts: '${{ secrets.QA_USER }}@${{ secrets.QA_SERVER }}:${{ secrets.QA_PORT }}'
-        privateKey: ${{ secrets.SSH_PRIVATE_KEY }}
-        debug: true
-        command: touch delpoyTest.txt
+        host: ${{ secrets.QA_SERVER }}
+        username: ${{ secrets.QA_USER }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: ${{ secrets.QA_PORT }}
+        command_timeout: 30m
+        script: |
+          touch delpoyTest.txt
 
 
