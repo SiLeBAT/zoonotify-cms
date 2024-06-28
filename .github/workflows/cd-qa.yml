@@ -35,6 +35,6 @@ jobs:
         hosts: '${{ secrets.QA_USER }}@${{ secrets.QA_SERVER }}:${{ secrets.QA_PORT }}'
         privateKey: ${{ secrets.SSH_PRIVATE_KEY }}
         debug: true
-        command: |
-          touch delpoyTest.txt
+        command: ls -lah
+
 
