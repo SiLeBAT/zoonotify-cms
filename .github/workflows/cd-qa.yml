@@ -27,16 +27,20 @@ jobs:
     needs: build
     timeout-minutes: 5
     steps:
-    - name: Deploy to QA
-      uses: appleboy/ssh-action@v0.1.10
-      with:
-        host: ${{ secrets.QA_SERVER }}
-        username: ${{ secrets.QA_USER }}
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        port: ${{ secrets.QA_PORT }}
-        command_timeout: 30m
-        script: |
-          cd ${{ secrets.QA_PATH }}
-          ./deploy.sh develop
+      - name: Extract branch name
+        shell: bash
+        run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+        id: extract_branch
+      - name: Deploy to QA
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.QA_SERVER }}
+          username: ${{ secrets.QA_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.QA_PORT }}
+          command_timeout: 30m
+          script: |
+            cd ${{ secrets.QA_PATH }}
+            ./deploy.sh ${{ steps.extract_branch.outputs.branch }}
 
 
