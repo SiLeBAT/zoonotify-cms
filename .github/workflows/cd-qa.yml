@@ -40,6 +40,9 @@ jobs:
           port: ${{ secrets.QA_PORT }}
           command_timeout: 30m
           script: |
+            rm -rf cms.old
+            mv zoonotify-cms cms.old
+            git clone https://github.com/SiLeBAT/zoonotify-cms.git
             cd ${{ secrets.QA_PATH }}
             ./deploy.sh ${{ steps.extract_branch.outputs.branch }}
 
