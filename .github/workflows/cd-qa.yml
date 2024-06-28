@@ -1,0 +1,45 @@
+name: Continuous Deployment Workflow QA
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - testBranchDeploy
+
+jobs:
+  build:
+    name: 'Builds the strapi CMS'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: '18.15.0'
+      - name: Install dependencies
+        run: yarn install
+      - name: Build
+        run: yarn build
+
+  deploy:
+    name: 'Deploy to QA'
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+
+
+    - uses: JimCronqvist/action-ssh@7737f1192ddd8376686e9d6354dea44592c942bf
+      name: Execute SSH commmands on remote server
+      with:
+        hosts: '${{ secrets.QA_USER }}@${{ secrets.QA_SERVER }}:${{ secrets.QA_PORT }}'
+        privateKey: ${{ secrets.SSH_PRIVATE_KEY }}
+        command: |
+          cd ${{ secrets.QA_PATH }}
+          git pull
+          yarn
+          yarn build
+          ./node_modules/.bin/pm2 stop 0
+          killall node
+          ./node_modules/.bin/pm2 start /usr/home/zoono/zoonotify-cms/ecosystem.config.js
+
