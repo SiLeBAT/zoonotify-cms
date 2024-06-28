@@ -44,6 +44,8 @@ jobs:
             mv zoonotify-cms cms.old
             git clone https://github.com/SiLeBAT/zoonotify-cms.git
             cd ${{ secrets.QA_PATH }}
+            git checkout ${{ steps.extract_branch.outputs.branch }}
+            git pull
             ./deploy.sh ${{ steps.extract_branch.outputs.branch }}
 
 
