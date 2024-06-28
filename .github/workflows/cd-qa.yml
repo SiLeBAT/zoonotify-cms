@@ -36,6 +36,7 @@ jobs:
         port: ${{ secrets.QA_PORT }}
         command_timeout: 30m
         script: |
-          touch delpoyTest.txt
+          cd ${{ secrets.QA_PATH }}
+          ./deploy.sh develop
 
 
