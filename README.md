@@ -10,4 +10,3 @@
 
 ## Configuration conventions
 - All Master Data Content types should have the 'Draft & Publish' feature disabled.
-
