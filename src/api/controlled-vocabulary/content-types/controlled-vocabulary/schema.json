@@ -4,7 +4,8 @@
   "info": {
     "singularName": "controlled-vocabulary",
     "pluralName": "controlled-vocabularies",
-    "displayName": "Controlled Vocabulary"
+    "displayName": "MD Controlled Vocabulary",
+    "description": ""
   },
   "options": {
     "draftAndPublish": false

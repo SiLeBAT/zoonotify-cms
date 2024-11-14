@@ -1,7 +1,7 @@
 {
   "name": "zoonotify-cms",
   "private": true,
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "A Strapi application",
   "scripts": {
     "develop": "strapi develop",
@@ -10,11 +10,11 @@
     "strapi": "strapi"
   },
   "dependencies": {
-    "@strapi/plugin-documentation": "4.24.0",
-    "@strapi/plugin-i18n": "4.24.0",
-    "@strapi/plugin-users-permissions": "4.24.0",
-    "@strapi/provider-email-nodemailer": "^4.24.0",
-    "@strapi/strapi": "4.24.0",
+    "@strapi/plugin-documentation": "^4.25.0",
+    "@strapi/plugin-i18n": "^4.25.0",
+    "@strapi/plugin-users-permissions": "^4.25.0",
+    "@strapi/provider-email-nodemailer": "^4.25.0",
+    "@strapi/strapi": "^4.25.0",
     "event-stream": "^4.0.1",
     "exceljs": "^4.4.0",
     "JSONStream": "^1.3.5",
@@ -24,7 +24,8 @@
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-router-dom": "^5.2.0",
-    "styled-components": "^5.2.1"
+    "styled-components": "^5.2.1",
+    "zoonotify-cms": "file:"
   },
   "author": {
     "name": "A Strapi developer"
