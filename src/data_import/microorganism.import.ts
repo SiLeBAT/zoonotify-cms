@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 async function importMicroorganisms(strapi) {
-    let filePath = path.join(__dirname, '../../../data//master-data/microorganism.xlsx');
+    let filePath = path.join(__dirname, '../../../data/master-data/microorganism.xlsx');
 
     if (fs.existsSync(filePath)) {
         const buffer = fs.readFileSync(filePath);
@@ -15,44 +15,71 @@ async function importMicroorganisms(strapi) {
             return;
         }
 
-        if (microorganismData.data.length === 0) {
+        if (microorganismData.data.length <= 1) {
             console.error('No data found in the Microorganisms sheet');
             return;
         }
 
         let dataList = microorganismData.data.slice(1).map(row => {
-            
             return {
-                name: row[0], // Assuming 'name' is in the first column
-                iri: row[1],  // Assuming 'iri' is in the second column
-                isolateName: row[2] // Assuming the name or identifier of the isolate is in the third column
+                name_de: row[0], // German name (assuming it's in the first column)
+                name_en: row[1], // English name (assuming it's in the second column)
             };
         });
 
         for (const item of dataList) {
             try {
-                let existingMicroorganism = await strapi.entityService.findMany('api::microorganism.microorganism', {
-                    filters: { name: item.name },
+                // Step 1: Find or create/update the default locale ('en') entry
+                let existingEntriesEn = await strapi.entityService.findMany('api::microorganism.microorganism', {
+                    filters: { name: item.name_en, locale: 'en' },
                 });
 
-                let isolateId = null;
-                if (item.isolateName) {
-                    // Assuming isolateName is unique or an identifier for isolates
-                    let isolates = await strapi.entityService.findMany('api::isolate.isolate', {
-                        filters: { name: item.isolateName },
-                    });
-                    isolateId = isolates.length > 0 ? isolates[0].id : null;
-                }
+                let defaultEntry;
 
-                if (existingMicroorganism.length > 0) {
-                    // Update existing entry with potential new isolate linkage
-                    await strapi.entityService.update('api::microorganism.microorganism', existingMicroorganism[0].id, {
-                        data: { ...item, isolates: isolateId ? [isolateId] : [] },
+                if (existingEntriesEn.length > 0) {
+                    // Update the existing default locale entry
+                    defaultEntry = await strapi.entityService.update('api::microorganism.microorganism', existingEntriesEn[0].id, {
+                        data: {
+                            name: item.name_en,
+                            // Do not set 'locale' during update
+                        },
                     });
                 } else {
-                    // Create new entry with isolate linkage
+                    // Create a new default locale entry
+                    defaultEntry = await strapi.entityService.create('api::microorganism.microorganism', {
+                        data: {
+                            name: item.name_en,
+                            locale: 'en', // Set locale when creating new entry
+                        },
+                    });
+                }
+
+                // Step 2: Ensure the German ('de') localization exists
+                // Fetch the default entry with its localizations
+                const defaultEntryWithLocalizations = await strapi.entityService.findOne('api::microorganism.microorganism', defaultEntry.id, {
+                    populate: ['localizations'],
+                });
+
+                // Check if a German localization exists
+                let deEntry = defaultEntryWithLocalizations.localizations.find(loc => loc.locale === 'de');
+
+                if (deEntry) {
+                    // Update the existing German locale entry
+                    await strapi.entityService.update('api::microorganism.microorganism', deEntry.id, {
+                        data: {
+                            name: item.name_de,
+                            // Do not set 'locale' during update
+                        },
+                    });
+                } else {
+                    // Create a new German locale entry linked to the default entry
                     await strapi.entityService.create('api::microorganism.microorganism', {
-                        data: { ...item, isolates: isolateId ? [isolateId] : [] },
+                        data: {
+                            name: item.name_de,
+                            locale: 'de', // Set locale when creating new entry
+                            // Link to the default entry
+                            localizationOf: defaultEntry.id,
+                        },
                     });
                 }
             } catch (error) {
