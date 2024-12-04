@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 async function importMatrix(strapi) {
-    let filePath = path.join(__dirname, '../../../data//master-data/matrix.xlsx');
+    let filePath = path.join(__dirname, '../../../data/master-data/matrix.xlsx');
 
     if (fs.existsSync(filePath)) {
         const buffer = fs.readFileSync(filePath);
@@ -21,27 +21,70 @@ async function importMatrix(strapi) {
         }
 
         let dataList = matrixData.data.slice(1).map(row => {
-            // Logging each row to see what data is available
             return {
-                name: row[0], // Assuming 'name' is in the first column
-                iri: row[1]  // Assuming 'iri' is in the second column
+                name_de: row[0], // German name
+                name_en: row[1], // English name
+                iri: row[2] || null // IRI, if available
             };
         });
 
-
         for (const item of dataList) {
             try {
-                // Check if the entry already exists based on 'name'
-                let existingEntries = await strapi.entityService.findMany('api::matrix.matrix', {
-                    filters: { name: item.name },
+                // Step 1: Find or create/update the default locale ('en') entry
+                let existingEntriesEn = await strapi.entityService.findMany('api::matrix.matrix', {
+                    filters: { name: item.name_en },
+                    locale: 'en',
                 });
 
-                if (existingEntries.length > 0) {
-                    // Update the first found entry (assuming 'name' is unique)
-                    await strapi.entityService.update('api::matrix.matrix', existingEntries[0].id, { data: item });
+                let defaultEntry;
+
+                if (existingEntriesEn.length > 0) {
+                    // Update the existing default locale entry
+                    defaultEntry = await strapi.entityService.update('api::matrix.matrix', existingEntriesEn[0].id, {
+                        data: {
+                            name: item.name_en,
+                            iri: item.iri,
+                            locale: 'en', // Ensure locale is set inside data
+                        },
+                    });
                 } else {
-                    // Create new entry
-                    await strapi.entityService.create('api::matrix.matrix', { data: item });
+                    // Create a new default locale entry
+                    defaultEntry = await strapi.entityService.create('api::matrix.matrix', {
+                        data: {
+                            name: item.name_en,
+                            iri: item.iri,
+                            locale: 'en', // Set locale inside data
+                        },
+                    });
+                }
+
+                // Step 2: Find or create/update the German ('de') locale entry
+                // Fetch the default entry with its localizations
+                const defaultEntryWithLocalizations = await strapi.entityService.findOne('api::matrix.matrix', defaultEntry.id, {
+                    populate: ['localizations'],
+                });
+
+                // Check if a German localization exists
+                let deEntry = defaultEntryWithLocalizations.localizations.find(loc => loc.locale === 'de');
+
+                if (deEntry) {
+                    // Update the existing German locale entry
+                    await strapi.entityService.update('api::matrix.matrix', deEntry.id, {
+                        data: {
+                            name: item.name_de,
+                            locale: 'de', // Ensure locale is set inside data
+                        },
+                    });
+                } else {
+                    // Create a new German locale entry linked to the default entry
+                    await strapi.entityService.create('api::matrix.matrix', {
+                        data: {
+                            name: item.name_de,
+                            locale: 'de', // Set locale inside data
+                            // Link to the default entry using 'localizationOf'
+                            localizationOf: defaultEntry.id,
+                        },
+                    });
                 }
             } catch (error) {
                 console.error('Error importing matrix:', error);
