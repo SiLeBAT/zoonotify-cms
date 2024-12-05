@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-    nvm use 18.20.5
     /usr/home/zoono/.yarn/bin/yarn
     /usr/home/zoono/.yarn/bin/yarn build
     ./node_modules/.bin/pm2 stop all
