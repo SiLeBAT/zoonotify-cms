@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+    source /usr/home/zoono/.bashrc
     /usr/home/zoono/.yarn/bin/yarn
     /usr/home/zoono/.yarn/bin/yarn build
     ./node_modules/.bin/pm2 stop all
