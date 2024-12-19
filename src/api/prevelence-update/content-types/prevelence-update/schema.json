@@ -1,0 +1,21 @@
+{
+  "kind": "singleType",
+  "collectionName": "prevelence_updates",
+  "info": {
+    "singularName": "prevelence-update",
+    "pluralName": "prevelence-updates",
+    "displayName": "Prevelence update",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "date": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    }
+  }
+}
