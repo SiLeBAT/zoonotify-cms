@@ -10,6 +10,8 @@ import { importSampleOrigins } from './data_import/sample-origin.import';
 import { importSampleTypes } from './data_import/sample-type.import';
 import { importSamplingStages } from './data_import/sampling-stage.import';
 import { importSuperCategorySampleOrigins } from './data_import/super-category-sample-origin.import';
+import { updateGraphs } from './data_import/updateGraphs';
+
 
 
 
@@ -1028,6 +1030,8 @@ export default {
     await importSuperCategorySampleOrigins(strapi);
     await importMicroorganisms(strapi);
     await importMatrix(strapi);
+    await updateGraphs(strapi);
+
 
     // Add this line to call your new import function
     await importControlledVocabularyTranslations(strapi);
