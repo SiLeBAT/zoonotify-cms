@@ -11,6 +11,7 @@ import { importSampleTypes } from './data_import/sample-type.import';
 import { importSamplingStages } from './data_import/sampling-stage.import';
 import { importSuperCategorySampleOrigins } from './data_import/super-category-sample-origin.import';
 import { updateGraphs } from './data_import/updateGraphs';
+import { importExternalLinks } from './data_import/importExternalLinks';
 
 
 
@@ -1031,6 +1032,8 @@ export default {
     await importMicroorganisms(strapi);
     await importMatrix(strapi);
     await updateGraphs(strapi);
+    await importExternalLinks(strapi); 
+
 
 
     // Add this line to call your new import function
