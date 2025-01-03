@@ -52,7 +52,7 @@
     "priority": {
       "type": "integer",
       "required": true,
-      "unique": true,
+      "unique": false,
       "pluginOptions": {
         "i18n": {
           "localized": true
