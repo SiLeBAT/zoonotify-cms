@@ -19,6 +19,7 @@ export interface CutOff {
 }
 
 function readRecord(data: any[][]) {
+    console.log("Raw data from Excel sheet:", data);
     let baseRec = {};
     let cols: string[] = [];
     let dataList: any[] = [];
@@ -39,6 +40,7 @@ function readRecord(data: any[][]) {
         }
     });
 
+    console.log("Parsed column headers:", cols);
 
     data.forEach((recLine, index) => {
         let years: string[] = [];
@@ -57,43 +59,89 @@ function readRecord(data: any[][]) {
             dataList.push(newRec);
         }
     });
+
+    console.log("Parsed rows:", dataList);
     return dataList;
 }
 
 function prepareRecord(res, bacteria, tableId) {
+    console.log("Processing res array:", res);
+
     let descriptionObj = res.pop();
     let titleObj = res.pop();
+
+    if (!descriptionObj || !descriptionObj.Substanzklasse) {
+        console.error(`Description object missing for table_id ${tableId}:`, descriptionObj);
+        return null;
+    }
+
+    if (!titleObj || !titleObj.Substanzklasse) {
+        console.error(`Title object missing for table_id ${tableId}:`, titleObj);
+        return null;
+    }
 
     let newEntry: ResistanceRecord = {
         table_id: tableId,
         description: descriptionObj.Substanzklasse,
         title: titleObj.Substanzklasse,
         cut_offs: []
-    }
+    };
 
-    res.forEach(x => {
-        var item = antibiotics.find(item => item["name"] == x.Wirkstoff);
-        var antibioticId = null;
-        if (item) {
-            antibioticId = item.id;
+    let problematicAntibiotics = []; // Track problematic antibiotics
+
+    res.forEach((x) => {
+        if (!x || !x.Wirkstoff) {
+            console.error("Invalid data object:", x);
+            return;
         }
 
+        let item = antibiotics.find((item) => item["name"] === x.Wirkstoff);
+        let antibioticId = item ? item.id : null;
 
-        x.years.forEach(year => {
-            var cutOffVal = x[year + "_cut-off"];
+        if (!item) {
+            console.error(`Unmatched antibiotic name: ${x.Wirkstoff}`);
+            problematicAntibiotics.push(x.Wirkstoff);
+        }
+
+        x.years.forEach((year) => {
+            let cutOffVal = x[year + "_cut-off"];
+            let min = x[year + "_min"];
+            let max = x[year + "_max"];
+
+            if (isNaN(min) || isNaN(max)) {
+                console.error(`Invalid numeric values for year ${year}:`, { min, max });
+                problematicAntibiotics.push({ Wirkstoff: x.Wirkstoff, year, min, max });
+                return;
+            }
+
             let cutOff: CutOff = {
                 year: year,
                 antibiotic: [antibioticId],
                 substanzklasse: x.Substanzklasse,
                 bacteria: bacteria,
-                min: x[year + "_min"],
-                max: x[year + "_max"],
-                cutOff: cutOffVal.toString()
+                min: min,
+                max: max,
+                cutOff: cutOffVal ? cutOffVal.toString().replace('*', '') : "",
             };
+
+            if (!antibioticId) {
+                console.error(`Invalid antibiotic ID for Wirkstoff: ${x.Wirkstoff}, year: ${year}`);
+                problematicAntibiotics.push({ Wirkstoff: x.Wirkstoff, year, cutOff });
+                return;
+            }
+
             newEntry.cut_offs.push(cutOff);
         });
-
     });
+
+    if (!newEntry.cut_offs.length) {
+        console.error("Invalid entry generated for table_id:", tableId, newEntry);
+        return null;
+    }
+
+    if (problematicAntibiotics.length > 0) {
+        console.error("Problematic antibiotics identified:", problematicAntibiotics);
+    }
 
     return newEntry;
 }
@@ -102,28 +150,51 @@ async function saveResistanceRecord(records: any[]) {
     const response = [];
 
     for (const record of records) {
-        try {
-            const entries = await strapi.entityService.findMany('api::resistance-table.resistance-table', {
-                fields: ['id', 'table_id'],
-                filters: { table_id: record.table_id }
-            });
-
-            if (entries && entries.length > 0) {
-                const entry = await strapi.entityService.update('api::resistance-table.resistance-table', entries[0].id, {
-                    data: { ...record.cut_offs },
-                });
-                response.push({ statusCode: 201, entry });
-            } else {
-                const contents = await strapi.entityService.create('api::resistance-table.resistance-table', {
-                    data: record
-                });
-                response.push({ statusCode: 201, contents });
-            }
-
-        } catch (error) {
-            response.push({ statusCode: 500, error });
+        if (!record) {
+            console.error("Skipping invalid record:", record);
+            continue;
         }
 
+        try {
+            const enEntries = await strapi.entityService.findMany('api::resistance-table.resistance-table', {
+                fields: ['id', 'table_id', 'locale'],
+                filters: { table_id: record.table_id, locale: 'en' }
+            });
+
+            console.log(`Existing entries for table_id ${record.table_id} in 'en':`, enEntries);
+
+            let deEntries = await strapi.entityService.findMany('api::resistance-table.resistance-table', {
+                fields: ['id', 'table_id', 'locale'],
+                filters: { table_id: record.table_id, locale: 'de' }
+            });
+
+            if (enEntries.length > 0) {
+                const enEntry = await strapi.entityService.update('api::resistance-table.resistance-table', enEntries[0].id, {
+                    data: { ...record, locale: 'en' },
+                });
+                response.push({ statusCode: 201, enEntry });
+
+                if (deEntries.length === 0) {
+                    const deEntry = await strapi.entityService.create('api::resistance-table.resistance-table', {
+                        data: { ...record, locale: 'de', localizations: [enEntry.id] },
+                    });
+                    response.push({ statusCode: 201, deEntry });
+                }
+            } else {
+                const enContent = await strapi.entityService.create('api::resistance-table.resistance-table', {
+                    data: { ...record, locale: 'en' },
+                });
+                response.push({ statusCode: 201, enContent });
+
+                const deContent = await strapi.entityService.create('api::resistance-table.resistance-table', {
+                    data: { ...record, locale: 'de', localizations: [enContent.id] },
+                });
+                response.push({ statusCode: 201, deContent });
+            }
+        } catch (error) {
+            console.error("Error saving record:", record, error);
+            response.push({ statusCode: 500, error });
+        }
     }
 
     return response;
@@ -132,15 +203,15 @@ async function saveResistanceRecord(records: any[]) {
 async function importCutOffData(strapi) {
     const fs = require('fs');
     let path = require('path');
-    let cutoffDataPath = path.join(__dirname, '../../data/cutoff-data.xlsx');
-    let cutoffDataResultPath = path.join(__dirname, '../../data/cutoff-import-result.json');
+    let cutoffDataPath = path.join(__dirname, '../../../data/master-data/cutoff-data.xlsx');
+    let cutoffDataResultPath = path.join(__dirname, '../../../data/master-data/cutoff-import-result.json');
 
     if (fs.existsSync(cutoffDataPath) && !fs.existsSync(cutoffDataResultPath)) {
         var begin = Date.now();
 
         const buffer = fs.readFileSync(cutoffDataPath);
         const dataFromExcel = xlsx.parse(buffer);
-        console.log(dataFromExcel);
+        console.log("Excel sheets parsed:", dataFromExcel.map(sheet => sheet.name));
         let dataList = [];
 
         antibiotics = await strapi.entityService.findMany('api::antibiotic.antibiotic', {
@@ -148,6 +219,7 @@ async function importCutOffData(strapi) {
         });
 
         dataFromExcel.forEach(sheet => {
+            console.log("Processing sheet:", sheet.name);
 
             let res = readRecord(sheet.data);
             if (sheet.name == "EC") {
@@ -165,10 +237,10 @@ async function importCutOffData(strapi) {
             if (sheet.name == "MRSA") {
                 dataList.push(prepareRecord(res, "methicillin-resistant Staphylococcus aureus", "4"));
             }
-            if (sheet.name == "E. faecalis") {
+            if (sheet.name == "calis") {
                 dataList.push(prepareRecord(res, "Enterococcus faecalis", "5a"));
             }
-            if (sheet.name == "E. faecium") {
+            if (sheet.name == "cium") {
                 dataList.push(prepareRecord(res, "Enterococcus faecium", "5b"));
             }
         });
@@ -180,16 +252,11 @@ async function importCutOffData(strapi) {
                     "Time Taken": "0",
                     "Successfully Saved": 0,
                     Failures: []
-                }
+                };
 
                 if (results) {
-                    let failures = results.filter((result) => {
-                        return result.statusCode == 500;
-                    });
-
-                    let success = results.filter((result) => {
-                        return result.statusCode == 201;
-                    });
+                    let failures = results.filter((result) => result.statusCode === 500);
+                    let success = results.filter((result) => result.statusCode === 201);
 
                     dataLog["Successfully Saved"] = success.length;
                     dataLog.Failures = failures;
@@ -203,8 +270,8 @@ async function importCutOffData(strapi) {
                 });
             })
             .catch(e => {
+                console.error("Error saving records:", e);
             });
-
     }
 }
 

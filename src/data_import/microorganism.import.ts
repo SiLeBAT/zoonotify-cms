@@ -3,64 +3,94 @@ const fs = require('fs');
 const path = require('path');
 
 async function importMicroorganisms(strapi) {
-    let filePath = path.join(__dirname, '../../../data//master-data/microorganism.xlsx');
+    const filePath = path.join(__dirname, '../../../data/master-data/microorganism.xlsx');
 
-    if (fs.existsSync(filePath)) {
-        const buffer = fs.readFileSync(filePath);
-        const dataFromExcel = xlsx.parse(buffer); // Parse the Excel file
-        const microorganismData = dataFromExcel.find(sheet => sheet.name === 'microorganism');
+    if (!fs.existsSync(filePath)) {
+        console.error('File not found:', filePath);
+        return;
+    }
 
-        if (!microorganismData) {
-            console.error('Microorganisms sheet not found in the file');
-            return;
-        }
+    const buffer = fs.readFileSync(filePath);
+    const dataFromExcel = xlsx.parse(buffer); // Parse the Excel file
+    const microorganismSheet = dataFromExcel.find(sheet => sheet.name === 'microorganism');
 
-        if (microorganismData.data.length === 0) {
-            console.error('No data found in the Microorganisms sheet');
-            return;
-        }
+    if (!microorganismSheet) {
+        console.error('Microorganisms sheet not found in the file');
+        return;
+    }
 
-        let dataList = microorganismData.data.slice(1).map(row => {
-            
-            return {
-                name: row[0], // Assuming 'name' is in the first column
-                iri: row[1],  // Assuming 'iri' is in the second column
-                isolateName: row[2] // Assuming the name or identifier of the isolate is in the third column
-            };
-        });
+    if (microorganismSheet.data.length <= 1) {
+        console.error('No data found in the Microorganisms sheet');
+        return;
+    }
 
-        for (const item of dataList) {
-            try {
-                let existingMicroorganism = await strapi.entityService.findMany('api::microorganism.microorganism', {
-                    filters: { name: item.name },
+    // Pre-fetch all existing microorganisms in both English and German
+    const existingMicroorganisms = await strapi.entityService.findMany('api::microorganism.microorganism', {
+        populate: ['localizations'],
+        filters: {},
+    });
+
+    const existingEnglishNames = new Set(
+        existingMicroorganisms
+            .filter(entry => entry.locale === 'en')
+            .map(entry => entry.name)
+    );
+
+    const existingGermanNames = new Set(
+        existingMicroorganisms
+            .filter(entry => entry.locale === 'de')
+            .map(entry => entry.name)
+    );
+
+    const dataList = microorganismSheet.data.slice(1).map(row => ({
+        name_de: row[0]?.trim(), // German name (first column)
+        name_en: row[1]?.trim(), // English name (second column)
+    }));
+
+    for (const item of dataList) {
+        try {
+            // Skip if the German name already exists
+            if (existingGermanNames.has(item.name_de)) {
+                console.log(`German entry "${item.name_de}" already exists. Skipping.`);
+                continue;
+            }
+
+            // Create or find the English entry
+            let defaultEntry;
+
+            if (existingEnglishNames.has(item.name_en)) {
+                // Fetch the existing English entry
+                defaultEntry = existingMicroorganisms.find(
+                    entry => entry.name === item.name_en && entry.locale === 'en'
+                );
+            } else {
+                // Create a new English entry
+                defaultEntry = await strapi.entityService.create('api::microorganism.microorganism', {
+                    data: {
+                        name: item.name_en,
+                        locale: 'en',
+                    },
                 });
 
-                let isolateId = null;
-                if (item.isolateName) {
-                    // Assuming isolateName is unique or an identifier for isolates
-                    let isolates = await strapi.entityService.findMany('api::isolate.isolate', {
-                        filters: { name: item.isolateName },
-                    });
-                    isolateId = isolates.length > 0 ? isolates[0].id : null;
-                }
-
-                if (existingMicroorganism.length > 0) {
-                    // Update existing entry with potential new isolate linkage
-                    await strapi.entityService.update('api::microorganism.microorganism', existingMicroorganism[0].id, {
-                        data: { ...item, isolates: isolateId ? [isolateId] : [] },
-                    });
-                } else {
-                    // Create new entry with isolate linkage
-                    await strapi.entityService.create('api::microorganism.microorganism', {
-                        data: { ...item, isolates: isolateId ? [isolateId] : [] },
-                    });
-                }
-            } catch (error) {
-                console.error('Error importing microorganism:', error);
+                // Add the new English name to the set
+                existingEnglishNames.add(item.name_en);
             }
+
+            // Create the German entry linked to the English entry
+            await strapi.entityService.create('api::microorganism.microorganism', {
+                data: {
+                    name: item.name_de,
+                    locale: 'de',
+                    localizationOf: defaultEntry.id,
+                },
+            });
+
+            // Add the German name to the set to prevent future duplicates
+            existingGermanNames.add(item.name_de);
+
+        } catch (error) {
+            console.error('Error importing microorganism:', error);
         }
-    } else {
-        console.error('File not found:', filePath);
     }
 }
 

@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+    PATH=$PATH:~/bin
+    source ~/.bashrc
+    source ~/.nvm/nvm.sh
     /usr/home/zoono/.yarn/bin/yarn
     /usr/home/zoono/.yarn/bin/yarn build
     ./node_modules/.bin/pm2 stop all

@@ -10,6 +10,10 @@ import { importSampleOrigins } from './data_import/sample-origin.import';
 import { importSampleTypes } from './data_import/sample-type.import';
 import { importSamplingStages } from './data_import/sampling-stage.import';
 import { importSuperCategorySampleOrigins } from './data_import/super-category-sample-origin.import';
+//mport { updateGraphs } from './data_import/updateGraphs';
+import { importExternalLinks } from './data_import/importExternalLinks';
+import fileLifecycles from './extensions/upload/content-types/file/lifecycles';
+
 
 
 
@@ -22,6 +26,9 @@ export default {
    * This gives you an opportunity to extend code.
    */
   register({ strapi }) {
+
+    strapi.contentTypes['plugin::upload.file'].lifecycles = fileLifecycles;
+    console.log('[DEBUG] File lifecycles registered.');
     if (strapi.plugin('documentation')) {
       const override = {
         info: { version: '2.2.0' },
@@ -969,6 +976,8 @@ export default {
         }
       }
 
+      
+
       strapi
         .plugin('documentation')
         .service('override')
@@ -1004,6 +1013,8 @@ export default {
 
   },
 
+  
+
   /**
    * An asynchronous bootstrap function that runs before
    * your application gets started.
@@ -1012,6 +1023,7 @@ export default {
    * run jobs, or perform some special logic.
    */
   async bootstrap({ strapi }) {
+    console.log('[DEBUG] Running bootstrap logic.');
     // Import data for LD
     await importResistanceData(strapi);
 
@@ -1028,6 +1040,10 @@ export default {
     await importSuperCategorySampleOrigins(strapi);
     await importMicroorganisms(strapi);
     await importMatrix(strapi);
+    //await updateGraphs(strapi);
+    await importExternalLinks(strapi); 
+
+
 
     // Add this line to call your new import function
     await importControlledVocabularyTranslations(strapi);
