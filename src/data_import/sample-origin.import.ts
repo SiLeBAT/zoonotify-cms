@@ -31,7 +31,7 @@ async function importSampleOrigins(strapi) {
         for (const item of dataList) {
             try {
                 // Step 1: Find or create/update the default locale ('en') entry
-                let existingEntriesEn = await strapi.entityService.findMany('api::sample-origin.sample-origin', {
+                let existingEntriesEn = await strapi.documents('api::sample-origin.sample-origin').findMany({
                     filters: { name: item.name_en },
                     locale: 'en',
                 });
@@ -40,15 +40,17 @@ async function importSampleOrigins(strapi) {
 
                 if (existingEntriesEn.length > 0) {
                     // Update the existing default locale entry
-                    defaultEntry = await strapi.entityService.update('api::sample-origin.sample-origin', existingEntriesEn[0].id, {
+                    defaultEntry = await strapi.documents('api::sample-origin.sample-origin').update({
+                        documentId: "__TODO__",
+
                         data: {
                             name: item.name_en,
                             locale: 'en', // Ensure locale is set inside data
-                        },
+                        }
                     });
                 } else {
                     // Create a new default locale entry
-                    defaultEntry = await strapi.entityService.create('api::sample-origin.sample-origin', {
+                    defaultEntry = await strapi.documents('api::sample-origin.sample-origin').create({
                         data: {
                             name: item.name_en,
                             locale: 'en', // Set locale inside data
@@ -58,8 +60,9 @@ async function importSampleOrigins(strapi) {
 
                 // Step 2: Find or create/update the German ('de') locale entry
                 // Fetch the default entry with its localizations
-                const defaultEntryWithLocalizations = await strapi.entityService.findOne('api::sample-origin.sample-origin', defaultEntry.id, {
-                    populate: ['localizations'],
+                const defaultEntryWithLocalizations = await strapi.documents('api::sample-origin.sample-origin').findOne({
+                    documentId: "__TODO__",
+                    populate: ['localizations']
                 });
 
                 // Check if a German localization exists
@@ -67,15 +70,17 @@ async function importSampleOrigins(strapi) {
 
                 if (deEntry) {
                     // Update the existing German locale entry
-                    await strapi.entityService.update('api::sample-origin.sample-origin', deEntry.id, {
+                    await strapi.documents('api::sample-origin.sample-origin').update({
+                        documentId: "__TODO__",
+
                         data: {
                             name: item.name_de,
                             locale: 'de', // Ensure locale is set inside data
-                        },
+                        }
                     });
                 } else {
                     // Create a new German locale entry linked to the default entry
-                    await strapi.entityService.create('api::sample-origin.sample-origin', {
+                    await strapi.documents('api::sample-origin.sample-origin').create({
                         data: {
                             name: item.name_de,
                             locale: 'de', // Set locale inside data

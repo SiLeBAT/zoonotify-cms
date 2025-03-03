@@ -49,19 +49,20 @@ async function importExternalLinks(strapi: any): Promise<void> {
                     locale: 'en',
                 };
 
-                let defaultEntry = await strapi.entityService.findMany('api::externallink.externallink', {
+                let defaultEntry = await strapi.documents('api::externallink.externallink').findMany({
                     filters: { name: item.name_en },
                     locale: 'en',
                 });
 
                 if (defaultEntry.length > 0) {
                     // Update existing English entry
-                    defaultEntry = await strapi.entityService.update('api::externallink.externallink', defaultEntry[0].id, {
-                        data: dataToSaveEn,
+                    defaultEntry = await strapi.documents('api::externallink.externallink').update({
+                        documentId: "__TODO__",
+                        data: dataToSaveEn
                     });
                 } else {
                     // Create new English entry
-                    defaultEntry = await strapi.entityService.create('api::externallink.externallink', {
+                    defaultEntry = await strapi.documents('api::externallink.externallink').create({
                         data: dataToSaveEn,
                     });
                 }
@@ -79,19 +80,20 @@ async function importExternalLinks(strapi: any): Promise<void> {
                     localizationOf: defaultEntry.id,
                 };
 
-                let existingEntriesDe = await strapi.entityService.findMany('api::externallink.externallink', {
+                let existingEntriesDe = await strapi.documents('api::externallink.externallink').findMany({
                     filters: { name: item.name_de },
                     locale: 'de',
                 });
 
                 if (existingEntriesDe.length > 0) {
                     // Update existing German entry
-                    await strapi.entityService.update('api::externallink.externallink', existingEntriesDe[0].id, {
-                        data: dataToSaveDe,
+                    await strapi.documents('api::externallink.externallink').update({
+                        documentId: "__TODO__",
+                        data: dataToSaveDe
                     });
                 } else {
                     // Create new German entry linked to the English one
-                    await strapi.entityService.create('api::externallink.externallink', {
+                    await strapi.documents('api::externallink.externallink').create({
                         data: dataToSaveDe,
                     });
                 }

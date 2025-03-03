@@ -32,16 +32,19 @@ async function importSampleTypes(strapi) {
         for (const item of dataList) {
             try {
                 // Check if the entry already exists based on 'name'
-                let existingEntries = await strapi.entityService.findMany('api::sample-type.sample-type', {
+                let existingEntries = await strapi.documents('api::sample-type.sample-type').findMany({
                     filters: { name: item.name },
                 });
 
                 if (existingEntries.length > 0) {
                     // Update the first found entry (assuming 'name' is unique)
-                    await strapi.entityService.update('api::sample-type.sample-type', existingEntries[0].id, { data: item });
+                    await strapi.documents('api::sample-type.sample-type').update({
+                        documentId: "__TODO__",
+                        data: item
+                    });
                 } else {
                     // Create new entry
-                    await strapi.entityService.create('api::sample-type.sample-type', { data: item });
+                    await strapi.documents('api::sample-type.sample-type').create({ data: item });
                 }
             } catch (error) {
                 console.error('Error importing sample type:', error);

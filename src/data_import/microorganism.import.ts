@@ -25,7 +25,7 @@ async function importMicroorganisms(strapi) {
     }
 
     // Pre-fetch all existing microorganisms in both English and German
-    const existingMicroorganisms = await strapi.entityService.findMany('api::microorganism.microorganism', {
+    const existingMicroorganisms = await strapi.documents('api::microorganism.microorganism').findMany({
         populate: ['localizations'],
         filters: {},
     });
@@ -65,7 +65,7 @@ async function importMicroorganisms(strapi) {
                 );
             } else {
                 // Create a new English entry
-                defaultEntry = await strapi.entityService.create('api::microorganism.microorganism', {
+                defaultEntry = await strapi.documents('api::microorganism.microorganism').create({
                     data: {
                         name: item.name_en,
                         locale: 'en',
@@ -77,7 +77,7 @@ async function importMicroorganisms(strapi) {
             }
 
             // Create the German entry linked to the English entry
-            await strapi.entityService.create('api::microorganism.microorganism', {
+            await strapi.documents('api::microorganism.microorganism').create({
                 data: {
                     name: item.name_de,
                     locale: 'de',
