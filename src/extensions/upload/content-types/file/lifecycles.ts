@@ -1,5 +1,5 @@
 
-import { Strapi } from '@strapi/strapi';
+import type { Strapi as StrapiType } from '@strapi/types/dist/core';
 import xlsx from 'node-xlsx';
 import fs from 'fs';
 import path from 'path';
@@ -55,23 +55,16 @@ let antibiotics: any; // This will be populated from the database later
 
 /**
  * Helper function to find or create a matrix entry by name.
- *
- * @param apiEndpoint - The API endpoint for matrices (e.g. 'api::matrix.matrix')
- * @param matrixName - The name of the matrix (from the Excel row)
- * @param locale - The locale (e.g. 'en' or 'de')
- * @param strapi - The Strapi instance
- * @returns The ID (string or number) of the found or newly created matrix entry.
  */
 async function findOrCreateMatrix(
   apiEndpoint: string,
   matrixName: string,
   locale: string,
-  strapi: Strapi
+  strapi: StrapiType
 ): Promise<string | number | null> {
   if (!matrixName) return null;
 
-  // Cast apiEndpoint as any to match expected ContentType
-  const existingMatrices = await strapi.entityService.findMany(apiEndpoint as any, {
+  const existingMatrices = await strapi.documents(apiEndpoint as any).findMany({
     filters: { name: matrixName },
     locale,
   });
@@ -79,7 +72,7 @@ async function findOrCreateMatrix(
   if (existingMatrices.length > 0) {
     return existingMatrices[0].id;
   } else {
-    const newMatrix = await strapi.entityService.create(apiEndpoint as any, {
+    const newMatrix = await strapi.documents(apiEndpoint as any).create({
       data: { name: matrixName },
     });
     console.log(
@@ -96,11 +89,11 @@ async function findEntityIdByName(
   apiEndpoint: string,
   name: string,
   locale: string,
-  strapi: Strapi
+  strapi: StrapiType
 ): Promise<string | number | null> {
   if (!name) return null;
 
-  const entities = await strapi.entityService.findMany(apiEndpoint as any, {
+  const entities = await strapi.documents(apiEndpoint as any).findMany({
     filters: { name },
     locale,
   });
@@ -111,17 +104,21 @@ async function findEntityIdByName(
 /**
  * Save or update a prevalence entry.
  */
-async function saveOrUpdatePrevalenceEntry(data: any, strapi: Strapi) {
-  const existingEntries = await strapi.entityService.findMany('api::prevalence.prevalence', {
+async function saveOrUpdatePrevalenceEntry(data: any, strapi: StrapiType) {
+  const existingEntries = await strapi.documents('api::prevalence.prevalence').findMany({
     filters: { dbId: data.dbId },
     locale: data.locale,
   });
 
   if (existingEntries.length > 0) {
-    await strapi.entityService.update('api::prevalence.prevalence', existingEntries[0].id, { data });
+    await strapi.documents('api::prevalence.prevalence').update({
+      // Convert evaluation.id to string if needed (placeholder below).
+      documentId: "__TODO__",
+      data,
+    });
     console.log(`[DEBUG] Updated existing prevalence entry with dbId: ${data.dbId}`);
   } else {
-    await strapi.entityService.create('api::prevalence.prevalence', { data });
+    await strapi.documents('api::prevalence.prevalence').create({ data });
     console.log(`[DEBUG] Created new prevalence entry with dbId: ${data.dbId}`);
   }
 }
@@ -134,14 +131,14 @@ export default {
     console.log('[DEBUG] afterCreate lifecycle triggered.');
 
     const { result } = event;
-    const strapi: Strapi = (global as any).strapi;
+    const strapi: StrapiType = (global as any).strapi;
 
     try {
-      const file: FileEntity = await strapi.entityService.findOne(
-        'plugin::upload.file',
-        result.id,
-        { populate: { folder: true } }
-      ) as FileEntity;
+      // Cast via unknown to satisfy TS conversion to FileEntity
+      const file: FileEntity = (await strapi.documents('plugin::upload.file').findOne({
+        documentId: "__TODO__",
+        populate: { folder: true },
+      })) as unknown as FileEntity;
 
       if (!file || !file.folder || !file.folder.name) {
         console.log('[DEBUG] File or folder information is missing. Aborting...');
@@ -167,7 +164,7 @@ export default {
           try {
             await importPrevalenceData(filePath, strapi);
             console.log('[DEBUG] Prevalence import completed successfully.');
-          } catch (importError) {
+          } catch (importError: any) {
             console.error('[ERROR] Failed to import Prevalence data:', importError.message || importError);
           }
         } else {
@@ -218,12 +215,13 @@ export default {
                 }
               );
 
-              const updatedDiagram = await strapi.entityService.findOne(
-                'plugin::upload.file',
-                evaluation.diagram.id,
-                { populate: { folder: true } }
-              ) as FileEntity;
-              console.log(`[DEBUG] Old diagram now in folder "${updatedDiagram.folder?.name}" (ID=${updatedDiagram.folder?.id}).`);
+              const updatedDiagram = (await strapi.documents('plugin::upload.file').findOne({
+                documentId: "__TODO__",
+                populate: { folder: true },
+              })) as unknown as FileEntity;
+              console.log(
+                `[DEBUG] Old diagram now in folder "${updatedDiagram.folder?.name}" (ID=${updatedDiagram.folder?.id}).`
+              );
             }
 
             await (strapi.entityService.update as any)(
@@ -255,12 +253,13 @@ export default {
                 }
               );
 
-              const updatedCSV = await strapi.entityService.findOne(
-                'plugin::upload.file',
-                evaluation.csv_data.id,
-                { populate: { folder: true } }
-              ) as FileEntity;
-              console.log(`[DEBUG] Old CSV now in folder "${updatedCSV.folder?.name}" (ID=${updatedCSV.folder?.id}).`);
+              const updatedCSV = (await strapi.documents('plugin::upload.file').findOne({
+                documentId: "__TODO__",
+                populate: { folder: true },
+              })) as unknown as FileEntity;
+              console.log(
+                `[DEBUG] Old CSV now in folder "${updatedCSV.folder?.name}" (ID=${updatedCSV.folder?.id}).`
+              );
             }
 
             await (strapi.entityService.update as any)(
@@ -289,7 +288,7 @@ export default {
           try {
             await importCutOffDataFromFile(filePath, strapi);
             console.log('[DEBUG] Cutoff import completed successfully.');
-          } catch (cutoffError) {
+          } catch (cutoffError: any) {
             console.error('[ERROR] Failed to import cutoff data:', cutoffError.message || cutoffError);
           }
         } else {
@@ -297,7 +296,7 @@ export default {
         }
         return;
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('[ERROR] afterCreate lifecycle failed:', error?.message || error);
     }
   },
@@ -308,7 +307,7 @@ export default {
  * Prevalence import functions
  * ------------------------------
  */
-async function importPrevalenceData(filePath: string, strapi: Strapi) {
+async function importPrevalenceData(filePath: string, strapi: StrapiType) {
   if (!fs.existsSync(filePath)) {
     throw new Error('File not found at path: ' + filePath);
   }
@@ -355,7 +354,6 @@ async function importPrevalenceData(filePath: string, strapi: Strapi) {
 
   for (const item of dataList) {
     try {
-      // Use findOrCreateMatrix for matrices so that a new matrix is created if it doesn't exist
       const matrixId_en = await findOrCreateMatrix('api::matrix.matrix', item.matrix_en, 'en', strapi);
       const matrixId_de = await findOrCreateMatrix('api::matrix.matrix', item.matrix_de, 'de', strapi);
 
@@ -416,7 +414,7 @@ async function importPrevalenceData(filePath: string, strapi: Strapi) {
 
       await saveOrUpdatePrevalenceEntry(dataToSave_en, strapi);
       await saveOrUpdatePrevalenceEntry(dataToSave_de, strapi);
-    } catch (error) {
+    } catch (error: any) {
       console.error('[ERROR] Failed to save data for entry with dbId:', item.dbId, error.message);
     }
   }
@@ -555,7 +553,7 @@ function prepareRecord(res: any[], bacteria: string, tableId: string): Resistanc
   return newEntry;
 }
 
-async function saveResistanceRecord(records: any[], strapi: Strapi): Promise<any[]> {
+async function saveResistanceRecord(records: any[], strapi: StrapiType): Promise<any[]> {
   const response: any[] = [];
 
   for (const record of records) {
@@ -565,37 +563,38 @@ async function saveResistanceRecord(records: any[], strapi: Strapi): Promise<any
     }
 
     try {
-      const enEntries = await strapi.entityService.findMany('api::resistance-table.resistance-table', {
+      const enEntries = await strapi.documents('api::resistance-table.resistance-table').findMany({
         fields: ['id', 'table_id', 'locale'],
         filters: { table_id: record.table_id, locale: 'en' }
       });
 
       console.log(`Existing entries for table_id ${record.table_id} in 'en':`, enEntries);
 
-      let deEntries = await strapi.entityService.findMany('api::resistance-table.resistance-table', {
+      let deEntries = await strapi.documents('api::resistance-table.resistance-table').findMany({
         fields: ['id', 'table_id', 'locale'],
         filters: { table_id: record.table_id, locale: 'de' }
       });
 
       if (enEntries.length > 0) {
-        const enEntry = await strapi.entityService.update('api::resistance-table.resistance-table', enEntries[0].id, {
-          data: { ...record, locale: 'en' },
+        const enEntry = await strapi.documents('api::resistance-table.resistance-table').update({
+          documentId: "__TODO__",
+          data: { ...record, locale: 'en' }
         });
         response.push({ statusCode: 201, enEntry });
 
         if (deEntries.length === 0) {
-          const deEntry = await strapi.entityService.create('api::resistance-table.resistance-table', {
+          const deEntry = await strapi.documents('api::resistance-table.resistance-table').create({
             data: { ...record, locale: 'de', localizations: [enEntry.id] },
           });
           response.push({ statusCode: 201, deEntry });
         }
       } else {
-        const enContent = await strapi.entityService.create('api::resistance-table.resistance-table', {
+        const enContent = await strapi.documents('api::resistance-table.resistance-table').create({
           data: { ...record, locale: 'en' },
         });
         response.push({ statusCode: 201, enContent });
 
-        const deContent = await strapi.entityService.create('api::resistance-table.resistance-table', {
+        const deContent = await strapi.documents('api::resistance-table.resistance-table').create({
           data: { ...record, locale: 'de', localizations: [enContent.id] },
         });
         response.push({ statusCode: 201, deContent });
@@ -612,7 +611,7 @@ async function saveResistanceRecord(records: any[], strapi: Strapi): Promise<any
 /**
  * New function to import cutoff data from the uploaded file.
  */
-async function importCutOffDataFromFile(filePath: string, strapi: Strapi) {
+async function importCutOffDataFromFile(filePath: string, strapi: StrapiType) {
   if (!fs.existsSync(filePath)) {
     throw new Error('Cutoff file not found at path: ' + filePath);
   }
@@ -623,7 +622,7 @@ async function importCutOffDataFromFile(filePath: string, strapi: Strapi) {
   let dataList: any[] = [];
 
   // Fetch antibiotics from the database
-  antibiotics = await strapi.entityService.findMany('api::antibiotic.antibiotic', {
+  antibiotics = await strapi.documents('api::antibiotic.antibiotic').findMany({
     fields: ['id', 'name']
   });
 

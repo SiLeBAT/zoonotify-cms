@@ -32,16 +32,19 @@ async function importMatrixDetails(strapi) {
         for (const item of dataList) {
             try {
                 // Check if the entry already exists based on 'name'
-                let existingEntries = await strapi.entityService.findMany('api::matrix-detail.matrix-detail', {
+                let existingEntries = await strapi.documents('api::matrix-detail.matrix-detail').findMany({
                     filters: { name: item.name },
                 });
 
                 if (existingEntries.length > 0) {
                     // Update the first found entry (assuming 'name' is unique)
-                    await strapi.entityService.update('api::matrix-detail.matrix-detail', existingEntries[0].id, { data: item });
+                    await strapi.documents('api::matrix-detail.matrix-detail').update({
+                        documentId: "__TODO__",
+                        data: item
+                    });
                 } else {
                     // Create new entry
-                    await strapi.entityService.create('api::matrix-detail.matrix-detail', { data: item });
+                    await strapi.documents('api::matrix-detail.matrix-detail').create({ data: item });
                 }
             } catch (error) {
                 console.error('Error importing matrix detail:', error);

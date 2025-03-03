@@ -156,37 +156,38 @@ async function saveResistanceRecord(records: any[]) {
         }
 
         try {
-            const enEntries = await strapi.entityService.findMany('api::resistance-table.resistance-table', {
+            const enEntries = await strapi.documents('api::resistance-table.resistance-table').findMany({
                 fields: ['id', 'table_id', 'locale'],
                 filters: { table_id: record.table_id, locale: 'en' }
             });
 
             console.log(`Existing entries for table_id ${record.table_id} in 'en':`, enEntries);
 
-            let deEntries = await strapi.entityService.findMany('api::resistance-table.resistance-table', {
+            let deEntries = await strapi.documents('api::resistance-table.resistance-table').findMany({
                 fields: ['id', 'table_id', 'locale'],
                 filters: { table_id: record.table_id, locale: 'de' }
             });
 
             if (enEntries.length > 0) {
-                const enEntry = await strapi.entityService.update('api::resistance-table.resistance-table', enEntries[0].id, {
-                    data: { ...record, locale: 'en' },
+                const enEntry = await strapi.documents('api::resistance-table.resistance-table').update({
+                    documentId: "__TODO__",
+                    data: { ...record, locale: 'en' }
                 });
                 response.push({ statusCode: 201, enEntry });
 
                 if (deEntries.length === 0) {
-                    const deEntry = await strapi.entityService.create('api::resistance-table.resistance-table', {
+                    const deEntry = await strapi.documents('api::resistance-table.resistance-table').create({
                         data: { ...record, locale: 'de', localizations: [enEntry.id] },
                     });
                     response.push({ statusCode: 201, deEntry });
                 }
             } else {
-                const enContent = await strapi.entityService.create('api::resistance-table.resistance-table', {
+                const enContent = await strapi.documents('api::resistance-table.resistance-table').create({
                     data: { ...record, locale: 'en' },
                 });
                 response.push({ statusCode: 201, enContent });
 
-                const deContent = await strapi.entityService.create('api::resistance-table.resistance-table', {
+                const deContent = await strapi.documents('api::resistance-table.resistance-table').create({
                     data: { ...record, locale: 'de', localizations: [enContent.id] },
                 });
                 response.push({ statusCode: 201, deContent });
@@ -214,7 +215,7 @@ async function importCutOffData(strapi) {
         console.log("Excel sheets parsed:", dataFromExcel.map(sheet => sheet.name));
         let dataList = [];
 
-        antibiotics = await strapi.entityService.findMany('api::antibiotic.antibiotic', {
+        antibiotics = await strapi.documents('api::antibiotic.antibiotic').findMany({
             fields: ['id', 'name']
         });
 

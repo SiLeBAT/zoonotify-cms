@@ -92,7 +92,7 @@ async function importPrevalences(strapi) {
                 };
 
                 // Create or update the default locale ('en') entry
-                let existingEntriesEn = await strapi.entityService.findMany('api::prevalence.prevalence', {
+                let existingEntriesEn = await strapi.documents('api::prevalence.prevalence').findMany({
                     filters: { dbId: item.dbId },
                     locale: 'en',
                 });
@@ -101,12 +101,13 @@ async function importPrevalences(strapi) {
 
                 if (existingEntriesEn.length > 0) {
                     // Update existing English entry
-                    defaultEntry = await strapi.entityService.update('api::prevalence.prevalence', existingEntriesEn[0].id, {
-                        data: dataToSave_en,
+                    defaultEntry = await strapi.documents('api::prevalence.prevalence').update({
+                        documentId: "__TODO__",
+                        data: dataToSave_en
                     });
                 } else {
                     // Create new English entry
-                    defaultEntry = await strapi.entityService.create('api::prevalence.prevalence', {
+                    defaultEntry = await strapi.documents('api::prevalence.prevalence').create({
                         data: dataToSave_en,
                     });
                 }
@@ -144,19 +145,20 @@ async function importPrevalences(strapi) {
                 };
 
                 // Check if German entry exists
-                let existingEntriesDe = await strapi.entityService.findMany('api::prevalence.prevalence', {
+                let existingEntriesDe = await strapi.documents('api::prevalence.prevalence').findMany({
                     filters: { dbId: item.dbId },
                     locale: 'de',
                 });
 
                 if (existingEntriesDe.length > 0) {
                     // Update existing German entry
-                    await strapi.entityService.update('api::prevalence.prevalence', existingEntriesDe[0].id, {
-                        data: dataToSave_de,
+                    await strapi.documents('api::prevalence.prevalence').update({
+                        documentId: "__TODO__",
+                        data: dataToSave_de
                     });
                 } else {
                     // Create new German entry linked to the English one
-                    await strapi.entityService.create('api::prevalence.prevalence', {
+                    await strapi.documents('api::prevalence.prevalence').create({
                         data: dataToSave_de,
                     });
                 }
@@ -177,7 +179,7 @@ async function importPrevalences(strapi) {
 // Utility function to find entity ID by name and locale
 async function findEntityIdByName(apiEndpoint, name, locale) {
     if (!name) return null;
-    const entities = await strapi.entityService.findMany(apiEndpoint, {
+    const entities = await strapi.documents(apiEndpoint).findMany({
         filters: { name },
         locale: locale,
     });
