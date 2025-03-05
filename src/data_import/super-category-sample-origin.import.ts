@@ -1,103 +1,187 @@
+
 import xlsx from 'node-xlsx';
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
+/**
+ * Import super category sample origins from an Excel file.
+ * - Creates/updates English records (locale='en') as the base.
+ * - Creates/updates German records (locale='de') linked to English via 'localizations'.
+ */
 async function importSuperCategorySampleOrigins(strapi) {
-    let filePath = path.join(__dirname, '../../../data/master-data/supercategorysampleorigin.xlsx');
+  const filePath = path.join(__dirname, '../../../data/master-data/supercategorysampleorigin.xlsx');
+  const logFilePath = path.join(__dirname, '../../../data/supercategorysampleorigin-import-log.json');
 
-    if (fs.existsSync(filePath)) {
-        const buffer = fs.readFileSync(filePath);
-        const dataFromExcel = xlsx.parse(buffer); // Parse the Excel file
-        const superCategorySampleOriginData = dataFromExcel.find(sheet => sheet.name === 'supercategorysampleorigin');
+  const importLog = {
+    totalProcessed: 0,
+    englishCreated: 0,
+    englishUpdated: 0,
+    germanCreated: 0,
+    germanUpdated: 0,
+    errors: []
+  };
 
-        if (!superCategorySampleOriginData) {
-            console.error('SuperCategorySampleOrigins sheet not found in the file');
-            return;
-        }
+  // Check if file exists
+  if (!fs.existsSync(filePath)) {
+    console.error('File not found:', filePath);
+    return;
+  }
 
-        if (superCategorySampleOriginData.data.length === 0) {
-            console.error('No data found in the SuperCategorySampleOrigins sheet');
-            return;
-        }
+  // Parse the Excel file
+  const buffer = fs.readFileSync(filePath);
+  const dataFromExcel = xlsx.parse(buffer);
+  const sheet = dataFromExcel.find((s) => s.name.toLowerCase() === 'supercategorysampleorigin');
 
-        let dataList = superCategorySampleOriginData.data.slice(1).map(row => {
-            return {
-                name_de: row[0], // German name (assuming it's in the first column)
-                name_en: row[1], // English name (assuming it's in the second column)
-                // 'iri' field can be included if needed
-                // iri: row[2] || null
-            };
+  if (!sheet) {
+    console.error('Sheet "supercategorysampleorigin" not found in the file');
+    return;
+  }
+  if (sheet.data.length <= 1) {
+    console.error('No data found in the "supercategorysampleorigin" sheet');
+    return;
+  }
+
+  // Map rows (skipping header) into objects: col 0 = German, col 1 = English
+  const dataList = sheet.data.slice(1).map((row, index) => {
+    const name_de = row[0] ? String(row[0]).trim() : null;
+    const name_en = row[1] ? String(row[1]).trim() : null;
+    console.log(`Raw data - Row ${index + 2}: German="${row[0]}", English="${row[1]}"`);
+    console.log(`Processed - Row ${index + 2}: German="${name_de}", English="${name_en}"`);
+    return {
+      rowNumber: index + 2,
+      name_de,
+      name_en
+    };
+  }).filter(row => {
+    if (!row.name_en) {
+      console.log(`Skipping Row ${row.rowNumber}: No English name provided`);
+      return false;
+    }
+    return true;
+  });
+
+  importLog.totalProcessed = dataList.length;
+  console.log(`Found ${dataList.length} super category sample origins to process`);
+
+  for (const item of dataList) {
+    console.log(`\nProcessing Row ${item.rowNumber}: English="${item.name_en}", German="${item.name_de}"`);
+    try {
+      // 1. Create/Update the English record (base record)
+      let englishRecords = await strapi.entityService.findMany('api::super-category-sample-origin.super-category-sample-origin', {
+        filters: { name: item.name_en },
+        locale: 'en'
+      });
+
+      let englishId;
+      if (englishRecords.length > 0) {
+        englishId = englishRecords[0].id;
+        console.log(`Updating English record: ID=${englishId} => ${item.name_en}`);
+        await strapi.entityService.update('api::super-category-sample-origin.super-category-sample-origin', englishId, {
+          data: {
+            name: item.name_en,
+            publishedAt: new Date()
+          },
+          locale: 'en'
+        });
+        importLog.englishUpdated++;
+      } else {
+        console.log(`Creating English record: ${item.name_en}`);
+        const newEnglish = await strapi.entityService.create('api::super-category-sample-origin.super-category-sample-origin', {
+          data: {
+            name: item.name_en,
+            publishedAt: new Date()
+          },
+          locale: 'en'
+        });
+        englishId = newEnglish.id;
+        importLog.englishCreated++;
+      }
+
+      // 2. Create/Update the German record (if German name exists and is not empty)
+      if (item.name_de && item.name_de.trim() !== '') {
+        console.log(`Attempting to process German name: "${item.name_de}"`);
+        let germanRecords = await strapi.entityService.findMany('api::super-category-sample-origin.super-category-sample-origin', {
+          filters: { name: item.name_de },
+          locale: 'de'
         });
 
-        for (const item of dataList) {
-            try {
-                // Step 1: Find or create/update the default locale ('en') entry
-                let existingEntriesEn = await strapi.documents('api::super-category-sample-origin.super-category-sample-origin').findMany({
-                    filters: { name: item.name_en },
-                    locale: 'en',
-                });
-
-                let defaultEntry;
-
-                if (existingEntriesEn.length > 0) {
-                    // Update the existing default locale entry
-                    defaultEntry = await strapi.documents('api::super-category-sample-origin.super-category-sample-origin').update({
-                        documentId: "__TODO__",
-
-                        data: {
-                            name: item.name_en,
-                            // Do not set 'locale' in data during update
-                        }
-                    });
-                } else {
-                    // Create a new default locale entry
-                    defaultEntry = await strapi.documents('api::super-category-sample-origin.super-category-sample-origin').create({
-                        data: {
-                            name: item.name_en,
-                            locale: 'en', // Set locale when creating a new entry
-                            // Include 'iri' if needed
-                            // iri: item.iri,
-                        },
-                    });
-                }
-
-                // Step 2: Find or create/update the German ('de') locale entry
-                // Fetch the default entry with its localizations
-                const defaultEntryWithLocalizations = await strapi.documents('api::super-category-sample-origin.super-category-sample-origin').findOne({
-                    documentId: "__TODO__",
-                    populate: ['localizations']
-                });
-
-                // Check if a German localization exists
-                let deEntry = defaultEntryWithLocalizations.localizations.find(loc => loc.locale === 'de');
-
-                if (deEntry) {
-                    // Update the existing German locale entry
-                    await strapi.documents('api::super-category-sample-origin.super-category-sample-origin').update({
-                        documentId: "__TODO__",
-
-                        data: {
-                            name: item.name_de,
-                            // Do not set 'locale' in data during update
-                        }
-                    });
-                } else {
-                    // Create a new German locale entry linked to the default entry
-                    await strapi.documents('api::super-category-sample-origin.super-category-sample-origin').create({
-                        data: {
-                            name: item.name_de,
-                            locale: 'de', // Set locale when creating a new entry
-                            localizationOf: defaultEntry.id, // Link to the default entry
-                        },
-                    });
-                }
-            } catch (error) {
-                console.error('Error importing super category sample origin:', error);
-            }
+        if (germanRecords.length > 0) {
+          const germanId = germanRecords[0].id;
+          console.log(`Updating German record: ID=${germanId} => ${item.name_de}`);
+          await strapi.entityService.update('api::super-category-sample-origin.super-category-sample-origin', germanId, {
+            data: {
+              name: item.name_de,
+              localizations: [englishId],
+              publishedAt: new Date()
+            },
+            locale: 'de'
+          });
+          importLog.germanUpdated++;
+        } else {
+          console.log(`Creating German record: ${item.name_de} (linked to English ID: ${englishId})`);
+          const newGerman = await strapi.entityService.create('api::super-category-sample-origin.super-category-sample-origin', {
+            data: {
+              name: item.name_de,
+              localizations: [englishId],
+              publishedAt: new Date()
+            },
+            locale: 'de'
+          });
+          console.log(`German record created with ID: ${newGerman.id}`);
+          importLog.germanCreated++;
         }
-    } else {
-        console.error('File not found:', filePath);
+
+        // Ensure English record links to German
+        const englishWithLocalizations = await strapi.entityService.findOne(
+          'api::super-category-sample-origin.super-category-sample-origin',
+          englishId,
+          { populate: ['localizations'] }
+        );
+
+        const currentLocalizations = englishWithLocalizations && englishWithLocalizations.localizations
+          ? englishWithLocalizations.localizations.map(loc => loc.id)
+          : [];
+
+        const germanRecordCheck = await strapi.entityService.findMany('api::super-category-sample-origin.super-category-sample-origin', {
+          filters: { name: item.name_de },
+          locale: 'de'
+        });
+
+        if (germanRecordCheck.length > 0 && !currentLocalizations.includes(germanRecordCheck[0].id)) {
+          console.log(`Linking English ID ${englishId} to German ID ${germanRecordCheck[0].id}`);
+          await strapi.entityService.update('api::super-category-sample-origin.super-category-sample-origin', englishId, {
+            data: {
+              localizations: [...currentLocalizations, germanRecordCheck[0].id],
+              name: item.name_en,
+              publishedAt: new Date()
+            },
+            locale: 'en'
+          });
+        } else {
+          console.log(`No linking needed for English ID ${englishId}`);
+        }
+      } else {
+        console.log(`Skipping German record: No valid German name (value: "${item.name_de}")`);
+      }
+    } catch (error) {
+      console.error(`Error importing row ${item.rowNumber}:`, error.message);
+      importLog.errors.push({
+        row: item.rowNumber,
+        english: item.name_en,
+        german: item.name_de,
+        error: error.message
+      });
     }
+  }
+
+  fs.writeFileSync(logFilePath, JSON.stringify(importLog, null, 2));
+  console.log(`\nImport completed:
+    Total Processed: ${importLog.totalProcessed}
+    English Created: ${importLog.englishCreated}
+    English Updated: ${importLog.englishUpdated}
+    German Created: ${importLog.germanCreated}
+    German Updated: ${importLog.germanUpdated}
+    Errors: ${importLog.errors.length}`);
 }
 
 export { importSuperCategorySampleOrigins };
