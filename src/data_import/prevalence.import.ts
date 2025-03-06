@@ -1,15 +1,36 @@
-
-
 import xlsx from 'node-xlsx';
 import fs from 'fs';
 import path from 'path';
 
 /**
- * Main import function for prevalence data.
- * Creates/updates an English (default) record and,
- * if there's German data, creates/updates a German record linked to it.
+ * Main entry point: imports prevalence data from Excel
+ * and then removes any duplicate German records.
  */
-async function importPrevalences(strapi: any) {
+async function importAndCleanupPrevalences(strapi) {
+  // ---------------------------------------------------------
+  // 1) (Optional) Remove all existing prevalence records
+  // ---------------------------------------------------------
+  //If you want to completely wipe the table first, uncomment:
+   //await removeAllPrevalences(strapi);
+   //console.log('All existing prevalence records removed.\n');
+
+  // ---------------------------------------------------------
+  // 2) Import the prevalence data from Excel
+  // ---------------------------------------------------------
+  await importPrevalences(strapi);
+
+  // ---------------------------------------------------------
+  // 3) Cleanup duplicate German records
+  // ---------------------------------------------------------
+  await cleanupGermanDuplicates(strapi);
+}
+
+/**
+ *  (A) importPrevalences:
+ *  Reads rows from an Excel file, creates/updates English records,
+ *  then creates/updates linked German records if data is present.
+ */
+async function importPrevalences(strapi) {
   const filePath = path.join(__dirname, '../../../data/master-data/prevalence.xlsx');
   const outFilePath = path.join(__dirname, '../../../data/prevalence-import-result.json');
 
@@ -17,7 +38,7 @@ async function importPrevalences(strapi: any) {
     TotalRecords: 0,
     EnglishSaved: 0,
     GermanSaved: 0,
-    Failures: [] as Array<{ dbId: string; error: string }>
+    Failures: []
   };
 
   if (!fs.existsSync(filePath)) {
@@ -105,6 +126,7 @@ async function importPrevalences(strapi: any) {
         sampleOrigin: sampleOriginId_en,
         matrixGroup: matrixGroupId_en,
         superCategorySampleOrigin: superCategorySampleOriginId_en,
+        locale: 'en',
       };
 
       // Find existing English record (dbId + locale='en')
@@ -118,7 +140,7 @@ async function importPrevalences(strapi: any) {
         console.log(`Updating existing English record ID: ${existingEn[0].id} for dbId: ${item.dbId}`);
         defaultEntry = await strapi.entityService.update('api::prevalence.prevalence', existingEn[0].id, {
           data: dataEn,
-          locale: 'en', // specify the locale
+          locale: 'en',
         });
       } else {
         console.log(`Creating new English record for dbId: ${item.dbId}`);
@@ -135,9 +157,9 @@ async function importPrevalences(strapi: any) {
       // ----------------------------------
       // Check if there's actual German data
       const hasGermanData =
+        item.microorganism_de ||
         item.matrix_de ||
         item.matrixDetail_de ||
-        item.microorganism_de ||
         item.sampleType_de ||
         item.samplingStage_de ||
         item.sampleOrigin_de ||
@@ -172,6 +194,7 @@ async function importPrevalences(strapi: any) {
           sampleOrigin: sampleOriginId_de,
           matrixGroup: matrixGroupId_de,
           superCategorySampleOrigin: superCategorySampleOriginId_de,
+          locale: 'de',
           // Link the German record to the English record
           localizationOf: defaultEntry.id,
         };
@@ -198,7 +221,7 @@ async function importPrevalences(strapi: any) {
 
         importLog.GermanSaved++;
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error(`Error importing prevalence data for dbId ${item.dbId}:`, error);
       importLog.Failures.push({ dbId: item.dbId, error: error.message });
     }
@@ -209,27 +232,112 @@ async function importPrevalences(strapi: any) {
 }
 
 /**
- * Helper function to find an entity ID by exact name + locale
- * in your master data (e.g. matrix, microorganism).
+ *  (B) cleanupGermanDuplicates:
+ *  Finds all German prevalence entries, groups them by dbId,
+ *  and if there are duplicates, keeps only the lowest ID and deletes the others.
  */
-async function findEntityIdByName(
-  strapi: any,
-  apiEndpoint: string,
-  name: string | undefined,
-  locale: string
-) {
+async function cleanupGermanDuplicates(strapi) {
+  console.log('\n--- Starting cleanup of duplicate German prevalence entries ---');
+
+  const pageSize = 100;
+  let page = 1;
+  const allGermanEntries = [];
+
+  // 1. Fetch all German records in batches
+  while (true) {
+    const results = await strapi.entityService.findMany('api::prevalence.prevalence', {
+      filters: { locale: 'de' },
+      sort: { id: 'asc' }, // so the first is the lowest ID
+      publicationState: 'preview',
+      pagination: { page, pageSize },
+    });
+    if (!results.length) break;
+
+    allGermanEntries.push(...results);
+    page++;
+  }
+
+  // 2. Group them by dbId
+  const groupedByDbId = {};
+  for (const entry of allGermanEntries) {
+    const key = entry.dbId || 'NO_DBID';
+    if (!groupedByDbId[key]) {
+      groupedByDbId[key] = [];
+    }
+    groupedByDbId[key].push(entry);
+  }
+
+  // 3. For each dbId group, if more than 1, keep the first (lowest ID) and delete the rest
+  let duplicatesRemoved = 0;
+  for (const dbId in groupedByDbId) {
+    const group = groupedByDbId[dbId];
+    if (group.length > 1) {
+      // Sort by ID ascending
+      group.sort((a, b) => a.id - b.id);
+      const toKeep = group[0];
+      const toDelete = group.slice(1);
+
+      for (const dup of toDelete) {
+        console.log(`Deleting duplicate DE record: ID=${dup.id}, dbId=${dup.dbId}`);
+        await strapi.entityService.delete('api::prevalence.prevalence', dup.id);
+        duplicatesRemoved++;
+      }
+    }
+  }
+
+  console.log(`--- Cleanup complete. Total German duplicates removed: ${duplicatesRemoved} ---\n`);
+}
+
+/**
+ *  (C) removeAllPrevalences (Optional):
+ *  Removes ALL prevalence records (English + German) from the DB.
+ */
+async function removeAllPrevalences(strapi) {
+  const pageSize = 100;
+  let page = 1;
+
+  while (true) {
+    // Find a batch of prevalence entries
+    const entries = await strapi.entityService.findMany('api::prevalence.prevalence', {
+      pagination: { page, pageSize },
+      publicationState: 'preview', // get all (including drafts)
+    });
+
+    if (!entries.length) break;
+
+    // Delete each entry in this batch
+    for (const entry of entries) {
+      console.log(`Deleting prevalence ID: ${entry.id} (dbId: ${entry.dbId || 'N/A'})`);
+      await strapi.entityService.delete('api::prevalence.prevalence', entry.id);
+    }
+    page++;
+  }
+}
+
+/**
+ *  (D) findEntityIdByName:
+ *  Finds an entity by exact `name` in a given `locale`.
+ *  Returns null if not found. Logs a message if not found.
+ */
+async function findEntityIdByName(strapi, apiEndpoint, name, locale) {
   if (!name) return null;
-  // We do a findMany with filters: { name }, then pick the one with matching locale
   const results = await strapi.entityService.findMany(apiEndpoint, {
     filters: { name },
-    locale, // Strapi v5 can filter by locale here
+    locale,
   });
   if (results.length > 0) {
-    // Return the first match
     return results[0].id;
   }
   console.log(`No entity found for "${name}" (${locale}) in ${apiEndpoint}`);
   return null;
 }
 
-export { importPrevalences };
+export {
+  importAndCleanupPrevalences, // the main function to run
+  importPrevalences,           // run just the import if you like
+  cleanupGermanDuplicates,      // run the cleanup alone if needed
+  removeAllPrevalences          // optional to wipe everything first
+};
+
+
+
