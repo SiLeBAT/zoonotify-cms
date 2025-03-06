@@ -7,6 +7,7 @@ import path from 'path';
  * Import sampling stages from an Excel file.
  * - Creates/updates English records (locale='en') as the base.
  * - Creates/updates German records (locale='de') linked to English via 'localizations'.
+ * - Ensures no duplication across locales on re-run.
  */
 async function importSamplingStages(strapi) {
   const filePath = path.join(__dirname, '../../../data/master-data/samplingstage.xlsx');
@@ -20,6 +21,18 @@ async function importSamplingStages(strapi) {
     germanUpdated: 0,
     errors: []
   };
+
+  // Optional: Clear existing records before import (uncomment for testing)
+  /*
+  console.log('Clearing existing sampling-stage records...');
+  const allRecords = await strapi.entityService.findMany('api::sampling-stage.sampling-stage', {
+    locale: ['en', 'de']
+  });
+  for (const record of allRecords) {
+    await strapi.entityService.delete('api::sampling-stage.sampling-stage', record.id);
+  }
+  console.log('Existing records cleared.');
+  */
 
   // Check if file exists
   if (!fs.existsSync(filePath)) {
@@ -42,38 +55,56 @@ async function importSamplingStages(strapi) {
   }
 
   // Map rows (skipping header) into objects: col 0 = German, col 1 = English
-  const dataList = sheet.data.slice(1).map((row, index) => ({
-    rowNumber: index + 2,
-    name_de: row[0] ? String(row[0]).trim() : null,
-    name_en: row[1] ? String(row[1]).trim() : null
-  })).filter(row => row.name_en); // Require English name as base
+  const dataList = sheet.data.slice(1).map((row, index) => {
+    const name_de = row[0] ? String(row[0]).trim() : null;
+    const name_en = row[1] ? String(row[1]).trim() : null;
+    
+    return {
+      rowNumber: index + 2,
+      name_de,
+      name_en
+    };
+  }).filter(row => {
+    if (!row.name_en) {
+      
+      return false;
+    }
+    return true;
+  });
 
   importLog.totalProcessed = dataList.length;
-  console.log(`Found ${dataList.length} sampling stages to process`);
+  
 
   for (const item of dataList) {
-    console.log(`\nRow ${item.rowNumber}: English="${item.name_en}", German="${item.name_de}"`);
+    
     try {
       // 1. Create/Update the English record (base record)
       let englishRecords = await strapi.entityService.findMany('api::sampling-stage.sampling-stage', {
-        filters: { name: item.name_en },
+        filters: { name: item.name_en, locale: 'en' }, // Explicitly filter by locale
         locale: 'en'
       });
+
+      
 
       let englishId;
       if (englishRecords.length > 0) {
         englishId = englishRecords[0].id;
-        console.log(`Updating English record: ID=${englishId} => ${item.name_en}`);
-        await strapi.entityService.update('api::sampling-stage.sampling-stage', englishId, {
-          data: {
-            name: item.name_en,
-            publishedAt: new Date()
-          },
-          locale: 'en'
-        });
-        importLog.englishUpdated++;
+        // Only update if the name has changed
+        if (englishRecords[0].name !== item.name_en) {
+          
+          await strapi.entityService.update('api::sampling-stage.sampling-stage', englishId, {
+            data: {
+              name: item.name_en,
+              publishedAt: new Date()
+            },
+            locale: 'en'
+          });
+          importLog.englishUpdated++;
+        } else {
+          
+        }
       } else {
-        console.log(`Creating English record: ${item.name_en}`);
+        
         const newEnglish = await strapi.entityService.create('api::sampling-stage.sampling-stage', {
           data: {
             name: item.name_en,
@@ -85,28 +116,39 @@ async function importSamplingStages(strapi) {
         importLog.englishCreated++;
       }
 
-      // 2. Create/Update the German record (if German name exists)
-      if (item.name_de) {
+      // 2. Create/Update the German record (if German name exists and is not empty)
+      if (item.name_de && item.name_de.trim() !== '') {
+        
         let germanRecords = await strapi.entityService.findMany('api::sampling-stage.sampling-stage', {
-          filters: { name: item.name_de },
+          filters: { name: item.name_de, locale: 'de' }, // Explicitly filter by locale
           locale: 'de'
         });
 
+        console.log(`Found ${germanRecords.length} existing German records for "${item.name_de}"`);
+
         if (germanRecords.length > 0) {
           const germanId = germanRecords[0].id;
-          console.log(`Updating German record: ID=${germanId} => ${item.name_de}`);
-          await strapi.entityService.update('api::sampling-stage.sampling-stage', germanId, {
-            data: {
-              name: item.name_de,
-              localizations: [englishId],
-              publishedAt: new Date()
-            },
-            locale: 'de'
-          });
-          importLog.germanUpdated++;
+          // Only update if the name or localization has changed
+          const needsUpdate = germanRecords[0].name !== item.name_de || 
+            !germanRecords[0].localizations || 
+            !germanRecords[0].localizations.some(loc => loc.id === englishId);
+          if (needsUpdate) {
+            
+            await strapi.entityService.update('api::sampling-stage.sampling-stage', germanId, {
+              data: {
+                name: item.name_de,
+                localizations: [englishId],
+                publishedAt: new Date()
+              },
+              locale: 'de'
+            });
+            importLog.germanUpdated++;
+          } else {
+       
+          }
         } else {
-          console.log(`Creating German record: ${item.name_de} (linked to English ID: ${englishId})`);
-          await strapi.entityService.create('api::sampling-stage.sampling-stage', {
+        
+          const newGerman = await strapi.entityService.create('api::sampling-stage.sampling-stage', {
             data: {
               name: item.name_de,
               localizations: [englishId],
@@ -114,6 +156,7 @@ async function importSamplingStages(strapi) {
             },
             locale: 'de'
           });
+          
           importLog.germanCreated++;
         }
 
@@ -129,11 +172,12 @@ async function importSamplingStages(strapi) {
           : [];
 
         const germanRecordCheck = await strapi.entityService.findMany('api::sampling-stage.sampling-stage', {
-          filters: { name: item.name_de },
+          filters: { name: item.name_de, locale: 'de' },
           locale: 'de'
         });
 
         if (germanRecordCheck.length > 0 && !currentLocalizations.includes(germanRecordCheck[0].id)) {
+         
           await strapi.entityService.update('api::sampling-stage.sampling-stage', englishId, {
             data: {
               localizations: [...currentLocalizations, germanRecordCheck[0].id],
@@ -142,7 +186,11 @@ async function importSamplingStages(strapi) {
             },
             locale: 'en'
           });
+        } else {
+          
         }
+      } else {
+        
       }
     } catch (error) {
       console.error(`Error importing row ${item.rowNumber}:`, error.message);

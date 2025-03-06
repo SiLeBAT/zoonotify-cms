@@ -7,6 +7,7 @@ import path from 'path';
  * Import sample origins from an Excel file.
  * - Creates/updates English records (locale='en') as the base.
  * - Creates/updates German records (locale='de') linked to English via 'localizations'.
+ * - Ensures no duplication across locales on re-run.
  */
 async function importSampleOrigins(strapi) {
   const filePath = path.join(__dirname, '../../../data/master-data/sampleorigin.xlsx');
@@ -20,6 +21,18 @@ async function importSampleOrigins(strapi) {
     germanUpdated: 0,
     errors: []
   };
+
+  // Optional: Clear existing records before import (uncomment for testing)
+  /*
+  console.log('Clearing existing sample-origin records...');
+  const allRecords = await strapi.entityService.findMany('api::sample-origin.sample-origin', {
+    locale: ['en', 'de']
+  });
+  for (const record of allRecords) {
+    await strapi.entityService.delete('api::sample-origin.sample-origin', record.id);
+  }
+  console.log('Existing records cleared.');
+  */
 
   // Check if file exists
   if (!fs.existsSync(filePath)) {
@@ -45,8 +58,7 @@ async function importSampleOrigins(strapi) {
   const dataList = sheet.data.slice(1).map((row, index) => {
     const name_de = row[0] ? String(row[0]).trim() : null;
     const name_en = row[1] ? String(row[1]).trim() : null;
-    console.log(`Raw data - Row ${index + 2}: German="${row[0]}", English="${row[1]}"`);
-    console.log(`Processed - Row ${index + 2}: German="${name_de}", English="${name_en}"`);
+   
     return {
       rowNumber: index + 2,
       name_de,
@@ -54,38 +66,45 @@ async function importSampleOrigins(strapi) {
     };
   }).filter(row => {
     if (!row.name_en) {
-      console.log(`Skipping Row ${row.rowNumber}: No English name provided`);
+      
       return false;
     }
     return true;
   });
 
   importLog.totalProcessed = dataList.length;
-  console.log(`Found ${dataList.length} sample origins to process`);
+  
 
   for (const item of dataList) {
-    console.log(`\nProcessing Row ${item.rowNumber}: English="${item.name_en}", German="${item.name_de}"`);
+  
     try {
       // 1. Create/Update the English record (base record)
       let englishRecords = await strapi.entityService.findMany('api::sample-origin.sample-origin', {
-        filters: { name: item.name_en },
+        filters: { name: item.name_en, locale: 'en' }, // Explicitly filter by locale
         locale: 'en'
       });
+
+      
 
       let englishId;
       if (englishRecords.length > 0) {
         englishId = englishRecords[0].id;
-        console.log(`Updating English record: ID=${englishId} => ${item.name_en}`);
-        await strapi.entityService.update('api::sample-origin.sample-origin', englishId, {
-          data: {
-            name: item.name_en,
-            publishedAt: new Date()
-          },
-          locale: 'en'
-        });
-        importLog.englishUpdated++;
+        // Only update if the name has changed
+        if (englishRecords[0].name !== item.name_en) {
+          
+          await strapi.entityService.update('api::sample-origin.sample-origin', englishId, {
+            data: {
+              name: item.name_en,
+              publishedAt: new Date()
+            },
+            locale: 'en'
+          });
+          importLog.englishUpdated++;
+        } else {
+          
+        }
       } else {
-        console.log(`Creating English record: ${item.name_en}`);
+        
         const newEnglish = await strapi.entityService.create('api::sample-origin.sample-origin', {
           data: {
             name: item.name_en,
@@ -99,26 +118,36 @@ async function importSampleOrigins(strapi) {
 
       // 2. Create/Update the German record (if German name exists and is not empty)
       if (item.name_de && item.name_de.trim() !== '') {
-        console.log(`Attempting to process German name: "${item.name_de}"`);
+        
         let germanRecords = await strapi.entityService.findMany('api::sample-origin.sample-origin', {
-          filters: { name: item.name_de },
+          filters: { name: item.name_de, locale: 'de' }, // Explicitly filter by locale
           locale: 'de'
         });
 
+        
+
         if (germanRecords.length > 0) {
           const germanId = germanRecords[0].id;
-          console.log(`Updating German record: ID=${germanId} => ${item.name_de}`);
-          await strapi.entityService.update('api::sample-origin.sample-origin', germanId, {
-            data: {
-              name: item.name_de,
-              localizations: [englishId],
-              publishedAt: new Date()
-            },
-            locale: 'de'
-          });
-          importLog.germanUpdated++;
+          // Only update if the name or localization has changed
+          const needsUpdate = germanRecords[0].name !== item.name_de || 
+            !germanRecords[0].localizations || 
+            !germanRecords[0].localizations.some(loc => loc.id === englishId);
+          if (needsUpdate) {
+            
+            await strapi.entityService.update('api::sample-origin.sample-origin', germanId, {
+              data: {
+                name: item.name_de,
+                localizations: [englishId],
+                publishedAt: new Date()
+              },
+              locale: 'de'
+            });
+            importLog.germanUpdated++;
+          } else {
+            
+          }
         } else {
-          console.log(`Creating German record: ${item.name_de} (linked to English ID: ${englishId})`);
+          
           const newGerman = await strapi.entityService.create('api::sample-origin.sample-origin', {
             data: {
               name: item.name_de,
@@ -127,7 +156,7 @@ async function importSampleOrigins(strapi) {
             },
             locale: 'de'
           });
-          console.log(`German record created with ID: ${newGerman.id}`);
+         
           importLog.germanCreated++;
         }
 
@@ -143,12 +172,12 @@ async function importSampleOrigins(strapi) {
           : [];
 
         const germanRecordCheck = await strapi.entityService.findMany('api::sample-origin.sample-origin', {
-          filters: { name: item.name_de },
+          filters: { name: item.name_de, locale: 'de' },
           locale: 'de'
         });
 
         if (germanRecordCheck.length > 0 && !currentLocalizations.includes(germanRecordCheck[0].id)) {
-          console.log(`Linking English ID ${englishId} to German ID ${germanRecordCheck[0].id}`);
+          
           await strapi.entityService.update('api::sample-origin.sample-origin', englishId, {
             data: {
               localizations: [...currentLocalizations, germanRecordCheck[0].id],
@@ -158,10 +187,10 @@ async function importSampleOrigins(strapi) {
             locale: 'en'
           });
         } else {
-          console.log(`No linking needed for English ID ${englishId}`);
+          
         }
       } else {
-        console.log(`Skipping German record: No valid German name (value: "${item.name_de}")`);
+        
       }
     } catch (error) {
       console.error(`Error importing row ${item.rowNumber}:`, error.message);
