@@ -7,6 +7,7 @@ import path from 'path';
  * Import matrices from an Excel file.
  * - Creates/updates English records (locale='en') as the base.
  * - Creates/updates German records (locale='de') linked to English via 'localizations'.
+ * - Ensures no duplication across locales on re-run.
  */
 async function importMatrix(strapi) {
   const filePath = path.join(__dirname, '../../../data/master-data/matrix.xlsx');
@@ -20,6 +21,18 @@ async function importMatrix(strapi) {
     germanUpdated: 0,
     errors: []
   };
+
+  // Optional: Clear existing records before import (uncomment for testing)
+  /*
+  console.log('Clearing existing matrix records...');
+  const allRecords = await strapi.entityService.findMany('api::matrix.matrix', {
+    locale: ['en', 'de']
+  });
+  for (const record of allRecords) {
+    await strapi.entityService.delete('api::matrix.matrix', record.id);
+  }
+  console.log('Existing records cleared.');
+  */
 
   // Check if file exists
   if (!fs.existsSync(filePath)) {
@@ -42,40 +55,59 @@ async function importMatrix(strapi) {
   }
 
   // Map rows (skipping header) into objects: col 0 = German, col 1 = English, col 2 = IRI
-  const dataList = sheet.data.slice(1).map((row, index) => ({
-    rowNumber: index + 2,
-    name_de: row[0] ? String(row[0]).trim() : null,
-    name_en: row[1] ? String(row[1]).trim() : null,
-    iri: row[2] ? String(row[2]).trim() : null
-  })).filter(row => row.name_en); // Require English name as base
+  const dataList = sheet.data.slice(1).map((row, index) => {
+    const name_de = row[0] ? String(row[0]).trim() : null;
+    const name_en = row[1] ? String(row[1]).trim() : null;
+    const iri = row[2] ? String(row[2]).trim() : null;
+   
+    return {
+      rowNumber: index + 2,
+      name_de,
+      name_en,
+      iri
+    };
+  }).filter(row => {
+    if (!row.name_en) {
+
+      return false;
+    }
+    return true;
+  });
 
   importLog.totalProcessed = dataList.length;
-  console.log(`Found ${dataList.length} matrices to process`);
+ 
 
   for (const item of dataList) {
-    console.log(`\nRow ${item.rowNumber}: English="${item.name_en}", German="${item.name_de}", IRI="${item.iri}"`);
+    
     try {
       // 1. Create/Update the English record (base record)
       let englishRecords = await strapi.entityService.findMany('api::matrix.matrix', {
-        filters: { name: item.name_en },
+        filters: { name: item.name_en, locale: 'en' }, // Explicitly filter by locale
         locale: 'en'
       });
+
+      
 
       let englishId;
       if (englishRecords.length > 0) {
         englishId = englishRecords[0].id;
-        console.log(`Updating English record: ID=${englishId} => ${item.name_en}`);
-        await strapi.entityService.update('api::matrix.matrix', englishId, {
-          data: {
-            name: item.name_en,
-            iri: item.iri,
-            publishedAt: new Date()
-          },
-          locale: 'en'
-        });
-        importLog.englishUpdated++;
+        // Only update if the name or iri has changed
+        if (englishRecords[0].name !== item.name_en || englishRecords[0].iri !== item.iri) {
+          
+          await strapi.entityService.update('api::matrix.matrix', englishId, {
+            data: {
+              name: item.name_en,
+              iri: item.iri,
+              publishedAt: new Date()
+            },
+            locale: 'en'
+          });
+          importLog.englishUpdated++;
+        } else {
+          
+        }
       } else {
-        console.log(`Creating English record: ${item.name_en}`);
+       
         const newEnglish = await strapi.entityService.create('api::matrix.matrix', {
           data: {
             name: item.name_en,
@@ -88,28 +120,39 @@ async function importMatrix(strapi) {
         importLog.englishCreated++;
       }
 
-      // 2. Create/Update the German record (if German name exists)
-      if (item.name_de) {
+      // 2. Create/Update the German record (if German name exists and is not empty)
+      if (item.name_de && item.name_de.trim() !== '') {
+        
         let germanRecords = await strapi.entityService.findMany('api::matrix.matrix', {
-          filters: { name: item.name_de },
+          filters: { name: item.name_de, locale: 'de' }, // Explicitly filter by locale
           locale: 'de'
         });
 
+        
+
         if (germanRecords.length > 0) {
           const germanId = germanRecords[0].id;
-          console.log(`Updating German record: ID=${germanId} => ${item.name_de}`);
-          await strapi.entityService.update('api::matrix.matrix', germanId, {
-            data: {
-              name: item.name_de,
-              localizations: [englishId],
-              publishedAt: new Date()
-            },
-            locale: 'de'
-          });
-          importLog.germanUpdated++;
+          // Only update if the name or localization has changed
+          const needsUpdate = germanRecords[0].name !== item.name_de || 
+            !germanRecords[0].localizations || 
+            !germanRecords[0].localizations.some(loc => loc.id === englishId);
+          if (needsUpdate) {
+   
+            await strapi.entityService.update('api::matrix.matrix', germanId, {
+              data: {
+                name: item.name_de,
+                localizations: [englishId],
+                publishedAt: new Date()
+              },
+              locale: 'de'
+            });
+            importLog.germanUpdated++;
+          } else {
+            
+          }
         } else {
-          console.log(`Creating German record: ${item.name_de} (linked to English ID: ${englishId})`);
-          await strapi.entityService.create('api::matrix.matrix', {
+          
+          const newGerman = await strapi.entityService.create('api::matrix.matrix', {
             data: {
               name: item.name_de,
               localizations: [englishId],
@@ -117,6 +160,7 @@ async function importMatrix(strapi) {
             },
             locale: 'de'
           });
+         
           importLog.germanCreated++;
         }
 
@@ -132,11 +176,12 @@ async function importMatrix(strapi) {
           : [];
 
         const germanRecordCheck = await strapi.entityService.findMany('api::matrix.matrix', {
-          filters: { name: item.name_de },
+          filters: { name: item.name_de, locale: 'de' },
           locale: 'de'
         });
 
         if (germanRecordCheck.length > 0 && !currentLocalizations.includes(germanRecordCheck[0].id)) {
+          
           await strapi.entityService.update('api::matrix.matrix', englishId, {
             data: {
               localizations: [...currentLocalizations, germanRecordCheck[0].id],
@@ -146,7 +191,11 @@ async function importMatrix(strapi) {
             },
             locale: 'en'
           });
+        } else {
+          
         }
+      } else {
+       
       }
     } catch (error) {
       console.error(`Error importing row ${item.rowNumber}:`, error.message);
