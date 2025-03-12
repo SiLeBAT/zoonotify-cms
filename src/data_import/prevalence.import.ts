@@ -91,10 +91,10 @@ async function importPrevalences(strapi) {
   }));
 
   importLog.TotalRecords = dataList.length;
-  console.log(`Total rows to process: ${dataList.length}`);
+
 
   for (const item of dataList) {
-    console.log(`\nProcessing row ${item.rowNumber}, dbId: ${item.dbId}`);
+    
     try {
       // ----------------------------------
       // 1. Create/Update the English Record
@@ -137,13 +137,13 @@ async function importPrevalences(strapi) {
 
       let defaultEntry; // The final English record
       if (existingEn && existingEn.length > 0) {
-        console.log(`Updating existing English record ID: ${existingEn[0].id} for dbId: ${item.dbId}`);
+      
         defaultEntry = await strapi.entityService.update('api::prevalence.prevalence', existingEn[0].id, {
           data: dataEn,
           locale: 'en',
         });
       } else {
-        console.log(`Creating new English record for dbId: ${item.dbId}`);
+        
         defaultEntry = await strapi.entityService.create('api::prevalence.prevalence', {
           data: dataEn,
           locale: 'en',
@@ -205,14 +205,12 @@ async function importPrevalences(strapi) {
           locale: 'de',
         });
 
-        if (existingDe && existingDe.length > 0) {
-          console.log(`Updating existing German record ID: ${existingDe[0].id} for dbId: ${item.dbId}`);
-          await strapi.entityService.update('api::prevalence.prevalence', existingDe[0].id, {
+        if (existingDe && existingDe.length > 0) {         await strapi.entityService.update('api::prevalence.prevalence', existingDe[0].id, {
             data: dataDe,
             locale: 'de',
           });
         } else {
-          console.log(`Creating new German record for dbId: ${item.dbId}`);
+
           await strapi.entityService.create('api::prevalence.prevalence', {
             data: dataDe,
             locale: 'de',
@@ -228,7 +226,7 @@ async function importPrevalences(strapi) {
   }
 
   fs.writeFileSync(outFilePath, JSON.stringify(importLog, null, 2));
-  console.log('Import completed. Log written to', outFilePath);
+
 }
 
 /**
@@ -237,8 +235,7 @@ async function importPrevalences(strapi) {
  *  and if there are duplicates, keeps only the lowest ID and deletes the others.
  */
 async function cleanupGermanDuplicates(strapi) {
-  console.log('\n--- Starting cleanup of duplicate German prevalence entries ---');
-
+  
   const pageSize = 100;
   let page = 1;
   const allGermanEntries = [];
@@ -278,14 +275,14 @@ async function cleanupGermanDuplicates(strapi) {
       const toDelete = group.slice(1);
 
       for (const dup of toDelete) {
-        console.log(`Deleting duplicate DE record: ID=${dup.id}, dbId=${dup.dbId}`);
+        
         await strapi.entityService.delete('api::prevalence.prevalence', dup.id);
         duplicatesRemoved++;
       }
     }
   }
 
-  console.log(`--- Cleanup complete. Total German duplicates removed: ${duplicatesRemoved} ---\n`);
+
 }
 
 /**
@@ -307,7 +304,7 @@ async function removeAllPrevalences(strapi) {
 
     // Delete each entry in this batch
     for (const entry of entries) {
-      console.log(`Deleting prevalence ID: ${entry.id} (dbId: ${entry.dbId || 'N/A'})`);
+
       await strapi.entityService.delete('api::prevalence.prevalence', entry.id);
     }
     page++;
@@ -328,7 +325,7 @@ async function findEntityIdByName(strapi, apiEndpoint, name, locale) {
   if (results.length > 0) {
     return results[0].id;
   }
-  console.log(`No entity found for "${name}" (${locale}) in ${apiEndpoint}`);
+ 
   return null;
 }
 
