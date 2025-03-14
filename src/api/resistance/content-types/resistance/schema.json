@@ -1,0 +1,605 @@
+{
+  "kind": "collectionType",
+  "collectionName": "resistances",
+  "info": {
+    "singularName": "resistance",
+    "pluralName": "resistances",
+    "displayName": "Resistance",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "zomoProgram": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "private": true
+    },
+    "matrix": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::matrix.matrix"
+    },
+    "matrixGroup": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::matrix-group.matrix-group"
+    },
+    "microorganism": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::microorganism.microorganism"
+    },
+    "sampleType": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::sample-type.sample-type"
+    },
+    "samplingStage": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::sampling-stage.sampling-stage"
+    },
+    "sampleOrigin": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::sample-origin.sample-origin"
+    },
+    "superCategorySampleOrigin": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::super-category-sample-origin.super-category-sample-origin"
+    },
+    "AMP_Res_quant": {
+      "type": "decimal",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "AZI_Res_quant": {
+      "type": "integer",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "CHL_Res_quant": {
+      "type": "integer",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "CIP_Res_quant": {
+      "type": "decimal"
+    },
+    "CLI_Res_quant": {
+      "type": "decimal",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "COL_Res_quant": {
+      "type": "decimal",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "DAP_Res_quant": {
+      "type": "decimal"
+    },
+    "ERY_Res_quant": {
+      "type": "decimal",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "ETP_Res_quant": {
+      "type": "decimal",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "FFN_Res_quant": {
+      "type": "integer",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "FOT_Res_quant": {
+      "type": "decimal"
+    },
+    "FOX_Res_quant": {
+      "type": "decimal"
+    },
+    "FUS_Res_quant": {
+      "type": "decimal"
+    },
+    "GEN_Res_quant": {
+      "type": "decimal"
+    },
+    "VAN_Res_quant": {
+      "type": "integer",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "TMP_Res_quant": {
+      "type": "decimal",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "TIA_Res_quant": {
+      "type": "decimal",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "TGC_Res_quant": {
+      "type": "decimal",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "TET_Res_quant": {
+      "type": "decimal",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "TEC_Res_quant": {
+      "type": "decimal",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "TAZ_Res_quant": {
+      "type": "decimal",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "SYN_Res_quant": {
+      "type": "decimal",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "STR_Res_quant": {
+      "type": "integer",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "SMX_Res_quant": {
+      "type": "integer",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "RIF_Res_quant": {
+      "type": "decimal",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "PEN_Res_quant": {
+      "type": "decimal"
+    },
+    "NAL_Res_quant": {
+      "type": "integer",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "MUP_Res_quant": {
+      "type": "decimal",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "MERO_Res_quant": {
+      "type": "decimal",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "LZD_Res_quant": {
+      "type": "decimal",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "KAN_Res_quant": {
+      "type": "decimal",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "samplingYear": {
+      "type": "integer",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "AK_Res_qual": {
+      "type": "integer",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "min": 0,
+      "max": 1
+    },
+    "AMP_Res_qual": {
+      "type": "integer",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "max": 1,
+      "min": 0
+    },
+    "AZI_Res_qual": {
+      "type": "integer",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "min": 0,
+      "max": 1
+    },
+    "CHL_Res_qual": {
+      "type": "integer",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "min": 0,
+      "max": 1
+    },
+    "CIP_Res_qual": {
+      "type": "integer",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "max": 1,
+      "min": 0
+    },
+    "CLI_Res_qual": {
+      "type": "integer",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "min": 0,
+      "max": 1
+    },
+    "COL_Res_qual": {
+      "type": "integer",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "max": 1,
+      "min": 0
+    },
+    "DAP_Res_qual": {
+      "type": "integer",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "min": 0,
+      "max": 1
+    },
+    "ERY_Res_qual": {
+      "type": "integer",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "max": 1,
+      "min": 0
+    },
+    "ETP_Res_qual": {
+      "type": "integer",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "max": 1,
+      "min": 0
+    },
+    "FFN_Res_qual": {
+      "type": "integer",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "max": 1,
+      "min": 0
+    },
+    "FOT_Res_qual": {
+      "type": "integer",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "max": 1,
+      "min": 0
+    },
+    "FOX_Res_qual": {
+      "type": "integer",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "max": 1,
+      "min": 0
+    },
+    "FUS_Res_qual": {
+      "type": "integer",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "max": 1,
+      "min": 0
+    },
+    "GEN_Res_qual": {
+      "type": "integer",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "max": 1,
+      "min": 0
+    },
+    "KAN_Res_qual": {
+      "type": "integer",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "max": 1,
+      "min": 0
+    },
+    "LZD_Res_qual": {
+      "type": "integer",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "min": 0,
+      "max": 1
+    },
+    "MERO_Res_qual": {
+      "type": "integer",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "min": 0,
+      "max": 1
+    },
+    "MUP_Res_qual": {
+      "type": "integer",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "max": 1,
+      "min": 0
+    },
+    "NAL_Res_qual": {
+      "type": "integer",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "max": 1,
+      "min": 0
+    },
+    "PEN_Res_qual": {
+      "type": "integer",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "max": 1,
+      "min": 0
+    },
+    "RIF_Res_qual": {
+      "type": "integer",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "max": 1,
+      "min": 0
+    },
+    "SMX_Res_qual": {
+      "type": "integer",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "max": 1,
+      "min": 0
+    },
+    "STR_Res_qual": {
+      "type": "integer",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "max": 1,
+      "min": 0
+    },
+    "SYN_Res_qual": {
+      "type": "integer",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "max": 1,
+      "min": 0
+    },
+    "TAZ_Res_qual": {
+      "type": "integer",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "max": 1,
+      "min": 0
+    },
+    "TEC_Res_qual": {
+      "type": "integer",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "max": 1,
+      "min": 0
+    },
+    "TET_Res_qual": {
+      "type": "integer",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "max": 1,
+      "min": 0
+    },
+    "TGC_Res_qual": {
+      "type": "integer",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "max": 1,
+      "min": 0
+    },
+    "TIA_Res_qual": {
+      "type": "integer",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "min": 0,
+      "max": 1
+    },
+    "TMP_Res_qual": {
+      "type": "integer",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "min": 0,
+      "max": 1
+    },
+    "VAN_Res_qual": {
+      "type": "integer",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "min": 0,
+      "max": 1
+    }
+  }
+}
