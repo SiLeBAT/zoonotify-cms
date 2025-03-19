@@ -5,7 +5,8 @@ import { importMatrixGroups } from './data_import/matrix-group.import';
 import { importMatrix } from './data_import/matrix.import';
 import { importMicroorganisms } from './data_import/microorganism.import';
 import { importPrevalences } from './data_import/prevalence.import';
-import { importResistanceData } from './data_import/resistance.import';
+import { importResistances } from './data_import/importResistances';
+//import { importResistanceData } from './data_import/resistance.import';
 import { importSampleOrigins } from './data_import/sample-origin.import';
 import { importSampleTypes } from './data_import/sample-type.import';
 import { importSamplingStages } from './data_import/sampling-stage.import';
@@ -13,6 +14,8 @@ import { importSuperCategorySampleOrigins } from './data_import/super-category-s
 //mport { updateGraphs } from './data_import/updateGraphs';
 import { importExternalLinks } from './data_import/importExternalLinks';
 import fileLifecycles from './extensions/upload/content-types/file/lifecycles';
+
+
 
 
 
@@ -1025,7 +1028,7 @@ export default {
   async bootstrap({ strapi }) {
     console.log('[DEBUG] Running bootstrap logic.');
     // Import data for LD
-    await importResistanceData(strapi);
+    //await importResistanceData(strapi);
 
     // Import data for yearly cutt-off
     await importCutOffData(strapi);
@@ -1042,6 +1045,8 @@ export default {
     await importMatrix(strapi);
     //await updateGraphs(strapi);
     await importExternalLinks(strapi); 
+  //await importAndCleanupResistances(strapi);
+  await importResistances(strapi);
 
 
 
