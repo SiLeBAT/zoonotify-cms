@@ -39,8 +39,8 @@ interface PrevalenceInput {
   sampleOrigin?: string | number;
   matrixGroup?: string | number;
   superCategorySampleOrigin?: string | number;
-  locale?: string; // Optional in Strapi v5, handled by the method
-  publishedAt?: Date | string; // Optional, for publishing state
+  locale?: string;
+  publishedAt?: Date | string;
 }
 interface Evaluation {
   id: number | string;
@@ -48,27 +48,7 @@ interface Evaluation {
   diagram?: FileEntity;
   csv_data?: FileEntity;
 }
-interface PrevalenceInput {
-  dbId: string;
-  zomoProgram?: string;
-  samplingYear?: number;
-  furtherDetails?: string;
-  numberOfSamples?: number;
-  numberOfPositive?: number;
-  percentageOfPositive?: number;
-  ciMin?: number | null;
-  ciMax?: number | null;
-  matrix?: string | number;
-  matrixDetail?: string | number;
-  microorganism?: string | number;
-  sampleType?: string | number;
-  samplingStage?: string | number;
-  sampleOrigin?: string | number;
-  matrixGroup?: string | number;
-  superCategorySampleOrigin?: string | number;
-  publishedAt?: Date | string;
-  locale?: string;
-}
+
 /**
  * Interfaces for Resistance / Cutoff data
  */
@@ -133,12 +113,15 @@ async function findEntityIdByName(
   strapi: StrapiType
 ): Promise<string | number | null> {
   if (!name) return null;
+
   const entities = await strapi.documents(apiEndpoint as any).findMany({
     filters: { name },
     locale,
   });
+
   return entities.length > 0 ? entities[0].id : null;
 }
+
 /**
  * Save or update a prevalence entry.
  */
@@ -184,7 +167,6 @@ export default {
 
       const folderName = file.folder.name;
       console.log(`[DEBUG] File uploaded in folder "${folderName}" with name "${file.name}".`);
-
       // --------------------------
       // Handle Prevalence folder
       // --------------------------
@@ -236,8 +218,8 @@ export default {
         for (const evaluation of evaluations) {
           console.log(`[DEBUG] Checking evaluation (ID=${evaluation.id}).`);
 
-          // Update diagram if file is an image and names match
-          if (file.mime.startsWith('image/') && evaluation.diagram?.name === file.name) {
+          // Update diagram if file is an image and names match or if no diagram exists yet
+          if (file.mime.startsWith('image/') && (!evaluation.diagram || evaluation.diagram.name === file.name)) {
             console.log(`[DEBUG] Found matching diagram for evaluation ID=${evaluation.id}.`);
 
             if (evaluation.diagram?.id) {
@@ -264,17 +246,17 @@ export default {
             await (strapi.entityService.update as any)(
               'api::evaluation.evaluation',
               evaluation.id,
-              { data: { diagram: file.id } }
+              { data: { diagram: file.id }, locale }
             );
             console.log(`[DEBUG] Updated diagram for evaluation ID=${evaluation.id} -> new file ID=${file.id}.`);
           }
 
-          // Update CSV data if file is CSV/Excel and names match
+          // Update CSV data if file is CSV/Excel and names match or if no CSV exists yet
           if (
             (file.mime === 'text/csv' ||
               file.mime === 'application/vnd.ms-excel' ||
               file.mime === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') &&
-            evaluation.csv_data?.name === file.name
+            (!evaluation.csv_data || evaluation.csv_data.name === file.name)
           ) {
             console.log(`[DEBUG] Found matching csv_data for evaluation ID=${evaluation.id}.`);
 
@@ -302,13 +284,12 @@ export default {
             await (strapi.entityService.update as any)(
               'api::evaluation.evaluation',
               evaluation.id,
-              { data: { csv_data: file.id } }
+              { data: { csv_data: file.id }, locale }
             );
             console.log(`[DEBUG] Updated csv_data for evaluation ID=${evaluation.id} -> new file ID=${file.id}.`);
           }
         }
       }
-
       // ----------------------------------
       // Handle Cutt_Off folder (Cutoff)
       // ----------------------------------
