@@ -14,11 +14,10 @@ function parseNumeric(cell, parser) {
   if (cell === '' || cell === null || cell === '-' || cell === '_') {
     return null;
   }
-  // Replace all commas with dots
   const normalized = String(cell).replace(/,/g, '.');
   const value = parser(normalized);
   if (Number.isNaN(value)) {
-    return null; // fallback to null if parse fails
+    return null;
   }
   return value;
 }
@@ -40,10 +39,6 @@ function removeNulls(obj) {
  *    - Then removes any duplicate German records.
  */
 export async function importAndCleanupResistances(strapi) {
-  // Optional: wipe everything first
-  // await removeAllResistances(strapi);
-  // console.log('All existing resistance records removed.\n');
-
   await importResistances(strapi);
   await cleanupGermanDuplicates(strapi);
 }
@@ -52,56 +47,60 @@ export async function importAndCleanupResistances(strapi) {
  * (A) importResistances:
  *    - Reads rows from an Excel file,
  *    - Creates/updates English records,
- *    - Creates/updates German records if data is present.
+ *    - Creates/updates German records if data is present,
+ *    - Rows with missing relational data are logged as failures and skipped.
  */
 export async function importResistances(strapi) {
-  // Adjust the path to your Excel file if needed
   const filePath = path.join(__dirname, '../../../data/master-data/ZooNotify_amr_DB_DE_EN_2025-02-27.xlsx');
   const outFilePath = path.join(__dirname, '../../../data/resistances-import-result.json');
 
   const importLog = {
-    TotalRecords: 0,
+    FileFound: false,
+    SheetFound: false,
+    SheetName: null,
+    TotalRowsInSheet: 0,
+    TotalRecordsProcessed: 0,
     EnglishSaved: 0,
     GermanSaved: 0,
+    RowsImported: 0,
     Failures: []
   };
 
   if (!fs.existsSync(filePath)) {
     console.error('File not found:', filePath);
+    importLog.FileFound = false;
+    fs.writeFileSync(outFilePath, JSON.stringify(importLog, null, 2));
     return;
   }
+  importLog.FileFound = true;
 
   const buffer = fs.readFileSync(filePath);
   const dataFromExcel = xlsx.parse(buffer);
 
-  // Adjust the sheet name if needed:
   const resistanceData = dataFromExcel.find(sheet => sheet.name === 'Sheet 1');
   if (!resistanceData) {
     console.error('Resistances sheet not found in the file');
+    importLog.SheetFound = false;
+    fs.writeFileSync(outFilePath, JSON.stringify(importLog, null, 2));
     return;
   }
+  importLog.SheetFound = true;
+  importLog.SheetName = resistanceData.name;
+  importLog.TotalRowsInSheet = resistanceData.data.length - 1;
 
   if (resistanceData.data.length <= 1) {
     console.error('No data found in the Resistances sheet');
+    fs.writeFileSync(outFilePath, JSON.stringify(importLog, null, 2));
     return;
   }
 
-  // (A1) Convert rows (skipping header) into objects
   const dataList = resistanceData.data.slice(1).map((row, index) => {
-    const rowNumber = index + 2; // header is row 1
-
-    // You can log row to confirm column indexes:
-    // console.log(`Row ${rowNumber} =>`, row);
-
+    const rowNumber = index + 2; // Header is row 1
     return {
       rowNumber,
-      dbId: String(row[24]),
-
-      // Basic fields
+      dbId: String(row[24]), // This will be checked for blank below
       zomoProgram: row[0],
       samplingYear: parseNumeric(row[1], parseInt),
-
-      // Relation fields (German/English)
       microorganism_de: row[3],
       microorganism_en: row[4],
       sampleType_de: row[5],
@@ -116,8 +115,6 @@ export async function importResistances(strapi) {
       matrixGroup_en: row[14],
       matrix_de: row[15],
       matrix_en: row[16],
-
-      // Quantitative fields
       AMP_Res_quant: parseNumeric(row[49], parseFloat),
       AZI_Res_quant: parseNumeric(row[50], parseInt),
       CHL_Res_quant: parseNumeric(row[51], parseInt),
@@ -149,8 +146,6 @@ export async function importResistances(strapi) {
       TIA_Res_quant: parseNumeric(row[77], parseFloat),
       TMP_Res_quant: parseNumeric(row[78], parseFloat),
       VAN_Res_quant: parseNumeric(row[79], parseInt),
-
-      // Qualitative fields
       AK_Res_qual: parseNumeric(row[80], parseInt),
       AMP_Res_qual: parseNumeric(row[81], parseInt),
       AZI_Res_qual: parseNumeric(row[82], parseInt),
@@ -186,13 +181,29 @@ export async function importResistances(strapi) {
     };
   });
 
-  importLog.TotalRecords = dataList.length;
+  importLog.TotalRecordsProcessed = dataList.length;
 
   for (const item of dataList) {
     try {
-      // ----------------------------------
-      // 1) Create/Update the English record
-      // ----------------------------------
+      let hasMissingRelations = false;
+      const missingRelations = [];
+
+      // Check for blank dbId
+      if (!item.dbId || item.dbId === 'undefined' || item.dbId === 'null') {
+        missingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: dbId is blank`);
+        hasMissingRelations = true;
+      }
+
+      // Check for blank English relational fields
+      if (!item.matrix_en) missingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: English matrix is blank`);
+      if (!item.matrixGroup_en) missingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: English matrixGroup is blank`);
+      if (!item.microorganism_en) missingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: English microorganism is blank`);
+      if (!item.sampleType_en) missingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: English sampleType is blank`);
+      if (!item.samplingStage_en) missingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: English samplingStage is blank`);
+      if (!item.sampleOrigin_en) missingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: English sampleOrigin is blank`);
+      if (!item.superCategorySampleOrigin_en) missingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: English superCategorySampleOrigin is blank`);
+
+      // English relations lookup
       const matrixId_en = await findEntityIdByName(strapi, 'api::matrix.matrix', item.matrix_en, 'en');
       const matrixGroupId_en = await findEntityIdByName(strapi, 'api::matrix-group.matrix-group', item.matrixGroup_en, 'en');
       const microorganismId_en = await findEntityIdByName(strapi, 'api::microorganism.microorganism', item.microorganism_en, 'en');
@@ -206,12 +217,37 @@ export async function importResistances(strapi) {
         'en'
       );
 
+      // Check for missing English relations (not found in database)
+      if (item.matrix_en && !matrixId_en) missingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: Missing English matrix '${item.matrix_en}'`);
+      if (item.matrixGroup_en && !matrixGroupId_en) missingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: Missing English matrixGroup '${item.matrixGroup_en}'`);
+      if (item.microorganism_en && !microorganismId_en) missingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: Missing English microorganism '${item.microorganism_en}'`);
+      if (item.sampleType_en && !sampleTypeId_en) missingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: Missing English sampleType '${item.sampleType_en}'`);
+      if (item.samplingStage_en && !samplingStageId_en) missingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: Missing English samplingStage '${item.samplingStage_en}'`);
+      if (item.sampleOrigin_en && !sampleOriginId_en) missingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: Missing English sampleOrigin '${item.sampleOrigin_en}'`);
+      if (item.superCategorySampleOrigin_en && !superCategorySampleOriginId_en) {
+        missingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: Missing English superCategorySampleOrigin '${item.superCategorySampleOrigin_en}'`);
+      }
+
+      // If any English relations are missing, mark as failure
+      if (missingRelations.length > 0) {
+        hasMissingRelations = true;
+        importLog.Failures.push({
+          rowNumber: item.rowNumber,
+          dbId: item.dbId,
+          error: `Missing relations: ${missingRelations.join(', ')}`
+        });
+      }
+
+      // Skip import if there are missing relations
+      if (hasMissingRelations) {
+        continue;
+      }
+
+      // Proceed with English record creation/update
       const dataEn = removeNulls({
         dbId: item.dbId,
         zomoProgram: item.zomoProgram,
         samplingYear: item.samplingYear,
-
-        // _Res_quant
         AMP_Res_quant: item.AMP_Res_quant,
         AZI_Res_quant: item.AZI_Res_quant,
         CHL_Res_quant: item.CHL_Res_quant,
@@ -243,8 +279,6 @@ export async function importResistances(strapi) {
         TIA_Res_quant: item.TIA_Res_quant,
         TMP_Res_quant: item.TMP_Res_quant,
         VAN_Res_quant: item.VAN_Res_quant,
-
-        // _Res_qual
         AK_Res_qual: item.AK_Res_qual,
         AMP_Res_qual: item.AMP_Res_qual,
         AZI_Res_qual: item.AZI_Res_qual,
@@ -277,7 +311,6 @@ export async function importResistances(strapi) {
         TIA_Res_qual: item.TIA_Res_qual,
         TMP_Res_qual: item.TMP_Res_qual,
         VAN_Res_qual: item.VAN_Res_qual,
-
         matrix: matrixId_en,
         matrixGroup: matrixGroupId_en,
         microorganism: microorganismId_en,
@@ -285,11 +318,9 @@ export async function importResistances(strapi) {
         samplingStage: samplingStageId_en,
         sampleOrigin: sampleOriginId_en,
         superCategorySampleOrigin: superCategorySampleOriginId_en,
-
         locale: 'en'
       });
 
-      // Find existing English record (by dbId + locale='en')
       const existingEn = await strapi.entityService.findMany('api::resistance.resistance', {
         filters: { dbId: item.dbId },
         locale: 'en'
@@ -307,10 +338,9 @@ export async function importResistances(strapi) {
         });
       }
       importLog.EnglishSaved++;
+      importLog.RowsImported++;
 
-      // ----------------------------------
-      // 2) Create/Update the German record
-      // ----------------------------------
+      // German record
       const hasGermanData =
         item.microorganism_de ||
         item.sampleType_de ||
@@ -321,7 +351,17 @@ export async function importResistances(strapi) {
         item.matrix_de;
 
       if (hasGermanData) {
-        // Lookup relation IDs (German)
+        const germanMissingRelations = [];
+
+        // Check for blank German relational fields
+        if (!item.matrix_de) germanMissingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: German matrix is blank`);
+        if (!item.matrixGroup_de) germanMissingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: German matrixGroup is blank`);
+        if (!item.microorganism_de) germanMissingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: German microorganism is blank`);
+        if (!item.sampleType_de) germanMissingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: German sampleType is blank`);
+        if (!item.samplingStage_de) germanMissingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: German samplingStage is blank`);
+        if (!item.sampleOrigin_de) germanMissingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: German sampleOrigin is blank`);
+        if (!item.superCategorySampleOrigin_de) germanMissingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: German superCategorySampleOrigin is blank`);
+
         const matrixId_de = await findEntityIdByName(strapi, 'api::matrix.matrix', item.matrix_de, 'de');
         const matrixGroupId_de = await findEntityIdByName(strapi, 'api::matrix-group.matrix-group', item.matrixGroup_de, 'de');
         const microorganismId_de = await findEntityIdByName(strapi, 'api::microorganism.microorganism', item.microorganism_de, 'de');
@@ -335,12 +375,31 @@ export async function importResistances(strapi) {
           'de'
         );
 
+        // Check for missing German relations (not found in database)
+        if (item.matrix_de && !matrixId_de) germanMissingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: Missing German matrix '${item.matrix_de}'`);
+        if (item.matrixGroup_de && !matrixGroupId_de) germanMissingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: Missing German matrixGroup '${item.matrixGroup_de}'`);
+        if (item.microorganism_de && !microorganismId_de) germanMissingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: Missing German microorganism '${item.microorganism_de}'`);
+        if (item.sampleType_de && !sampleTypeId_de) germanMissingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: Missing German sampleType '${item.sampleType_de}'`);
+        if (item.samplingStage_de && !samplingStageId_de) germanMissingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: Missing German samplingStage '${item.samplingStage_de}'`);
+        if (item.sampleOrigin_de && !sampleOriginId_de) germanMissingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: Missing German sampleOrigin '${item.sampleOrigin_de}'`);
+        if (item.superCategorySampleOrigin_de && !superCategorySampleOriginId_de) {
+          germanMissingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: Missing German superCategorySampleOrigin '${item.superCategorySampleOrigin_de}'`);
+        }
+
+        // If any German relations are missing, mark as failure
+        if (germanMissingRelations.length > 0) {
+          importLog.Failures.push({
+            rowNumber: item.rowNumber,
+            dbId: item.dbId,
+            error: `Missing German relations: ${germanMissingRelations.join(', ')}`
+          });
+          continue;
+        }
+
         const dataDe = removeNulls({
           dbId: item.dbId,
           zomoProgram: item.zomoProgram,
           samplingYear: item.samplingYear,
-
-          // _Res_quant
           AMP_Res_quant: item.AMP_Res_quant,
           AZI_Res_quant: item.AZI_Res_quant,
           CHL_Res_quant: item.CHL_Res_quant,
@@ -372,8 +431,6 @@ export async function importResistances(strapi) {
           TIA_Res_quant: item.TIA_Res_quant,
           TMP_Res_quant: item.TMP_Res_quant,
           VAN_Res_quant: item.VAN_Res_quant,
-
-          // _Res_qual
           AK_Res_qual: item.AK_Res_qual,
           AMP_Res_qual: item.AMP_Res_qual,
           AZI_Res_qual: item.AZI_Res_qual,
@@ -406,7 +463,6 @@ export async function importResistances(strapi) {
           TIA_Res_qual: item.TIA_Res_qual,
           TMP_Res_qual: item.TMP_Res_qual,
           VAN_Res_qual: item.VAN_Res_qual,
-
           matrix: matrixId_de,
           matrixGroup: matrixGroupId_de,
           microorganism: microorganismId_de,
@@ -414,12 +470,9 @@ export async function importResistances(strapi) {
           samplingStage: samplingStageId_de,
           sampleOrigin: sampleOriginId_de,
           superCategorySampleOrigin: superCategorySampleOriginId_de,
-
           locale: 'de'
         });
 
-        // Instead of findEntityIdByName (which searches by "name"),
-        // we directly find by { dbId: item.dbId } and locale: 'de':
         const existingDe = await strapi.entityService.findMany('api::resistance.resistance', {
           filters: { dbId: item.dbId },
           locale: 'de'
@@ -440,10 +493,7 @@ export async function importResistances(strapi) {
       }
     } catch (error) {
       console.error(`Error importing resistance data for dbId ${item.dbId}:`, error);
-      if (error.details) {
-        console.error('Validation details:', error.details);
-      }
-      importLog.Failures.push({ dbId: item.dbId, error: error.message });
+      importLog.Failures.push({ rowNumber: item.rowNumber, dbId: item.dbId, error: error.message });
     }
   }
 
