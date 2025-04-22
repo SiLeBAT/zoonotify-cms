@@ -1,13 +1,20 @@
 
-
 import xlsx from 'node-xlsx';
 import fs from 'fs';
 import path from 'path';
 
+// Define a type for the entity object
+interface MicroorganismEntity {
+  name: string;
+  publishedAt: Date;
+  locale: string;
+}
+
 /**
  * Import microorganisms from an Excel file.
- * - Creates/updates English records (locale='en') as the base.
- * - Creates/updates German records (locale='de') linked to English via 'localizations'.
+ * - Creates English records (locale='en') as the base.
+ * - Creates German records (locale='de') as localized versions of the English records using the same documentId.
+ * - Ensures no duplication across locales on re-run.
  */
 async function importMicroorganisms(strapi) {
   const filePath = path.join(__dirname, '../../../data/master-data/microorganism.xlsx');
@@ -52,113 +59,109 @@ async function importMicroorganisms(strapi) {
   importLog.totalProcessed = dataList.length;
   console.log(`Found ${dataList.length} microorganisms to process`);
 
+  const service = strapi.entityService;
+  const collection = 'api::microorganism.microorganism';
+
   for (const item of dataList) {
     console.log(`\nRow ${item.rowNumber}: English="${item.name_en}", German="${item.name_de}"`);
     try {
-      // 1. Create/Update the English record (base record)
-      let englishRecord = await strapi.entityService.findMany('api::microorganism.microorganism', {
-        filters: { name: item.name_en },
+      // 1. Create or Update the English record (base record, locale='en')
+      let englishRecord = await service.findMany(collection, {
+        filters: { name: item.name_en, locale: 'en' },
         locale: 'en',
+        populate: ['localizations']
       });
 
-      let englishId;
+      let englishId, englishDocumentId;
       if (englishRecord.length > 0) {
-        console.log(`Updating English record: ID=${englishRecord[0].id} => ${item.name_en}`);
-        englishRecord = await strapi.entityService.update(
-          'api::microorganism.microorganism',
-          englishRecord[0].id,
-          {
+        englishId = englishRecord[0].id;
+        englishDocumentId = englishRecord[0].documentId; // Get the documentId
+        // Update if the name has changed
+        if (englishRecord[0].name !== item.name_en) {
+          console.log(`Updating English record: ID=${englishId} => ${item.name_en}`);
+          await service.update(collection, englishId, {
             data: {
               name: item.name_en,
               publishedAt: new Date()
             },
             locale: 'en'
-          }
-        );
-        englishId = englishRecord.id;
-        importLog.englishUpdated++;
+          });
+          importLog.englishUpdated++;
+        }
       } else {
         console.log(`Creating English record: ${item.name_en}`);
-        englishRecord = await strapi.entityService.create(
-          'api::microorganism.microorganism',
-          {
-            data: {
-              name: item.name_en,
-              publishedAt: new Date()
-            },
-            locale: 'en'
-          }
-        );
-        englishId = englishRecord.id;
+        const newEnglish = await service.create(collection, {
+          data: {
+            name: item.name_en,
+            publishedAt: new Date()
+          },
+          locale: 'en'
+        });
+        englishId = newEnglish.id;
+        englishDocumentId = newEnglish.documentId; // Get the documentId
         importLog.englishCreated++;
       }
 
-      // 2. Create/Update the German record (if German name exists)
-      if (item.name_de) {
-        let germanRecord = await strapi.entityService.findMany('api::microorganism.microorganism', {
-          filters: { name: item.name_de },
-          locale: 'de',
+      // 2. Create or Update the German record as a localized version of the English record
+      if (item.name_de && item.name_de.trim() !== '') {
+        // Check if a German localization already exists for this English record
+        const englishWithLocalizations = await service.findOne(collection, englishId, {
+          populate: ['localizations'],
+          locale: 'en'
         });
 
-        if (germanRecord.length > 0) {
-          console.log(`Updating German record: ID=${germanRecord[0].id} => ${item.name_de}`);
-          await strapi.entityService.update(
-            'api::microorganism.microorganism',
-            germanRecord[0].id,
-            {
+        const germanLocalization = englishWithLocalizations.localizations?.find(loc => loc.locale === 'de');
+
+        if (germanLocalization) {
+          // Update the existing German localization if the name has changed
+          if (germanLocalization.name !== item.name_de) {
+            console.log(`Updating German record: ID=${germanLocalization.id} => ${item.name_de}`);
+            await service.update(collection, germanLocalization.id, {
               data: {
                 name: item.name_de,
-                localizations: [englishId],
                 publishedAt: new Date()
               },
               locale: 'de'
-            }
-          );
-          importLog.germanUpdated++;
+            });
+            importLog.germanUpdated++;
+          }
         } else {
-          console.log(`Creating German record: ${item.name_de} (linked to English ID: ${englishId})`);
-          await strapi.entityService.create(
-            'api::microorganism.microorganism',
-            {
-              data: {
-                name: item.name_de,
-                localizations: [englishId],
-                publishedAt: new Date()
-              },
-              locale: 'de'
+          // Use Strapi's db.query to create the German record with the same documentId
+          console.log(`Creating German record: ${item.name_de} (linked to English documentId: ${englishDocumentId})`);
+          const germanRecord = await strapi.db.query('api::microorganism.microorganism').create({
+            data: {
+              name: item.name_de,
+              publishedAt: new Date(),
+              locale: 'de',
+              documentId: englishDocumentId // Use the same documentId to link them
             }
-          );
+          });
+
+          // Log the creation for debugging
+          console.log(`Created German record for English documentId ${englishDocumentId}:`, {
+            id: germanRecord.id,
+            documentId: germanRecord.documentId,
+            locale: germanRecord.locale
+          });
+
+          // Fetch the English record to confirm linking
+          const updatedEnglish = await service.findOne(collection, englishId, {
+            populate: ['localizations'],
+            locale: 'en'
+          });
+          console.log(`Linked records for English ID ${englishId} (documentId: ${englishDocumentId}):`, updatedEnglish.localizations);
+
+          // Additional debugging: Fetch the German record to confirm its documentId
+          const fetchedGerman = await service.findOne(collection, germanRecord.id, {
+            populate: ['localizations'],
+            locale: 'de'
+          });
+          console.log(`German record details for ID ${germanRecord.id}:`, {
+            documentId: fetchedGerman.documentId,
+            localizations: fetchedGerman.localizations
+          });
+
           importLog.germanCreated++;
-        }
-
-        // Ensure English record links to German
-        const updatedEnglish = await strapi.entityService.findOne(
-          'api::microorganism.microorganism',
-          englishId,
-          { populate: ['localizations'] }
-        );
-        const currentLocalizations = updatedEnglish.localizations
-          ? updatedEnglish.localizations.map(loc => loc.id)
-          : [];
-
-        const germanRecordCheck = await strapi.entityService.findMany('api::microorganism.microorganism', {
-          filters: { name: item.name_de },
-          locale: 'de'
-        });
-
-        if (germanRecordCheck.length > 0 && !currentLocalizations.includes(germanRecordCheck[0].id)) {
-          await strapi.entityService.update(
-            'api::microorganism.microorganism',
-            englishId,
-            {
-              data: {
-                localizations: [...currentLocalizations, germanRecordCheck[0].id],
-                name: item.name_en,
-                publishedAt: new Date()
-              },
-              locale: 'en'
-            }
-          );
         }
       }
     } catch (error) {
@@ -172,6 +175,7 @@ async function importMicroorganisms(strapi) {
     }
   }
 
+  // Write the import log to a file
   fs.writeFileSync(logFilePath, JSON.stringify(importLog, null, 2));
   console.log(`\nImport completed:
     Total Processed: ${importLog.totalProcessed}

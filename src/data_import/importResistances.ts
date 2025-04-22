@@ -3,6 +3,84 @@ import xlsx from 'node-xlsx';
 import fs from 'fs';
 import path from 'path';
 
+// Define a type for the resistance entity object
+interface ResistanceEntity {
+  dbId: string;
+  zomoProgram: string | null;
+  samplingYear: number | null;
+  AMP_Res_quant: number | null;
+  AZI_Res_quant: number | null;
+  CHL_Res_quant: number | null;
+  CIP_Res_quant: number | null;
+  CLI_Res_quant: number | null;
+  COL_Res_quant: number | null;
+  DAP_Res_quant: number | null;
+  ERY_Res_quant: number | null;
+  ETP_Res_quant: number | null;
+  FFN_Res_quant: number | null;
+  FOT_Res_quant: number | null;
+  FOX_Res_quant: number | null;
+  FUS_Res_quant: number | null;
+  GEN_Res_quant: number | null;
+  KAN_Res_quant: number | null;
+  LZD_Res_quant: number | null;
+  MERO_Res_quant: number | null;
+  MUP_Res_quant: number | null;
+  NAL_Res_quant: number | null;
+  PEN_Res_quant: number | null;
+  RIF_Res_quant: number | null;
+  SMX_Res_quant: number | null;
+  STR_Res_quant: number | null;
+  SYN_Res_quant: number | null;
+  TAZ_Res_quant: number | null;
+  TEC_Res_quant: number | null;
+  TET_Res_quant: number | null;
+  TGC_Res_quant: number | null;
+  TIA_Res_quant: number | null;
+  TMP_Res_quant: number | null;
+  VAN_Res_quant: number | null;
+  AK_Res_qual: number | null;
+  AMP_Res_qual: number | null;
+  AZI_Res_qual: number | null;
+  CHL_Res_qual: number | null;
+  CIP_Res_qual: number | null;
+  CLI_Res_qual: number | null;
+  COL_Res_qual: number | null;
+  DAP_Res_qual: number | null;
+  ERY_Res_qual: number | null;
+  ETP_Res_qual: number | null;
+  FFN_Res_qual: number | null;
+  FOT_Res_qual: number | null;
+  FOX_Res_qual: number | null;
+  FUS_Res_qual: number | null;
+  GEN_Res_qual: number | null;
+  KAN_Res_qual: number | null;
+  LZD_Res_qual: number | null;
+  MERO_Res_qual: number | null;
+  MUP_Res_qual: number | null;
+  NAL_Res_qual: number | null;
+  PEN_Res_qual: number | null;
+  RIF_Res_qual: number | null;
+  SMX_Res_qual: number | null;
+  STR_Res_qual: number | null;
+  SYN_Res_qual: number | null;
+  TAZ_Res_qual: number | null;
+  TEC_Res_qual: number | null;
+  TET_Res_qual: number | null;
+  TGC_Res_qual: number | null;
+  TIA_Res_qual: number | null;
+  TMP_Res_qual: number | null;
+  VAN_Res_qual: number | null;
+  matrix: number | null;
+  matrixGroup: number | null;
+  microorganism: number | null;
+  sampleType: number | null;
+  samplingStage: number | null;
+  sampleOrigin: number | null;
+  superCategorySampleOrigin: number | null;
+  locale: string;
+}
+
 /**
  * 1) parseNumeric:
  *    - If the cell is blank, "-" or "_" => return null.
@@ -46,8 +124,8 @@ export async function importAndCleanupResistances(strapi) {
 /**
  * (A) importResistances:
  *    - Reads rows from an Excel file,
- *    - Creates/updates English records,
- *    - Creates/updates German records if data is present,
+ *    - Creates English records,
+ *    - Creates German records as localized versions using the same documentId if data is present,
  *    - Rows with missing relational data are logged as failures and skipped.
  */
 export async function importResistances(strapi) {
@@ -61,7 +139,9 @@ export async function importResistances(strapi) {
     TotalRowsInSheet: 0,
     TotalRecordsProcessed: 0,
     EnglishSaved: 0,
+    EnglishUpdated: 0,
     GermanSaved: 0,
+    GermanUpdated: 0,
     RowsImported: 0,
     Failures: []
   };
@@ -182,6 +262,9 @@ export async function importResistances(strapi) {
   });
 
   importLog.TotalRecordsProcessed = dataList.length;
+
+  const service = strapi.entityService;
+  const collection = 'api::resistance.resistance';
 
   for (const item of dataList) {
     try {
@@ -321,23 +404,39 @@ export async function importResistances(strapi) {
         locale: 'en'
       });
 
-      const existingEn = await strapi.entityService.findMany('api::resistance.resistance', {
+      const existingEn = await service.findMany(collection, {
         filters: { dbId: item.dbId },
-        locale: 'en'
+        locale: 'en',
+        populate: ['localizations']
       });
 
+      let defaultEntry; // The final English record
+      let englishId, englishDocumentId;
       if (existingEn && existingEn.length > 0) {
-        await strapi.entityService.update('api::resistance.resistance', existingEn[0].id, {
-          data: dataEn,
-          locale: 'en'
-        });
+        englishId = existingEn[0].id;
+        englishDocumentId = existingEn[0].documentId; // Get the documentId
+        // Check if any field has changed (excluding locale)
+        const hasChanges = Object.keys(dataEn).some(key => 
+          key !== 'locale' && JSON.stringify(existingEn[0][key]) !== JSON.stringify(dataEn[key])
+        );
+        if (hasChanges) {
+          defaultEntry = await service.update(collection, englishId, {
+            data: dataEn,
+            locale: 'en'
+          });
+          importLog.EnglishUpdated++;
+        } else {
+          defaultEntry = existingEn[0];
+        }
       } else {
-        await strapi.entityService.create('api::resistance.resistance', {
+        defaultEntry = await service.create(collection, {
           data: dataEn,
           locale: 'en'
         });
+        importLog.EnglishSaved++;
       }
-      importLog.EnglishSaved++;
+      englishId = defaultEntry.id;
+      englishDocumentId = defaultEntry.documentId;
       importLog.RowsImported++;
 
       // German record
@@ -473,23 +572,61 @@ export async function importResistances(strapi) {
           locale: 'de'
         });
 
-        const existingDe = await strapi.entityService.findMany('api::resistance.resistance', {
-          filters: { dbId: item.dbId },
-          locale: 'de'
+        // Check if a German localization already exists for this English record
+        const englishWithLocalizations = await service.findOne(collection, englishId, {
+          populate: ['localizations'],
+          locale: 'en'
         });
 
-        if (existingDe && existingDe.length > 0) {
-          await strapi.entityService.update('api::resistance.resistance', existingDe[0].id, {
-            data: dataDe,
-            locale: 'de'
-          });
+        const germanLocalization = englishWithLocalizations.localizations?.find(loc => loc.locale === 'de');
+
+        if (germanLocalization) {
+          // Update the existing German localization if any data has changed
+          const hasChanges = Object.keys(dataDe).some(key => 
+            key !== 'locale' && JSON.stringify(germanLocalization[key]) !== JSON.stringify(dataDe[key])
+          );
+          if (hasChanges) {
+            await service.update(collection, germanLocalization.id, {
+              data: dataDe,
+              locale: 'de'
+            });
+            importLog.GermanUpdated++;
+          }
         } else {
-          await strapi.entityService.create('api::resistance.resistance', {
-            data: dataDe,
+          // Use Strapi's db.query to create the German record with the same documentId
+          const germanRecord = await strapi.db.query('api::resistance.resistance').create({
+            data: {
+              ...dataDe,
+              documentId: englishDocumentId // Use the same documentId to link them
+            }
+          });
+
+          // Log the creation for debugging
+          console.log(`Created German record for English documentId ${englishDocumentId}:`, {
+            id: germanRecord.id,
+            documentId: germanRecord.documentId,
+            locale: germanRecord.locale
+          });
+
+          // Fetch the English record to confirm linking
+          const updatedEnglish = await service.findOne(collection, englishId, {
+            populate: ['localizations'],
+            locale: 'en'
+          });
+          console.log(`Linked records for English ID ${englishId} (documentId: ${englishDocumentId}):`, updatedEnglish.localizations);
+
+          // Additional debugging: Fetch the German record to confirm its documentId
+          const fetchedGerman = await service.findOne(collection, germanRecord.id, {
+            populate: ['localizations'],
             locale: 'de'
           });
+          console.log(`German record details for ID ${germanRecord.id}:`, {
+            documentId: fetchedGerman.documentId,
+            localizations: fetchedGerman.localizations
+          });
+
+          importLog.GermanSaved++;
         }
-        importLog.GermanSaved++;
       }
     } catch (error) {
       console.error(`Error importing resistance data for dbId ${item.dbId}:`, error);
