@@ -1,8 +1,29 @@
 
-
 import xlsx from 'node-xlsx'; 
 import fs from 'fs';
 import path from 'path';
+
+// Define a type for the prevalence entity object
+interface PrevalenceEntity {
+  dbId: string;
+  zomoProgram: string | null;
+  samplingYear: number;
+  furtherDetails: string | null;
+  numberOfSamples: number;
+  numberOfPositive: number;
+  percentageOfPositive: number;
+  ciMin: number | null;
+  ciMax: number | null;
+  matrix: number | null;
+  matrixDetail: number | null;
+  microorganism: number | null;
+  sampleType: number | null;
+  samplingStage: number | null;
+  sampleOrigin: number | null;
+  matrixGroup: number | null;
+  superCategorySampleOrigin: number | null;
+  locale: string;
+}
 
 /**
  * Main entry point: imports prevalence data from Excel
@@ -29,8 +50,8 @@ async function importAndCleanupPrevalences(strapi) {
 
 /**
  * (A) importPrevalences:
- * Reads rows from an Excel file, creates/updates English records,
- * then creates/updates linked German records if data is present.
+ * Reads rows from an Excel file, creates English records,
+ * then creates linked German records using the same documentId if data is present.
  */
 async function importPrevalences(strapi) {
   const filePath = path.join(__dirname, '../../../data/master-data/prevalence.xlsx');
@@ -39,7 +60,9 @@ async function importPrevalences(strapi) {
   const importLog = {
     TotalRecords: 0,
     EnglishSaved: 0,
+    EnglishUpdated: 0,
     GermanSaved: 0,
+    GermanUpdated: 0,
     Failures: []
   };
 
@@ -94,6 +117,9 @@ async function importPrevalences(strapi) {
 
   importLog.TotalRecords = dataList.length;
 
+  const service = strapi.entityService;
+  const collection = 'api::prevalence.prevalence';
+
   for (const item of dataList) {
     try {
       // ----------------------------------
@@ -130,24 +156,39 @@ async function importPrevalences(strapi) {
       };
 
       // Find existing English record (dbId + locale='en')
-      const existingEn = await strapi.entityService.findMany('api::prevalence.prevalence', {
-        filters: { dbId: item.dbId },
+      const existingEn = await service.findMany(collection, {
+        filters: { dbId: item.dbId, locale: 'en' },
         locale: 'en',
+        populate: ['localizations']
       });
 
       let defaultEntry; // The final English record
+      let englishId, englishDocumentId;
       if (existingEn && existingEn.length > 0) {
-        defaultEntry = await strapi.entityService.update('api::prevalence.prevalence', existingEn[0].id, {
-          data: dataEn,
-          locale: 'en',
-        });
+        englishId = existingEn[0].id;
+        englishDocumentId = existingEn[0].documentId; // Get the documentId
+        // Check if any field has changed (excluding locale)
+        const hasChanges = Object.keys(dataEn).some(key => 
+          key !== 'locale' && JSON.stringify(existingEn[0][key]) !== JSON.stringify(dataEn[key])
+        );
+        if (hasChanges) {
+          defaultEntry = await service.update(collection, englishId, {
+            data: dataEn,
+            locale: 'en',
+          });
+          importLog.EnglishUpdated++;
+        } else {
+          defaultEntry = existingEn[0];
+        }
       } else {
-        defaultEntry = await strapi.entityService.create('api::prevalence.prevalence', {
+        defaultEntry = await service.create(collection, {
           data: dataEn,
           locale: 'en',
         });
+        importLog.EnglishSaved++;
       }
-      importLog.EnglishSaved++;
+      englishId = defaultEntry.id;
+      englishDocumentId = defaultEntry.documentId;
 
       // ----------------------------------
       // 2. Create/Update the German Record
@@ -192,27 +233,63 @@ async function importPrevalences(strapi) {
           matrixGroup: matrixGroupId_de,
           superCategorySampleOrigin: superCategorySampleOriginId_de,
           locale: 'de'
-          // Note: We removed the `localizationOf` key from the payload.
         };
 
-        // Look for existing German record (dbId + locale='de')
-        const existingDe = await strapi.entityService.findMany('api::prevalence.prevalence', {
-          filters: { dbId: item.dbId },
-          locale: 'de',
+        // Check if a German localization already exists for this English record
+        const englishWithLocalizations = await service.findOne(collection, englishId, {
+          populate: ['localizations'],
+          locale: 'en'
         });
 
-        if (existingDe && existingDe.length > 0) {
-          await strapi.entityService.update('api::prevalence.prevalence', existingDe[0].id, {
-            data: dataDe,
-            locale: 'de',
-          });
+        const germanLocalization = englishWithLocalizations.localizations?.find(loc => loc.locale === 'de');
+
+        if (germanLocalization) {
+          // Update the existing German localization if any data has changed
+          const hasChanges = Object.keys(dataDe).some(key => 
+            key !== 'locale' && JSON.stringify(germanLocalization[key]) !== JSON.stringify(dataDe[key])
+          );
+          if (hasChanges) {
+            await service.update(collection, germanLocalization.id, {
+              data: dataDe,
+              locale: 'de'
+            });
+            importLog.GermanUpdated++;
+          }
         } else {
-          await strapi.entityService.create('api::prevalence.prevalence', {
-            data: dataDe,
-            locale: 'de',
+          // Use Strapi's db.query to create the German record with the same documentId
+          const germanRecord = await strapi.db.query('api::prevalence.prevalence').create({
+            data: {
+              ...dataDe,
+              documentId: englishDocumentId // Use the same documentId to link them
+            }
           });
+
+          // Log the creation for debugging
+          console.log(`Created German record for English documentId ${englishDocumentId}:`, {
+            id: germanRecord.id,
+            documentId: germanRecord.documentId,
+            locale: germanRecord.locale
+          });
+
+          // Fetch the English record to confirm linking
+          const updatedEnglish = await service.findOne(collection, englishId, {
+            populate: ['localizations'],
+            locale: 'en'
+          });
+          console.log(`Linked records for English ID ${englishId} (documentId: ${englishDocumentId}):`, updatedEnglish.localizations);
+
+          // Additional debugging: Fetch the German record to confirm its documentId
+          const fetchedGerman = await service.findOne(collection, germanRecord.id, {
+            populate: ['localizations'],
+            locale: 'de'
+          });
+          console.log(`German record details for ID ${germanRecord.id}:`, {
+            documentId: fetchedGerman.documentId,
+            localizations: fetchedGerman.localizations
+          });
+
+          importLog.GermanSaved++;
         }
-        importLog.GermanSaved++;
       }
     } catch (error) {
       console.error(`Error importing prevalence data for dbId ${item.dbId}:`, error);
@@ -316,5 +393,3 @@ export {
   cleanupGermanDuplicates,     // run cleanup alone if needed
   removeAllPrevalences         // optional to wipe everything first
 };
-
-
