@@ -70,6 +70,14 @@ export interface CutOff {
 }
 
 /**
+ * Interface for upload plugin configuration
+ */
+interface UploadConfig {
+  provider?: string;
+  providerOptions?: any;
+}
+
+/**
  * Global variable used for cutoff processing.
  */
 let antibiotics: any; // This will be populated from the database later
@@ -133,8 +141,7 @@ async function saveOrUpdatePrevalenceEntry(data: any, strapi: StrapiType) {
 
   if (existingEntries.length > 0) {
     await strapi.documents('api::prevalence.prevalence').update({
-      // Convert evaluation.id to string if needed (placeholder below).
-      documentId: "__TODO__",
+      documentId: existingEntries[0].documentId,
       data,
     });
     console.log(`[DEBUG] Updated existing prevalence entry with dbId: ${data.dbId}`);
@@ -199,9 +206,10 @@ export default {
         const locale = folderName === 'evaluation-en' ? 'en' : 'de';
         console.log(`[DEBUG] Evaluations for locale="${locale}" will be processed...`);
 
-        const evaluations = await strapi.db.query('api::evaluation.evaluation').findMany({
-          where: { locale },
-          populate: { diagram: true, csv_data: true },
+        // Fetch evaluations using Strapi's document service for consistency
+        const evaluations = await strapi.documents('api::evaluation.evaluation').findMany({
+          filters: { locale },
+          populate: ['diagram', 'csv_data'],
         });
         console.log(`[DEBUG] Found ${evaluations.length} evaluations for locale="${locale}".`);
 
@@ -215,8 +223,12 @@ export default {
           });
         }
 
+        // Check if using local storage (default provider)
+        const uploadConfig = strapi.config.get('plugin.upload') as UploadConfig;
+        const isLocalStorage = !uploadConfig?.provider || uploadConfig.provider === 'local';
+
         for (const evaluation of evaluations) {
-          console.log(`[DEBUG] Checking evaluation (ID=${evaluation.id}).`);
+          console.log(`[DEBUG] Checking evaluation (ID=${evaluation.id}, DocumentID=${evaluation.documentId}).`);
 
           // Update diagram if file is an image and names match or if no diagram exists yet
           if (file.mime.startsWith('image/') && (!evaluation.diagram || evaluation.diagram.name === file.name)) {
@@ -224,16 +236,36 @@ export default {
 
             if (evaluation.diagram?.id) {
               console.log(`[DEBUG] Moving old diagram (ID=${evaluation.diagram.id}) -> Archive folder...`);
-              await (strapi.entityService.update as any)(
-                'plugin::upload.file',
-                evaluation.diagram.id,
-                {
-                  data: {
-                    folder: archiveFolder.id,
-                    folderPath: `/${archiveFolder.id}`,
-                  },
+              const oldDiagram = (await strapi.entityService.findOne('plugin::upload.file', evaluation.diagram.id, {
+                populate: { folder: true },
+              })) as unknown as FileEntity;
+
+              // Update database record
+              await strapi.entityService.update('plugin::upload.file', evaluation.diagram.id, {
+                data: {
+                  folderPath: `/${archiveFolder.id}`,
+                  folder: archiveFolder.id,
+                } as any, // Type assertion to bypass TS2353 for 'folder'
+              });
+
+              // Physically move file for local storage
+              if (isLocalStorage) {
+                const oldPath = path.join(strapi.dirs.app.root, 'public', oldDiagram.url);
+                const archivePath = path.join(strapi.dirs.app.root, 'public', 'uploads/Archive', path.basename(oldDiagram.url));
+                try {
+                  if (fs.existsSync(oldPath)) {
+                    fs.mkdirSync(path.dirname(archivePath), { recursive: true });
+                    fs.renameSync(oldPath, archivePath);
+                    console.log(`[DEBUG] Physically moved diagram from ${oldPath} to ${archivePath}`);
+                  } else {
+                    console.warn(`[WARN] Old diagram file not found at ${oldPath}`);
+                  }
+                } catch (moveError: any) {
+                  console.error(`[ERROR] Failed to move diagram to Archive: ${moveError.message}`);
                 }
-              );
+              } else {
+                console.log(`[DEBUG] Using cloud storage provider (${uploadConfig?.provider || 'unknown'}). File move handled by provider.`);
+              }
 
               const updatedDiagram = (await strapi.entityService.findOne('plugin::upload.file', evaluation.diagram.id, {
                 populate: { folder: true },
@@ -243,11 +275,14 @@ export default {
               );
             }
 
-            await (strapi.entityService.update as any)(
-              'api::evaluation.evaluation',
-              evaluation.id,
-              { data: { diagram: file.id }, locale }
-            );
+            // Update the evaluation entry with the new diagram
+            await strapi.documents('api::evaluation.evaluation').update({
+              documentId: evaluation.documentId,
+              data: {
+                diagram: file.id,
+              } as any, // Type assertion to bypass TS2353 for 'diagram'
+              locale,
+            });
             console.log(`[DEBUG] Updated diagram for evaluation ID=${evaluation.id} -> new file ID=${file.id}.`);
           }
 
@@ -262,16 +297,36 @@ export default {
 
             if (evaluation.csv_data?.id) {
               console.log(`[DEBUG] Moving old CSV (ID=${evaluation.csv_data.id}) -> Archive folder...`);
-              await (strapi.entityService.update as any)(
-                'plugin::upload.file',
-                evaluation.csv_data.id,
-                {
-                  data: {
-                    folder: archiveFolder.id,
-                    folderPath: `/${archiveFolder.id}`,
-                  },
+              const oldCSV = (await strapi.entityService.findOne('plugin::upload.file', evaluation.csv_data.id, {
+                populate: { folder: true },
+              })) as unknown as FileEntity;
+
+              // Update database record
+              await strapi.entityService.update('plugin::upload.file', evaluation.csv_data.id, {
+                data: {
+                  folderPath: `/${archiveFolder.id}`,
+                  folder: archiveFolder.id,
+                } as any, // Type assertion to bypass TS2353 for 'folder'
+              });
+
+              // Physically move file for local storage
+              if (isLocalStorage) {
+                const oldPath = path.join(strapi.dirs.app.root, 'public', oldCSV.url);
+                const archivePath = path.join(strapi.dirs.app.root, 'public', 'Uploads/Archive', path.basename(oldCSV.url));
+                try {
+                  if (fs.existsSync(oldPath)) {
+                    fs.mkdirSync(path.dirname(archivePath), { recursive: true });
+                    fs.renameSync(oldPath, archivePath);
+                    console.log(`[DEBUG] Physically moved CSV from ${oldPath} to ${archivePath}`);
+                  } else {
+                    console.warn(`[WARN] Old CSV file not found at ${oldPath}`);
+                  }
+                } catch (moveError: any) {
+                  console.error(`[ERROR] Failed to move CSV to Archive: ${moveError.message}`);
                 }
-              );
+              } else {
+                console.log(`[DEBUG] Using cloud storage provider (${uploadConfig?.provider || 'unknown'}). File move handled by provider.`);
+              }
 
               const updatedCSV = (await strapi.entityService.findOne('plugin::upload.file', evaluation.csv_data.id, {
                 populate: { folder: true },
@@ -281,11 +336,14 @@ export default {
               );
             }
 
-            await (strapi.entityService.update as any)(
-              'api::evaluation.evaluation',
-              evaluation.id,
-              { data: { csv_data: file.id }, locale }
-            );
+            // Update the evaluation entry with the new CSV data
+            await strapi.documents('api::evaluation.evaluation').update({
+              documentId: evaluation.documentId,
+              data: {
+                csv_data: file.id,
+              } as any, // Type assertion to bypass TS2353 for 'csv_data'
+              locale,
+            });
             console.log(`[DEBUG] Updated csv_data for evaluation ID=${evaluation.id} -> new file ID=${file.id}.`);
           }
         }
@@ -484,7 +542,6 @@ async function importPrevalenceData(filePath: string, strapi: StrapiType) {
 /**
  * ------------------------------
  * Cutoff (Resistance) import functions
- * (Integrated with the "good code" provided)
  * ------------------------------
  */
 
