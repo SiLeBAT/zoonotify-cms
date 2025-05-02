@@ -13,6 +13,8 @@ import { importSamplingStages } from './data_import/sampling-stage.import';
 import { importSuperCategorySampleOrigins } from './data_import/super-category-sample-origin.import';
 //mport { updateGraphs } from './data_import/updateGraphs';
 import { importExternalLinks } from './data_import/importExternalLinks';
+import { importAntimicrobialSubstances } from './data_import/antimicrobial-substance.import'; // Add this import
+import { importSpecies } from './data_import/specie.import'; // Add this import
 import fileLifecycles from './extensions/upload/content-types/file/lifecycles';
 
 
@@ -1048,7 +1050,8 @@ export default {
   //await importAndCleanupResistances(strapi);
   await importResistances(strapi);
 
-
+  await importAntimicrobialSubstances(strapi); // Add this line to call the new import function
+  await importSpecies(strapi); // Add this line to call the new import function
 
     // Add this line to call your new import function
     await importControlledVocabularyTranslations(strapi);

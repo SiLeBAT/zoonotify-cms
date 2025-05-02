@@ -8,69 +8,7 @@ interface ResistanceEntity {
   dbId: string;
   zomoProgram: string | null;
   samplingYear: number | null;
-  AMP_Res_quant: number | null;
-  AZI_Res_quant: number | null;
-  CHL_Res_quant: number | null;
-  CIP_Res_quant: number | null;
-  CLI_Res_quant: number | null;
-  COL_Res_quant: number | null;
-  DAP_Res_quant: number | null;
-  ERY_Res_quant: number | null;
-  ETP_Res_quant: number | null;
-  FFN_Res_quant: number | null;
-  FOT_Res_quant: number | null;
-  FOX_Res_quant: number | null;
-  FUS_Res_quant: number | null;
-  GEN_Res_quant: number | null;
-  KAN_Res_quant: number | null;
-  LZD_Res_quant: number | null;
-  MERO_Res_quant: number | null;
-  MUP_Res_quant: number | null;
-  NAL_Res_quant: number | null;
-  PEN_Res_quant: number | null;
-  RIF_Res_quant: number | null;
-  SMX_Res_quant: number | null;
-  STR_Res_quant: number | null;
-  SYN_Res_quant: number | null;
-  TAZ_Res_quant: number | null;
-  TEC_Res_quant: number | null;
-  TET_Res_quant: number | null;
-  TGC_Res_quant: number | null;
-  TIA_Res_quant: number | null;
-  TMP_Res_quant: number | null;
-  VAN_Res_quant: number | null;
-  AK_Res_qual: number | null;
-  AMP_Res_qual: number | null;
-  AZI_Res_qual: number | null;
-  CHL_Res_qual: number | null;
-  CIP_Res_qual: number | null;
-  CLI_Res_qual: number | null;
-  COL_Res_qual: number | null;
-  DAP_Res_qual: number | null;
-  ERY_Res_qual: number | null;
-  ETP_Res_qual: number | null;
-  FFN_Res_qual: number | null;
-  FOT_Res_qual: number | null;
-  FOX_Res_qual: number | null;
-  FUS_Res_qual: number | null;
-  GEN_Res_qual: number | null;
-  KAN_Res_qual: number | null;
-  LZD_Res_qual: number | null;
-  MERO_Res_qual: number | null;
-  MUP_Res_qual: number | null;
-  NAL_Res_qual: number | null;
-  PEN_Res_qual: number | null;
-  RIF_Res_qual: number | null;
-  SMX_Res_qual: number | null;
-  STR_Res_qual: number | null;
-  SYN_Res_qual: number | null;
-  TAZ_Res_qual: number | null;
-  TEC_Res_qual: number | null;
-  TET_Res_qual: number | null;
-  TGC_Res_qual: number | null;
-  TIA_Res_qual: number | null;
-  TMP_Res_qual: number | null;
-  VAN_Res_qual: number | null;
+  
   matrix: number | null;
   matrixGroup: number | null;
   microorganism: number | null;
@@ -79,6 +17,14 @@ interface ResistanceEntity {
   sampleOrigin: number | null;
   superCategorySampleOrigin: number | null;
   locale: string;
+  antimicrobialSubstance: number | null;
+  specie: number | null;
+  anzahlGetesteterIsolate: number | null;
+  anzahlResistenterIsolate: number | null;
+  resistenzrate: number | null;
+  minKonfidenzintervall: number | null;
+  maxKonfidenzintervall: number | null;
+ 
 }
 
 /**
@@ -175,89 +121,40 @@ export async function importResistances(strapi) {
   }
 
   const dataList = resistanceData.data.slice(1).map((row, index) => {
-    const rowNumber = index + 2; // Header is row 1
+    const rowNumber = index +0; // Header is row 1
     return {
       rowNumber,
-      dbId: String(row[24]), // This will be checked for blank below
+      dbId: String(row[28]), // This will be checked for blank below
       zomoProgram: row[0],
       samplingYear: parseNumeric(row[1], parseInt),
       microorganism_de: row[3],
       microorganism_en: row[4],
-      sampleType_de: row[5],
-      sampleType_en: row[6],
-      superCategorySampleOrigin_de: row[7],
-      superCategorySampleOrigin_en: row[8],
-      sampleOrigin_de: row[9],
-      sampleOrigin_en: row[10],
-      samplingStage_de: row[11],
-      samplingStage_en: row[12],
-      matrixGroup_de: row[13],
-      matrixGroup_en: row[14],
-      matrix_de: row[15],
-      matrix_en: row[16],
-      AMP_Res_quant: parseNumeric(row[49], parseFloat),
-      AZI_Res_quant: parseNumeric(row[50], parseInt),
-      CHL_Res_quant: parseNumeric(row[51], parseInt),
-      CIP_Res_quant: parseNumeric(row[52], parseFloat),
-      CLI_Res_quant: parseNumeric(row[53], parseFloat),
-      COL_Res_quant: parseNumeric(row[54], parseFloat),
-      DAP_Res_quant: parseNumeric(row[55], parseFloat),
-      ERY_Res_quant: parseNumeric(row[56], parseFloat),
-      ETP_Res_quant: parseNumeric(row[57], parseFloat),
-      FFN_Res_quant: parseNumeric(row[58], parseInt),
-      FOT_Res_quant: parseNumeric(row[59], parseFloat),
-      FOX_Res_quant: parseNumeric(row[60], parseFloat),
-      FUS_Res_quant: parseNumeric(row[61], parseFloat),
-      GEN_Res_quant: parseNumeric(row[62], parseFloat),
-      KAN_Res_quant: parseNumeric(row[63], parseFloat),
-      LZD_Res_quant: parseNumeric(row[64], parseFloat),
-      MERO_Res_quant: parseNumeric(row[65], parseFloat),
-      MUP_Res_quant: parseNumeric(row[66], parseFloat),
-      NAL_Res_quant: parseNumeric(row[67], parseInt),
-      PEN_Res_quant: parseNumeric(row[68], parseFloat),
-      RIF_Res_quant: parseNumeric(row[69], parseFloat),
-      SMX_Res_quant: parseNumeric(row[70], parseInt),
-      STR_Res_quant: parseNumeric(row[71], parseInt),
-      SYN_Res_quant: parseNumeric(row[72], parseFloat),
-      TAZ_Res_quant: parseNumeric(row[73], parseFloat),
-      TEC_Res_quant: parseNumeric(row[74], parseFloat),
-      TET_Res_quant: parseNumeric(row[75], parseFloat),
-      TGC_Res_quant: parseNumeric(row[76], parseFloat),
-      TIA_Res_quant: parseNumeric(row[77], parseFloat),
-      TMP_Res_quant: parseNumeric(row[78], parseFloat),
-      VAN_Res_quant: parseNumeric(row[79], parseInt),
-      AK_Res_qual: parseNumeric(row[80], parseInt),
-      AMP_Res_qual: parseNumeric(row[81], parseInt),
-      AZI_Res_qual: parseNumeric(row[82], parseInt),
-      CHL_Res_qual: parseNumeric(row[83], parseInt),
-      CIP_Res_qual: parseNumeric(row[84], parseInt),
-      CLI_Res_qual: parseNumeric(row[85], parseInt),
-      COL_Res_qual: parseNumeric(row[86], parseInt),
-      DAP_Res_qual: parseNumeric(row[87], parseInt),
-      ERY_Res_qual: parseNumeric(row[88], parseInt),
-      ETP_Res_qual: parseNumeric(row[89], parseInt),
-      FFN_Res_qual: parseNumeric(row[90], parseInt),
-      FOT_Res_qual: parseNumeric(row[91], parseInt),
-      FOX_Res_qual: parseNumeric(row[92], parseInt),
-      FUS_Res_qual: parseNumeric(row[93], parseInt),
-      GEN_Res_qual: parseNumeric(row[94], parseInt),
-      KAN_Res_qual: parseNumeric(row[95], parseInt),
-      LZD_Res_qual: parseNumeric(row[96], parseInt),
-      MERO_Res_qual: parseNumeric(row[97], parseInt),
-      MUP_Res_qual: parseNumeric(row[98], parseInt),
-      NAL_Res_qual: parseNumeric(row[99], parseInt),
-      PEN_Res_qual: parseNumeric(row[100], parseInt),
-      RIF_Res_qual: parseNumeric(row[101], parseInt),
-      SMX_Res_qual: parseNumeric(row[102], parseInt),
-      STR_Res_qual: parseNumeric(row[103], parseInt),
-      SYN_Res_qual: parseNumeric(row[104], parseInt),
-      TAZ_Res_qual: parseNumeric(row[105], parseInt),
-      TEC_Res_qual: parseNumeric(row[106], parseInt),
-      TET_Res_qual: parseNumeric(row[107], parseInt),
-      TGC_Res_qual: parseNumeric(row[108], parseInt),
-      TIA_Res_qual: parseNumeric(row[109], parseInt),
-      TMP_Res_qual: parseNumeric(row[110], parseInt),
-      VAN_Res_qual: parseNumeric(row[111], parseInt),
+      specie_en: row[6] || null,
+      specie_de: row[5] || null,
+
+      sampleType_de: row[7],
+      sampleType_en: row[8],
+
+      superCategorySampleOrigin_de: row[9],
+      superCategorySampleOrigin_en: row[10],
+
+      sampleOrigin_de: row[11],
+      sampleOrigin_en: row[12],
+      samplingStage_de: row[13],
+      samplingStage_en: row[14],
+      matrixGroup_de: row[15],
+      matrixGroup_en: row[16],
+      matrix_de: row[17],
+      matrix_en: row[18],
+
+      antimicrobialSubstance_en: row[21] || null,
+      antimicrobialSubstance_de: row[22] || null,
+      anzahlGetesteterIsolate: parseNumeric(row[23], parseInt),
+      anzahlResistenterIsolate: parseNumeric(row[24], parseInt),
+      resistenzrate: parseNumeric(row[25], parseFloat),
+      minKonfidenzintervall: parseNumeric(row[26], parseFloat),
+      maxKonfidenzintervall: parseNumeric(row[27], parseFloat),
+
     };
   });
 
@@ -285,22 +182,31 @@ export async function importResistances(strapi) {
       if (!item.samplingStage_en) missingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: English samplingStage is blank`);
       if (!item.sampleOrigin_en) missingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: English sampleOrigin is blank`);
       if (!item.superCategorySampleOrigin_en) missingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: English superCategorySampleOrigin is blank`);
+      if (!item.antimicrobialSubstance_en) missingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: English antimicrobialSubstance is blank`);
+      if (!item.specie_en) missingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: English specie is blank`);
 
       // English relations lookup
-      const matrixId_en = await findEntityIdByName(strapi, 'api::matrix.matrix', item.matrix_en, 'en');
-      const matrixGroupId_en = await findEntityIdByName(strapi, 'api::matrix-group.matrix-group', item.matrixGroup_en, 'en');
-      const microorganismId_en = await findEntityIdByName(strapi, 'api::microorganism.microorganism', item.microorganism_en, 'en');
-      const sampleTypeId_en = await findEntityIdByName(strapi, 'api::sample-type.sample-type', item.sampleType_en, 'en');
-      const samplingStageId_en = await findEntityIdByName(strapi, 'api::sampling-stage.sampling-stage', item.samplingStage_en, 'en');
-      const sampleOriginId_en = await findEntityIdByName(strapi, 'api::sample-origin.sample-origin', item.sampleOrigin_en, 'en');
-      const superCategorySampleOriginId_en = await findEntityIdByName(
-        strapi,
-        'api::super-category-sample-origin.super-category-sample-origin',
-        item.superCategorySampleOrigin_en,
-        'en'
-      );
-
-      // Check for missing English relations (not found in database)
+            const matrixId_en = await findEntityIdByName(strapi, 'api::matrix.matrix', item.matrix_en, 'en');
+            const matrixGroupId_en = await findEntityIdByName(strapi, 'api::matrix-group.matrix-group', item.matrixGroup_en, 'en');
+            const microorganismId_en = await findEntityIdByName(strapi, 'api::microorganism.microorganism', item.microorganism_en, 'en');
+            const sampleTypeId_en = await findEntityIdByName(strapi, 'api::sample-type.sample-type', item.sampleType_en, 'en');
+            const samplingStageId_en = await findEntityIdByName(strapi, 'api::sampling-stage.sampling-stage', item.samplingStage_en, 'en');
+            const sampleOriginId_en = await findEntityIdByName(strapi, 'api::sample-origin.sample-origin', item.sampleOrigin_en, 'en');
+            const superCategorySampleOriginId_en = await findEntityIdByName(
+              strapi,
+              'api::super-category-sample-origin.super-category-sample-origin',
+              item.superCategorySampleOrigin_en,
+              'en'
+            );
+            const antimicrobialSubstanceId_en = await findEntityIdByName(
+              strapi,
+              'api::antimicrobial-substance.antimicrobial-substance',
+              item.antimicrobialSubstance_en,
+              'en'
+            );
+            const specieId_en = await findEntityIdByName(strapi, 'api::specie.specie', item.specie_en, 'en');
+      
+            // Check for missing English relations
       if (item.matrix_en && !matrixId_en) missingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: Missing English matrix '${item.matrix_en}'`);
       if (item.matrixGroup_en && !matrixGroupId_en) missingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: Missing English matrixGroup '${item.matrixGroup_en}'`);
       if (item.microorganism_en && !microorganismId_en) missingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: Missing English microorganism '${item.microorganism_en}'`);
@@ -310,6 +216,11 @@ export async function importResistances(strapi) {
       if (item.superCategorySampleOrigin_en && !superCategorySampleOriginId_en) {
         missingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: Missing English superCategorySampleOrigin '${item.superCategorySampleOrigin_en}'`);
       }
+      if (item.antimicrobialSubstance_en && !antimicrobialSubstanceId_en) {
+        missingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: Missing English antimicrobialSubstance '${item.antimicrobialSubstance_en}'`);
+      }
+      if (item.specie_en && !specieId_en) missingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: Missing English specie '${item.specie_en}'`);
+
 
       // If any English relations are missing, mark as failure
       if (missingRelations.length > 0) {
@@ -331,69 +242,6 @@ export async function importResistances(strapi) {
         dbId: item.dbId,
         zomoProgram: item.zomoProgram,
         samplingYear: item.samplingYear,
-        AMP_Res_quant: item.AMP_Res_quant,
-        AZI_Res_quant: item.AZI_Res_quant,
-        CHL_Res_quant: item.CHL_Res_quant,
-        CIP_Res_quant: item.CIP_Res_quant,
-        CLI_Res_quant: item.CLI_Res_quant,
-        COL_Res_quant: item.COL_Res_quant,
-        DAP_Res_quant: item.DAP_Res_quant,
-        ERY_Res_quant: item.ERY_Res_quant,
-        ETP_Res_quant: item.ETP_Res_quant,
-        FFN_Res_quant: item.FFN_Res_quant,
-        FOT_Res_quant: item.FOT_Res_quant,
-        FOX_Res_quant: item.FOX_Res_quant,
-        FUS_Res_quant: item.FUS_Res_quant,
-        GEN_Res_quant: item.GEN_Res_quant,
-        KAN_Res_quant: item.KAN_Res_quant,
-        LZD_Res_quant: item.LZD_Res_quant,
-        MERO_Res_quant: item.MERO_Res_quant,
-        MUP_Res_quant: item.MUP_Res_quant,
-        NAL_Res_quant: item.NAL_Res_quant,
-        PEN_Res_quant: item.PEN_Res_quant,
-        RIF_Res_quant: item.RIF_Res_quant,
-        SMX_Res_quant: item.SMX_Res_quant,
-        STR_Res_quant: item.STR_Res_quant,
-        SYN_Res_quant: item.SYN_Res_quant,
-        TAZ_Res_quant: item.TAZ_Res_quant,
-        TEC_Res_quant: item.TEC_Res_quant,
-        TET_Res_quant: item.TET_Res_quant,
-        TGC_Res_quant: item.TGC_Res_quant,
-        TIA_Res_quant: item.TIA_Res_quant,
-        TMP_Res_quant: item.TMP_Res_quant,
-        VAN_Res_quant: item.VAN_Res_quant,
-        AK_Res_qual: item.AK_Res_qual,
-        AMP_Res_qual: item.AMP_Res_qual,
-        AZI_Res_qual: item.AZI_Res_qual,
-        CHL_Res_qual: item.CHL_Res_qual,
-        CIP_Res_qual: item.CIP_Res_qual,
-        CLI_Res_qual: item.CLI_Res_qual,
-        COL_Res_qual: item.COL_Res_qual,
-        DAP_Res_qual: item.DAP_Res_qual,
-        ERY_Res_qual: item.ERY_Res_qual,
-        ETP_Res_qual: item.ETP_Res_qual,
-        FFN_Res_qual: item.FFN_Res_qual,
-        FOT_Res_qual: item.FOT_Res_qual,
-        FOX_Res_qual: item.FOX_Res_qual,
-        FUS_Res_qual: item.FUS_Res_qual,
-        GEN_Res_qual: item.GEN_Res_qual,
-        KAN_Res_qual: item.KAN_Res_qual,
-        LZD_Res_qual: item.LZD_Res_qual,
-        MERO_Res_qual: item.MERO_Res_qual,
-        MUP_Res_qual: item.MUP_Res_qual,
-        NAL_Res_qual: item.NAL_Res_qual,
-        PEN_Res_qual: item.PEN_Res_qual,
-        RIF_Res_qual: item.RIF_Res_qual,
-        SMX_Res_qual: item.SMX_Res_qual,
-        STR_Res_qual: item.STR_Res_qual,
-        SYN_Res_qual: item.SYN_Res_qual,
-        TAZ_Res_qual: item.TAZ_Res_qual,
-        TEC_Res_qual: item.TEC_Res_qual,
-        TET_Res_qual: item.TET_Res_qual,
-        TGC_Res_qual: item.TGC_Res_qual,
-        TIA_Res_qual: item.TIA_Res_qual,
-        TMP_Res_qual: item.TMP_Res_qual,
-        VAN_Res_qual: item.VAN_Res_qual,
         matrix: matrixId_en,
         matrixGroup: matrixGroupId_en,
         microorganism: microorganismId_en,
@@ -401,6 +249,13 @@ export async function importResistances(strapi) {
         samplingStage: samplingStageId_en,
         sampleOrigin: sampleOriginId_en,
         superCategorySampleOrigin: superCategorySampleOriginId_en,
+        antimicrobialSubstance: antimicrobialSubstanceId_en,
+        specie: specieId_en,
+        anzahlGetesteterIsolate: item.anzahlGetesteterIsolate,
+        anzahlResistenterIsolate: item.anzahlResistenterIsolate,
+        resistenzrate: item.resistenzrate,
+        minKonfidenzintervall: item.minKonfidenzintervall,
+        maxKonfidenzintervall: item.maxKonfidenzintervall,
         locale: 'en'
       });
 
@@ -441,39 +296,52 @@ export async function importResistances(strapi) {
 
       // German record
       const hasGermanData =
-        item.microorganism_de ||
-        item.sampleType_de ||
-        item.samplingStage_de ||
-        item.sampleOrigin_de ||
-        item.superCategorySampleOrigin_de ||
-        item.matrixGroup_de ||
-        item.matrix_de;
+      item.microorganism_de ||
+      item.sampleType_de ||
+      item.samplingStage_de ||
+      item.sampleOrigin_de ||
+      item.superCategorySampleOrigin_de ||
+      item.matrixGroup_de ||
+      item.matrix_de ||
+      item.antimicrobialSubstance_de ||
+      item.specie_de;
 
       if (hasGermanData) {
         const germanMissingRelations = [];
 
         // Check for blank German relational fields
-        if (!item.matrix_de) germanMissingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: German matrix is blank`);
-        if (!item.matrixGroup_de) germanMissingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: German matrixGroup is blank`);
-        if (!item.microorganism_de) germanMissingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: German microorganism is blank`);
-        if (!item.sampleType_de) germanMissingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: German sampleType is blank`);
-        if (!item.samplingStage_de) germanMissingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: German samplingStage is blank`);
-        if (!item.sampleOrigin_de) germanMissingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: German sampleOrigin is blank`);
-        if (!item.superCategorySampleOrigin_de) germanMissingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: German superCategorySampleOrigin is blank`);
-
-        const matrixId_de = await findEntityIdByName(strapi, 'api::matrix.matrix', item.matrix_de, 'de');
-        const matrixGroupId_de = await findEntityIdByName(strapi, 'api::matrix-group.matrix-group', item.matrixGroup_de, 'de');
-        const microorganismId_de = await findEntityIdByName(strapi, 'api::microorganism.microorganism', item.microorganism_de, 'de');
-        const sampleTypeId_de = await findEntityIdByName(strapi, 'api::sample-type.sample-type', item.sampleType_de, 'de');
-        const samplingStageId_de = await findEntityIdByName(strapi, 'api::sampling-stage.sampling-stage', item.samplingStage_de, 'de');
-        const sampleOriginId_de = await findEntityIdByName(strapi, 'api::sample-origin.sample-origin', item.sampleOrigin_de, 'de');
-        const superCategorySampleOriginId_de = await findEntityIdByName(
-          strapi,
-          'api::super-category-sample-origin.super-category-sample-origin',
-          item.superCategorySampleOrigin_de,
-          'de'
-        );
-
+                if (!item.matrix_de) germanMissingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: German matrix is blank`);
+                if (!item.matrixGroup_de) germanMissingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: German matrixGroup is blank`);
+                if (!item.microorganism_de) germanMissingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: German microorganism is blank`);
+                if (!item.sampleType_de) germanMissingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: German sampleType is blank`);
+                if (!item.samplingStage_de) germanMissingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: German samplingStage is blank`);
+                if (!item.sampleOrigin_de) germanMissingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: German sampleOrigin is blank`);
+                if (!item.superCategorySampleOrigin_de) germanMissingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: German superCategorySampleOrigin is blank`);
+                if (!item.antimicrobialSubstance_de) germanMissingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: German antimicrobialSubstance is blank`);
+                if (!item.specie_de) germanMissingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: German specie is blank`);
+        
+                // German relations lookup
+                const matrixId_de = await findEntityIdByName(strapi, 'api::matrix.matrix', item.matrix_de, 'de');
+                const matrixGroupId_de = await findEntityIdByName(strapi, 'api::matrix-group.matrix-group', item.matrixGroup_de, 'de');
+                const microorganismId_de = await findEntityIdByName(strapi, 'api::microorganism.microorganism', item.microorganism_de, 'de');
+                const sampleTypeId_de = await findEntityIdByName(strapi, 'api::sample-type.sample-type', item.sampleType_de, 'de');
+                const samplingStageId_de = await findEntityIdByName(strapi, 'api::sampling-stage.sampling-stage', item.samplingStage_de, 'de');
+                const sampleOriginId_de = await findEntityIdByName(strapi, 'api::sample-origin.sample-origin', item.sampleOrigin_de, 'de');
+                const superCategorySampleOriginId_de = await findEntityIdByName(
+                  strapi,
+                  'api::super-category-sample-origin.super-category-sample-origin',
+                  item.superCategorySampleOrigin_de,
+                  'de'
+                );
+                const antimicrobialSubstanceId_de = await findEntityIdByName(
+                  strapi,
+                  'api::antimicrobial-substance.antimicrobial-substance',
+                  item.antimicrobialSubstance_de,
+                  'de'
+                );
+                const specieId_de = await findEntityIdByName(strapi, 'api::specie.specie', item.specie_de, 'de');
+        
+               
         // Check for missing German relations (not found in database)
         if (item.matrix_de && !matrixId_de) germanMissingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: Missing German matrix '${item.matrix_de}'`);
         if (item.matrixGroup_de && !matrixGroupId_de) germanMissingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: Missing German matrixGroup '${item.matrixGroup_de}'`);
@@ -484,6 +352,10 @@ export async function importResistances(strapi) {
         if (item.superCategorySampleOrigin_de && !superCategorySampleOriginId_de) {
           germanMissingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: Missing German superCategorySampleOrigin '${item.superCategorySampleOrigin_de}'`);
         }
+        if (item.antimicrobialSubstance_de && !antimicrobialSubstanceId_de) {
+          germanMissingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: Missing German antimicrobialSubstance '${item.antimicrobialSubstance_de}'`);
+        }
+        if (item.specie_de && !specieId_de) germanMissingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: Missing German specie '${item.specie_de}'`);
 
         // If any German relations are missing, mark as failure
         if (germanMissingRelations.length > 0) {
@@ -499,69 +371,6 @@ export async function importResistances(strapi) {
           dbId: item.dbId,
           zomoProgram: item.zomoProgram,
           samplingYear: item.samplingYear,
-          AMP_Res_quant: item.AMP_Res_quant,
-          AZI_Res_quant: item.AZI_Res_quant,
-          CHL_Res_quant: item.CHL_Res_quant,
-          CIP_Res_quant: item.CIP_Res_quant,
-          CLI_Res_quant: item.CLI_Res_quant,
-          COL_Res_quant: item.COL_Res_quant,
-          DAP_Res_quant: item.DAP_Res_quant,
-          ERY_Res_quant: item.ERY_Res_quant,
-          ETP_Res_quant: item.ETP_Res_quant,
-          FFN_Res_quant: item.FFN_Res_quant,
-          FOT_Res_quant: item.FOT_Res_quant,
-          FOX_Res_quant: item.FOX_Res_quant,
-          FUS_Res_quant: item.FUS_Res_quant,
-          GEN_Res_quant: item.GEN_Res_quant,
-          KAN_Res_quant: item.KAN_Res_quant,
-          LZD_Res_quant: item.LZD_Res_quant,
-          MERO_Res_quant: item.MERO_Res_quant,
-          MUP_Res_quant: item.MUP_Res_quant,
-          NAL_Res_quant: item.NAL_Res_quant,
-          PEN_Res_quant: item.PEN_Res_quant,
-          RIF_Res_quant: item.RIF_Res_quant,
-          SMX_Res_quant: item.SMX_Res_quant,
-          STR_Res_quant: item.STR_Res_quant,
-          SYN_Res_quant: item.SYN_Res_quant,
-          TAZ_Res_quant: item.TAZ_Res_quant,
-          TEC_Res_quant: item.TEC_Res_quant,
-          TET_Res_quant: item.TET_Res_quant,
-          TGC_Res_quant: item.TGC_Res_quant,
-          TIA_Res_quant: item.TIA_Res_quant,
-          TMP_Res_quant: item.TMP_Res_quant,
-          VAN_Res_quant: item.VAN_Res_quant,
-          AK_Res_qual: item.AK_Res_qual,
-          AMP_Res_qual: item.AMP_Res_qual,
-          AZI_Res_qual: item.AZI_Res_qual,
-          CHL_Res_qual: item.CHL_Res_qual,
-          CIP_Res_qual: item.CIP_Res_qual,
-          CLI_Res_qual: item.CLI_Res_qual,
-          COL_Res_qual: item.COL_Res_qual,
-          DAP_Res_qual: item.DAP_Res_qual,
-          ERY_Res_qual: item.ERY_Res_qual,
-          ETP_Res_qual: item.ETP_Res_qual,
-          FFN_Res_qual: item.FFN_Res_qual,
-          FOT_Res_qual: item.FOT_Res_qual,
-          FOX_Res_qual: item.FOX_Res_qual,
-          FUS_Res_qual: item.FUS_Res_qual,
-          GEN_Res_qual: item.GEN_Res_qual,
-          KAN_Res_qual: item.KAN_Res_qual,
-          LZD_Res_qual: item.LZD_Res_qual,
-          MERO_Res_qual: item.MERO_Res_qual,
-          MUP_Res_qual: item.MUP_Res_qual,
-          NAL_Res_qual: item.NAL_Res_qual,
-          PEN_Res_qual: item.PEN_Res_qual,
-          RIF_Res_qual: item.RIF_Res_qual,
-          SMX_Res_qual: item.SMX_Res_qual,
-          STR_Res_qual: item.STR_Res_qual,
-          SYN_Res_qual: item.SYN_Res_qual,
-          TAZ_Res_qual: item.TAZ_Res_qual,
-          TEC_Res_qual: item.TEC_Res_qual,
-          TET_Res_qual: item.TET_Res_qual,
-          TGC_Res_qual: item.TGC_Res_qual,
-          TIA_Res_qual: item.TIA_Res_qual,
-          TMP_Res_qual: item.TMP_Res_qual,
-          VAN_Res_qual: item.VAN_Res_qual,
           matrix: matrixId_de,
           matrixGroup: matrixGroupId_de,
           microorganism: microorganismId_de,
@@ -569,6 +378,13 @@ export async function importResistances(strapi) {
           samplingStage: samplingStageId_de,
           sampleOrigin: sampleOriginId_de,
           superCategorySampleOrigin: superCategorySampleOriginId_de,
+          antimicrobialSubstance: antimicrobialSubstanceId_de,
+          specie: specieId_de,
+          anzahlGetesteterIsolate: item.anzahlGetesteterIsolate,
+          anzahlResistenterIsolate: item.anzahlResistenterIsolate,
+          resistenzrate: item.resistenzrate,
+          minKonfidenzintervall: item.minKonfidenzintervall,
+          maxKonfidenzintervall: item.maxKonfidenzintervall,
           locale: 'de'
         });
 
