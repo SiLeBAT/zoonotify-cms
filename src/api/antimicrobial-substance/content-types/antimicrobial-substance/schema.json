@@ -1,0 +1,28 @@
+{
+  "kind": "collectionType",
+  "collectionName": "antimicrobial_substances",
+  "info": {
+    "singularName": "antimicrobial-substance",
+    "pluralName": "antimicrobial-substances",
+    "displayName": "MD Antimicrobial Substance"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "name": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "unique": true
+    }
+  }
+}
