@@ -1,0 +1,29 @@
+{
+  "kind": "singleType",
+  "collectionName": "prevalence_informations",
+  "info": {
+    "singularName": "prevalence-information",
+    "pluralName": "prevalence-informations",
+    "displayName": "Prevalence Information",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "content": {
+      "type": "blocks",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "required": true
+    }
+  }
+}
