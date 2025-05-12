@@ -8,7 +8,6 @@ interface ResistanceEntity {
   dbId: string;
   zomoProgram: string | null;
   samplingYear: number | null;
-  
   matrix: number | null;
   matrixGroup: number | null;
   microorganism: number | null;
@@ -24,7 +23,6 @@ interface ResistanceEntity {
   resistenzrate: number | null;
   minKonfidenzintervall: number | null;
   maxKonfidenzintervall: number | null;
- 
 }
 
 /**
@@ -72,7 +70,7 @@ export async function importAndCleanupResistances(strapi) {
  *    - Reads rows from an Excel file,
  *    - Creates English records,
  *    - Creates German records as localized versions using the same documentId if data is present,
- *    - Rows with missing relational data are logged as failures and skipped.
+ *    - Rows with missing relational data (except specie) are logged as failures and skipped.
  */
 export async function importResistances(strapi) {
   const filePath = path.join(__dirname, '../../../data/master-data/ZooNotify_amr_DB_DE_EN_2025-02-27.xlsx');
@@ -121,23 +119,20 @@ export async function importResistances(strapi) {
   }
 
   const dataList = resistanceData.data.slice(1).map((row, index) => {
-    const rowNumber = index +0; // Header is row 1
+    const rowNumber = index + 2; // Header is row 1
     return {
       rowNumber,
-      dbId: String(row[28]), // This will be checked for blank below
+      dbId: String(row[28]),
       zomoProgram: row[0],
       samplingYear: parseNumeric(row[1], parseInt),
       microorganism_de: row[3],
       microorganism_en: row[4],
       specie_en: row[6] || null,
       specie_de: row[5] || null,
-
       sampleType_de: row[7],
       sampleType_en: row[8],
-
       superCategorySampleOrigin_de: row[9],
       superCategorySampleOrigin_en: row[10],
-
       sampleOrigin_de: row[11],
       sampleOrigin_en: row[12],
       samplingStage_de: row[13],
@@ -146,7 +141,6 @@ export async function importResistances(strapi) {
       matrixGroup_en: row[16],
       matrix_de: row[17],
       matrix_en: row[18],
-
       antimicrobialSubstance_en: row[21] || null,
       antimicrobialSubstance_de: row[22] || null,
       anzahlGetesteterIsolate: parseNumeric(row[23], parseInt),
@@ -154,7 +148,6 @@ export async function importResistances(strapi) {
       resistenzrate: parseNumeric(row[25], parseFloat),
       minKonfidenzintervall: parseNumeric(row[26], parseFloat),
       maxKonfidenzintervall: parseNumeric(row[27], parseFloat),
-
     };
   });
 
@@ -174,7 +167,7 @@ export async function importResistances(strapi) {
         hasMissingRelations = true;
       }
 
-      // Check for blank English relational fields
+      // Check for blank English relational fields (excluding specie)
       if (!item.matrix_en) missingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: English matrix is blank`);
       if (!item.matrixGroup_en) missingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: English matrixGroup is blank`);
       if (!item.microorganism_en) missingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: English microorganism is blank`);
@@ -183,30 +176,29 @@ export async function importResistances(strapi) {
       if (!item.sampleOrigin_en) missingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: English sampleOrigin is blank`);
       if (!item.superCategorySampleOrigin_en) missingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: English superCategorySampleOrigin is blank`);
       if (!item.antimicrobialSubstance_en) missingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: English antimicrobialSubstance is blank`);
-      if (!item.specie_en) missingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: English specie is blank`);
 
       // English relations lookup
-            const matrixId_en = await findEntityIdByName(strapi, 'api::matrix.matrix', item.matrix_en, 'en');
-            const matrixGroupId_en = await findEntityIdByName(strapi, 'api::matrix-group.matrix-group', item.matrixGroup_en, 'en');
-            const microorganismId_en = await findEntityIdByName(strapi, 'api::microorganism.microorganism', item.microorganism_en, 'en');
-            const sampleTypeId_en = await findEntityIdByName(strapi, 'api::sample-type.sample-type', item.sampleType_en, 'en');
-            const samplingStageId_en = await findEntityIdByName(strapi, 'api::sampling-stage.sampling-stage', item.samplingStage_en, 'en');
-            const sampleOriginId_en = await findEntityIdByName(strapi, 'api::sample-origin.sample-origin', item.sampleOrigin_en, 'en');
-            const superCategorySampleOriginId_en = await findEntityIdByName(
-              strapi,
-              'api::super-category-sample-origin.super-category-sample-origin',
-              item.superCategorySampleOrigin_en,
-              'en'
-            );
-            const antimicrobialSubstanceId_en = await findEntityIdByName(
-              strapi,
-              'api::antimicrobial-substance.antimicrobial-substance',
-              item.antimicrobialSubstance_en,
-              'en'
-            );
-            const specieId_en = await findEntityIdByName(strapi, 'api::specie.specie', item.specie_en, 'en');
-      
-            // Check for missing English relations
+      const matrixId_en = await findEntityIdByName(strapi, 'api::matrix.matrix', item.matrix_en, 'en');
+      const matrixGroupId_en = await findEntityIdByName(strapi, 'api::matrix-group.matrix-group', item.matrixGroup_en, 'en');
+      const microorganismId_en = await findEntityIdByName(strapi, 'api::microorganism.microorganism', item.microorganism_en, 'en');
+      const sampleTypeId_en = await findEntityIdByName(strapi, 'api::sample-type.sample-type', item.sampleType_en, 'en');
+      const samplingStageId_en = await findEntityIdByName(strapi, 'api::sampling-stage.sampling-stage', item.samplingStage_en, 'en');
+      const sampleOriginId_en = await findEntityIdByName(strapi, 'api::sample-origin.sample-origin', item.sampleOrigin_en, 'en');
+      const superCategorySampleOriginId_en = await findEntityIdByName(
+        strapi,
+        'api::super-category-sample-origin.super-category-sample-origin',
+        item.superCategorySampleOrigin_en,
+        'en'
+      );
+      const antimicrobialSubstanceId_en = await findEntityIdByName(
+        strapi,
+        'api::antimicrobial-substance.antimicrobial-substance',
+        item.antimicrobialSubstance_en,
+        'en'
+      );
+      const specieId_en = await findEntityIdByName(strapi, 'api::specie.specie', item.specie_en, 'en');
+
+      // Check for missing English relations (excluding specie)
       if (item.matrix_en && !matrixId_en) missingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: Missing English matrix '${item.matrix_en}'`);
       if (item.matrixGroup_en && !matrixGroupId_en) missingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: Missing English matrixGroup '${item.matrixGroup_en}'`);
       if (item.microorganism_en && !microorganismId_en) missingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: Missing English microorganism '${item.microorganism_en}'`);
@@ -219,8 +211,6 @@ export async function importResistances(strapi) {
       if (item.antimicrobialSubstance_en && !antimicrobialSubstanceId_en) {
         missingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: Missing English antimicrobialSubstance '${item.antimicrobialSubstance_en}'`);
       }
-      if (item.specie_en && !specieId_en) missingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: Missing English specie '${item.specie_en}'`);
-
 
       // If any English relations are missing, mark as failure
       if (missingRelations.length > 0) {
@@ -296,53 +286,51 @@ export async function importResistances(strapi) {
 
       // German record
       const hasGermanData =
-      item.microorganism_de ||
-      item.sampleType_de ||
-      item.samplingStage_de ||
-      item.sampleOrigin_de ||
-      item.superCategorySampleOrigin_de ||
-      item.matrixGroup_de ||
-      item.matrix_de ||
-      item.antimicrobialSubstance_de ||
-      item.specie_de;
+        item.microorganism_de ||
+        item.sampleType_de ||
+        item.samplingStage_de ||
+        item.sampleOrigin_de ||
+        item.superCategorySampleOrigin_de ||
+        item.matrixGroup_de ||
+        item.matrix_de ||
+        item.antimicrobialSubstance_de ||
+        item.specie_de;
 
       if (hasGermanData) {
         const germanMissingRelations = [];
 
-        // Check for blank German relational fields
-                if (!item.matrix_de) germanMissingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: German matrix is blank`);
-                if (!item.matrixGroup_de) germanMissingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: German matrixGroup is blank`);
-                if (!item.microorganism_de) germanMissingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: German microorganism is blank`);
-                if (!item.sampleType_de) germanMissingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: German sampleType is blank`);
-                if (!item.samplingStage_de) germanMissingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: German samplingStage is blank`);
-                if (!item.sampleOrigin_de) germanMissingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: German sampleOrigin is blank`);
-                if (!item.superCategorySampleOrigin_de) germanMissingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: German superCategorySampleOrigin is blank`);
-                if (!item.antimicrobialSubstance_de) germanMissingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: German antimicrobialSubstance is blank`);
-                if (!item.specie_de) germanMissingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: German specie is blank`);
-        
-                // German relations lookup
-                const matrixId_de = await findEntityIdByName(strapi, 'api::matrix.matrix', item.matrix_de, 'de');
-                const matrixGroupId_de = await findEntityIdByName(strapi, 'api::matrix-group.matrix-group', item.matrixGroup_de, 'de');
-                const microorganismId_de = await findEntityIdByName(strapi, 'api::microorganism.microorganism', item.microorganism_de, 'de');
-                const sampleTypeId_de = await findEntityIdByName(strapi, 'api::sample-type.sample-type', item.sampleType_de, 'de');
-                const samplingStageId_de = await findEntityIdByName(strapi, 'api::sampling-stage.sampling-stage', item.samplingStage_de, 'de');
-                const sampleOriginId_de = await findEntityIdByName(strapi, 'api::sample-origin.sample-origin', item.sampleOrigin_de, 'de');
-                const superCategorySampleOriginId_de = await findEntityIdByName(
-                  strapi,
-                  'api::super-category-sample-origin.super-category-sample-origin',
-                  item.superCategorySampleOrigin_de,
-                  'de'
-                );
-                const antimicrobialSubstanceId_de = await findEntityIdByName(
-                  strapi,
-                  'api::antimicrobial-substance.antimicrobial-substance',
-                  item.antimicrobialSubstance_de,
-                  'de'
-                );
-                const specieId_de = await findEntityIdByName(strapi, 'api::specie.specie', item.specie_de, 'de');
-        
-               
-        // Check for missing German relations (not found in database)
+        // Check for blank German relational fields (excluding specie)
+        if (!item.matrix_de) germanMissingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: German matrix is blank`);
+        if (!item.matrixGroup_de) germanMissingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: German matrixGroup is blank`);
+        if (!item.microorganism_de) germanMissingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: German microorganism is blank`);
+        if (!item.sampleType_de) germanMissingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: German sampleType is blank`);
+        if (!item.samplingStage_de) germanMissingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: German samplingStage is blank`);
+        if (!item.sampleOrigin_de) germanMissingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: German sampleOrigin is blank`);
+        if (!item.superCategorySampleOrigin_de) germanMissingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: German superCategorySampleOrigin is blank`);
+        if (!item.antimicrobialSubstance_de) germanMissingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: German antimicrobialSubstance is blank`);
+
+        // German relations lookup
+        const matrixId_de = await findEntityIdByName(strapi, 'api::matrix.matrix', item.matrix_de, 'de');
+        const matrixGroupId_de = await findEntityIdByName(strapi, 'api::matrix-group.matrix-group', item.matrixGroup_de, 'de');
+        const microorganismId_de = await findEntityIdByName(strapi, 'api::microorganism.microorganism', item.microorganism_de, 'de');
+        const sampleTypeId_de = await findEntityIdByName(strapi, 'api::sample-type.sample-type', item.sampleType_de, 'de');
+        const samplingStageId_de = await findEntityIdByName(strapi, 'api::sampling-stage.sampling-stage', item.samplingStage_de, 'de');
+        const sampleOriginId_de = await findEntityIdByName(strapi, 'api::sample-origin.sample-origin', item.sampleOrigin_de, 'de');
+        const superCategorySampleOriginId_de = await findEntityIdByName(
+          strapi,
+          'api::super-category-sample-origin.super-category-sample-origin',
+          item.superCategorySampleOrigin_de,
+          'de'
+        );
+        const antimicrobialSubstanceId_de = await findEntityIdByName(
+          strapi,
+          'api::antimicrobial-substance.antimicrobial-substance',
+          item.antimicrobialSubstance_de,
+          'de'
+        );
+        const specieId_de = await findEntityIdByName(strapi, 'api::specie.specie', item.specie_de, 'de');
+
+        // Check for missing German relations (excluding specie)
         if (item.matrix_de && !matrixId_de) germanMissingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: Missing German matrix '${item.matrix_de}'`);
         if (item.matrixGroup_de && !matrixGroupId_de) germanMissingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: Missing German matrixGroup '${item.matrixGroup_de}'`);
         if (item.microorganism_de && !microorganismId_de) germanMissingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: Missing German microorganism '${item.microorganism_de}'`);
@@ -355,7 +343,6 @@ export async function importResistances(strapi) {
         if (item.antimicrobialSubstance_de && !antimicrobialSubstanceId_de) {
           germanMissingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: Missing German antimicrobialSubstance '${item.antimicrobialSubstance_de}'`);
         }
-        if (item.specie_de && !specieId_de) germanMissingRelations.push(`Row ${item.rowNumber}-DB-ID:${item.dbId}: Missing German specie '${item.specie_de}'`);
 
         // If any German relations are missing, mark as failure
         if (germanMissingRelations.length > 0) {
