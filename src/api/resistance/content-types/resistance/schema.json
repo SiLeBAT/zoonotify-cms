@@ -74,15 +74,15 @@
       "required": true
     },
     "resistenzrate": {
-      "type": "decimal",
+      "type": "float",
       "required": true
     },
     "minKonfidenzintervall": {
-      "type": "decimal",
+      "type": "float",
       "required": true
     },
     "maxKonfidenzintervall": {
-      "type": "decimal",
+      "type": "float",
       "required": true
     },
     "samplingYear": {
