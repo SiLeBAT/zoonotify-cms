@@ -4,7 +4,8 @@
   "info": {
     "singularName": "antimicrobial",
     "pluralName": "antimicrobials",
-    "displayName": "antimicrobial"
+    "displayName": "antimicrobial",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
@@ -25,7 +26,7 @@
       }
     },
     "description": {
-      "type": "blocks",
+      "type": "richtext",
       "pluginOptions": {
         "i18n": {
           "localized": true

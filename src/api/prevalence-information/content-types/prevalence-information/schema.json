@@ -17,13 +17,13 @@
   },
   "attributes": {
     "content": {
-      "type": "blocks",
+      "type": "richtext",
+      "required": true,
       "pluginOptions": {
         "i18n": {
           "localized": true
         }
-      },
-      "required": true
+      }
     }
   }
 }
