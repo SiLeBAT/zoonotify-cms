@@ -1,0 +1,108 @@
+{
+  "kind": "collectionType",
+  "collectionName": "resistances",
+  "info": {
+    "singularName": "resistance",
+    "pluralName": "resistances",
+    "displayName": "Resistance",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "zomoProgram": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "private": true
+    },
+    "matrix": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::matrix.matrix"
+    },
+    "matrixGroup": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::matrix-group.matrix-group"
+    },
+    "microorganism": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::microorganism.microorganism"
+    },
+    "sampleType": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::sample-type.sample-type"
+    },
+    "samplingStage": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::sampling-stage.sampling-stage"
+    },
+    "sampleOrigin": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::sample-origin.sample-origin"
+    },
+    "antimicrobialSubstance": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::antimicrobial-substance.antimicrobial-substance"
+    },
+    "specie": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::specie.specie"
+    },
+    "anzahlGetesteterIsolate": {
+      "type": "integer",
+      "required": true
+    },
+    "anzahlResistenterIsolate": {
+      "type": "integer",
+      "required": true
+    },
+    "resistenzrate": {
+      "type": "float",
+      "required": true
+    },
+    "minKonfidenzintervall": {
+      "type": "float",
+      "required": true
+    },
+    "maxKonfidenzintervall": {
+      "type": "float",
+      "required": true
+    },
+    "samplingYear": {
+      "type": "integer",
+      "required": true
+    },
+    "superCategorySampleOrigin": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::super-category-sample-origin.super-category-sample-origin"
+    },
+    "dbId": {
+      "type": "string",
+      "required": true,
+      "unique": true,
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    }
+  }
+}

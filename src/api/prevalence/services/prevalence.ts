@@ -33,35 +33,37 @@ export default factories.createCoreService('api::prevalence.prevalence', ({ stra
         /**
             * Fetch master data
         */
-        microorganisms = await strapi.entityService.findMany('api::microorganism.microorganism', {
+        microorganisms = await strapi.documents('api::microorganism.microorganism').findMany({
             fields: ['id', 'name']
         });
 
-        contexts = await strapi.entityService.findMany('api::sampling-context.sampling-context', {
+        contexts = await strapi.documents('api::sampling-context.sampling-context').findMany({
             populate: { ontology_tuple: true }
         });
 
-        types = await strapi.entityService.findMany('api::sample-type.sample-type', {
+        types = await strapi.documents('api::sample-type.sample-type').findMany({
             populate: { ontology_tuple: true }
         });
 
-        stages = await strapi.entityService.findMany('api::sampling-stage.sampling-stage', {
+        stages = await strapi.documents('api::sampling-stage.sampling-stage').findMany({
             populate: { ontology_tuple: true }
         });
 
-        matrices = await strapi.entityService.findMany('api::matrix.matrix', {
+        matrices = await strapi.documents('api::matrix.matrix').findMany({
             fields: ['id', 'name']
         });
 
-        matrixDetails = await strapi.entityService.findMany('api::matrix-detail.matrix-detail', {
+        matrixDetails = await strapi.documents('api::matrix-detail.matrix-detail').findMany({
             fields: ['id', 'name']
         });
 
-        categories = await strapi.entityService.findMany('api::animal-species-food-category.animal-species-food-category', {
+        categories = await strapi.documents('api::animal-species-food-category.animal-species-food-category').findMany({
             populate: { ontology_tuple: true }
         });
 
-        productions = await strapi.entityService.findMany('api::animal-species-production-type-food.animal-species-production-type-food', {
+        productions = await strapi.documents(
+            'api::animal-species-production-type-food.animal-species-production-type-food'
+        ).findMany({
             populate: { ontology_tuple: true }
         });
 
@@ -168,7 +170,7 @@ export default factories.createCoreService('api::prevalence.prevalence', ({ stra
             });
 
             for (let i = 0; i < newSC.length; i++) {
-                const entry = await strapi.entityService.create('api::sampling-context.sampling-context', {
+                const entry = await strapi.documents('api::sampling-context.sampling-context').create({
                     data: newSC[i],
                 });
                 contexts.push(
@@ -191,7 +193,7 @@ export default factories.createCoreService('api::prevalence.prevalence', ({ stra
                 });
             });
             for (let i = 0; i < newT.length; i++) {
-                const entry = await strapi.entityService.create('api::sample-type.sample-type', {
+                const entry = await strapi.documents('api::sample-type.sample-type').create({
                     data: newT[i],
                 });
                 types.push(
@@ -213,7 +215,7 @@ export default factories.createCoreService('api::prevalence.prevalence', ({ stra
                 });
             });
             for (let i = 0; i < newSt.length; i++) {
-                const entry = await strapi.entityService.create('api::sampling-stage.sampling-stage', {
+                const entry = await strapi.documents('api::sampling-stage.sampling-stage').create({
                     data: newSt[i],
                 });
                 stages.push(
@@ -265,7 +267,7 @@ export default factories.createCoreService('api::prevalence.prevalence', ({ stra
                 });
             });
             for (let i = 0; i < newC.length; i++) {
-                const entry = await strapi.entityService.create('api::animal-species-food-category.animal-species-food-category', {
+                const entry = await strapi.documents('api::animal-species-food-category.animal-species-food-category').create({
                     data: newC[i],
                 });
                 categories.push(
@@ -287,7 +289,9 @@ export default factories.createCoreService('api::prevalence.prevalence', ({ stra
                 });
             });
             for (let i = 0; i < newP.length; i++) {
-                const entry = await strapi.entityService.create('api::animal-species-production-type-food.animal-species-production-type-food', {
+                const entry = await strapi.documents(
+                    'api::animal-species-production-type-food.animal-species-production-type-food'
+                ).create({
                     data: newP[i],
                 });
                 productions.push(
@@ -439,7 +443,8 @@ const savePrevalence = async (rec, i) => {
         where: { dbId: rec.dbId }
     });
     if (count > 0) {
-        const entry = await strapi.entityService.update("api::prevalence.prevalence", entries[0].id, {
+        const entry = await strapi.documents("api::prevalence.prevalence").update({
+            documentId: "__TODO__",
             data: JSON.parse(JSON.stringify(rec))
         });
         return entries[0].id;

@@ -1,98 +1,206 @@
+
 import xlsx from 'node-xlsx';
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
+// Define a type for the entity object
+interface MatrixEntity {
+  name: string;
+  iri?: string | null;
+  publishedAt: Date;
+  locale: string;
+}
+
+/**
+ * Import matrices from an Excel file.
+ * - Creates English records (locale='en') as the base.
+ * - Creates German records (locale='de') as localized versions of the English records using the same documentId.
+ * - Ensures no duplication across locales on re-run.
+ */
 async function importMatrix(strapi) {
-    let filePath = path.join(__dirname, '../../../data/master-data/matrix.xlsx');
+  const filePath = path.join(__dirname, '../../../data/master-data/matrix.xlsx');
+  const logFilePath = path.join(__dirname, '../../../data/matrix-import-log.json');
 
-    if (fs.existsSync(filePath)) {
-        const buffer = fs.readFileSync(filePath);
-        const dataFromExcel = xlsx.parse(buffer); // Parse the Excel file
-        const matrixData = dataFromExcel.find(sheet => sheet.name === 'matrix');
+  const importLog = {
+    totalProcessed: 0,
+    englishCreated: 0,
+    englishUpdated: 0,
+    germanCreated: 0,
+    germanUpdated: 0,
+    errors: []
+  };
 
-        if (!matrixData) {
-            console.error('Matrix sheet not found in the file');
-            return;
+  // Optional: Clear existing records before import (uncomment for testing)
+  /*
+  console.log('Clearing existing matrix records...');
+  const allRecords = await strapi.entityService.findMany('api::matrix.matrix', {
+    locale: ['en', 'de']
+  });
+  for (const record of allRecords) {
+    await strapi.entityService.delete('api::matrix.matrix', record.id);
+  }
+  console.log('Existing records cleared.');
+  */
+
+  // Check if file exists
+  if (!fs.existsSync(filePath)) {
+    console.error('File not found:', filePath);
+    return;
+  }
+
+  // Parse the Excel file
+  const buffer = fs.readFileSync(filePath);
+  const dataFromExcel = xlsx.parse(buffer);
+  const sheet = dataFromExcel.find((s) => s.name.toLowerCase() === 'matrix');
+
+  if (!sheet) {
+    console.error('Sheet "matrix" not found in the file');
+    return;
+  }
+  if (sheet.data.length <= 1) {
+    console.error('No data found in the "matrix" sheet');
+    return;
+  }
+
+  // Map rows (skipping header) into objects: col 0 = German, col 1 = English, col 2 = IRI
+  const dataList = sheet.data.slice(1).map((row, index) => {
+    const name_de = row[0] ? String(row[0]).trim() : null;
+    const name_en = row[1] ? String(row[1]).trim() : null;
+    const iri = row[2] ? String(row[2]).trim() : null;
+
+    return {
+      rowNumber: index + 2,
+      name_de,
+      name_en,
+      iri
+    };
+  }).filter(row => row.name_en); // Filter out rows without an English name
+
+  importLog.totalProcessed = dataList.length;
+
+  const service = strapi.entityService;
+  const collection = 'api::matrix.matrix';
+
+  for (const item of dataList) {
+    try {
+      // 1. Create or Update the English record (base record, locale='en')
+      let englishRecord = await service.findMany(collection, {
+        filters: { name: item.name_en, locale: 'en' },
+        locale: 'en',
+        populate: ['localizations']
+      });
+
+      let englishId, englishDocumentId;
+      if (englishRecord.length > 0) {
+        englishId = englishRecord[0].id;
+        englishDocumentId = englishRecord[0].documentId; // Get the documentId
+        // Update if the name or iri has changed
+        if (englishRecord[0].name !== item.name_en || englishRecord[0].iri !== item.iri) {
+          await service.update(collection, englishId, {
+            data: {
+              name: item.name_en,
+              iri: item.iri,
+              publishedAt: new Date()
+            },
+            locale: 'en'
+          });
+          importLog.englishUpdated++;
         }
+      } else {
+        const newEnglish = await service.create(collection, {
+          data: {
+            name: item.name_en,
+            iri: item.iri,
+            publishedAt: new Date()
+          },
+          locale: 'en'
+        });
+        englishId = newEnglish.id;
+        englishDocumentId = newEnglish.documentId; // Get the documentId
+        importLog.englishCreated++;
+      }
 
-        if (matrixData.data.length === 0) {
-            console.error('No data found in the Matrix sheet');
-            return;
-        }
-
-        let dataList = matrixData.data.slice(1).map(row => {
-            return {
-                name_de: row[0], // German name
-                name_en: row[1], // English name
-                iri: row[2] || null // IRI, if available
-            };
+      // 2. Create or Update the German record as a localized version of the English record
+      if (item.name_de && item.name_de.trim() !== '') {
+        // Check if a German localization already exists for this English record
+        const englishWithLocalizations = await service.findOne(collection, englishId, {
+          populate: ['localizations'],
+          locale: 'en'
         });
 
-        for (const item of dataList) {
-            try {
-                // Step 1: Find or create/update the default locale ('en') entry
-                let existingEntriesEn = await strapi.entityService.findMany('api::matrix.matrix', {
-                    filters: { name: item.name_en },
-                    locale: 'en',
-                });
+        const germanLocalization = englishWithLocalizations.localizations?.find(loc => loc.locale === 'de');
 
-                let defaultEntry;
-
-                if (existingEntriesEn.length > 0) {
-                    // Update the existing default locale entry
-                    defaultEntry = await strapi.entityService.update('api::matrix.matrix', existingEntriesEn[0].id, {
-                        data: {
-                            name: item.name_en,
-                            iri: item.iri,
-                            locale: 'en', // Ensure locale is set inside data
-                        },
-                    });
-                } else {
-                    // Create a new default locale entry
-                    defaultEntry = await strapi.entityService.create('api::matrix.matrix', {
-                        data: {
-                            name: item.name_en,
-                            iri: item.iri,
-                            locale: 'en', // Set locale inside data
-                        },
-                    });
-                }
-
-                // Step 2: Find or create/update the German ('de') locale entry
-                // Fetch the default entry with its localizations
-                const defaultEntryWithLocalizations = await strapi.entityService.findOne('api::matrix.matrix', defaultEntry.id, {
-                    populate: ['localizations'],
-                });
-
-                // Check if a German localization exists
-                let deEntry = defaultEntryWithLocalizations.localizations.find(loc => loc.locale === 'de');
-
-                if (deEntry) {
-                    // Update the existing German locale entry
-                    await strapi.entityService.update('api::matrix.matrix', deEntry.id, {
-                        data: {
-                            name: item.name_de,
-                            locale: 'de', // Ensure locale is set inside data
-                        },
-                    });
-                } else {
-                    // Create a new German locale entry linked to the default entry
-                    await strapi.entityService.create('api::matrix.matrix', {
-                        data: {
-                            name: item.name_de,
-                            locale: 'de', // Set locale inside data
-                            // Link to the default entry using 'localizationOf'
-                            localizationOf: defaultEntry.id,
-                        },
-                    });
-                }
-            } catch (error) {
-                console.error('Error importing matrix:', error);
+        if (germanLocalization) {
+          // Update the existing German localization if the name has changed
+          if (germanLocalization.name !== item.name_de) {
+            await service.update(collection, germanLocalization.id, {
+              data: {
+                name: item.name_de,
+                publishedAt: new Date()
+              },
+              locale: 'de'
+            });
+            importLog.germanUpdated++;
+          }
+        } else {
+          // Use Strapi's db.query to create the German record with the same documentId
+          const germanRecord = await strapi.db.query('api::matrix.matrix').create({
+            data: {
+              name: item.name_de,
+              publishedAt: new Date(),
+              locale: 'de',
+              documentId: englishDocumentId // Use the same documentId to link them
             }
+          });
+
+          // Log the creation for debugging
+          console.log(`Created German record for English documentId ${englishDocumentId}:`, {
+            id: germanRecord.id,
+            documentId: germanRecord.documentId,
+            locale: germanRecord.locale
+          });
+
+          // Fetch the English record to confirm linking
+          const updatedEnglish = await service.findOne(collection, englishId, {
+            populate: ['localizations'],
+            locale: 'en'
+          });
+          console.log(`Linked records for English ID ${englishId} (documentId: ${englishDocumentId}):`, updatedEnglish.localizations);
+
+          // Additional debugging: Fetch the German record to confirm its documentId
+          const fetchedGerman = await service.findOne(collection, germanRecord.id, {
+            populate: ['localizations'],
+            locale: 'de'
+          });
+          console.log(`German record details for ID ${germanRecord.id}:`, {
+            documentId: fetchedGerman.documentId,
+            localizations: fetchedGerman.localizations
+          });
+
+          importLog.germanCreated++;
         }
-    } else {
-        console.error('File not found:', filePath);
+      }
+    } catch (error) {
+      console.error(`Error importing row ${item.rowNumber}:`, error.message);
+      importLog.errors.push({
+        row: item.rowNumber,
+        english: item.name_en,
+        german: item.name_de,
+        iri: item.iri,
+        error: error.message
+      });
     }
+  }
+
+  // Write the import log to a file
+  fs.writeFileSync(logFilePath, JSON.stringify(importLog, null, 2));
+  console.log(`\nImport completed:
+    Total Processed: ${importLog.totalProcessed}
+    English Created: ${importLog.englishCreated}
+    English Updated: ${importLog.englishUpdated}
+    German Created: ${importLog.germanCreated}
+    German Updated: ${importLog.germanUpdated}
+    Errors: ${importLog.errors.length}`);
 }
 
 export { importMatrix };

@@ -22,16 +22,19 @@ async function importControlledVocabularyTranslations(strapi) {
         for (const item of dataList) {
             try {
                 // Check if the entry already exists
-                let existingEntries = await strapi.entityService.findMany('api::controlled-vocabulary.controlled-vocabulary', {
+                let existingEntries = await strapi.documents('api::controlled-vocabulary.controlled-vocabulary').findMany({
                     filters: { $or: [{ de: item.de }, { en: item.en }] },
                 });
 
                 if (existingEntries.length > 0) {
                     // Update the first found entry (assuming 'de' or 'en' fields are unique)
-                    await strapi.entityService.update('api::controlled-vocabulary.controlled-vocabulary', existingEntries[0].id, { data: item });
+                    await strapi.documents('api::controlled-vocabulary.controlled-vocabulary').update({
+                        documentId: "__TODO__",
+                        data: item
+                    });
                 } else {
                     // Create new entry
-                    await strapi.entityService.create('api::controlled-vocabulary.controlled-vocabulary', { data: item });
+                    await strapi.documents('api::controlled-vocabulary.controlled-vocabulary').create({ data: item });
                 }
             } catch (error) {
                 console.error('Error importing Controlled Vocabulary translation:', error);

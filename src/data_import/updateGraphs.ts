@@ -1,15 +1,15 @@
+
 import fs from 'fs';
 import path from 'path';
-import { Strapi } from '@strapi/strapi';
+// Import the Strapi type from the core definitions.
+import type { Strapi as StrapiType } from '@strapi/types/dist/core';
 
 interface FileEntity {
   id: number;
   name: string;
 }
 
-// The Evaluation interface now reflects that 'diagram' is the media field.
-// The schema shows 'diagram' as a required single media field with 'images' allowedTypes.
-// We assume it returns a structure similar to FileEntity when populated.
+// The Evaluation interface reflects that 'diagram' is the media field.
 interface Evaluation {
   id: number;
   diagram?: FileEntity;
@@ -27,7 +27,7 @@ interface ImportLog {
   failures: ImportFailure[];
 }
 
-export async function updateGraphs(strapi: Strapi): Promise<void> {
+export async function updateGraphs(strapi: StrapiType): Promise<void> {
   const outFilePath = path.join(__dirname, '../../../data/graph-update-result.json');
 
   const importLog: ImportLog = {
@@ -41,10 +41,10 @@ export async function updateGraphs(strapi: Strapi): Promise<void> {
 
   try {
     // 1. Fetch updated diagrams from the "Updated Graphs" folder
-    const updatedDiagrams = (await strapi.entityService.findMany('plugin::upload.file', {
+    const updatedDiagrams = (await strapi.documents('plugin::upload.file').findMany({
       filters: { folder: { name: 'Updated Graphs' } },
       fields: ['id', 'name']
-    })) as FileEntity[];
+    })) as unknown as FileEntity[];
 
     const updatedDiagramMap: Record<string, number> = {};
     for (const file of updatedDiagrams) {
@@ -54,10 +54,10 @@ export async function updateGraphs(strapi: Strapi): Promise<void> {
     }
 
     // 2. Fetch all evaluations with diagram populated
-    const evaluations = (await strapi.entityService.findMany('api::evaluation.evaluation', {
+    const evaluations = (await strapi.documents('api::evaluation.evaluation').findMany({
       filters: {},
       populate: { diagram: true }
-    })) as Evaluation[];
+    })) as unknown as Evaluation[];
 
     importLog.totalEntries = evaluations.length;
 
@@ -66,7 +66,7 @@ export async function updateGraphs(strapi: Strapi): Promise<void> {
       try {
         const oldDiagram = evaluation.diagram;
         if (!oldDiagram) {
-          // If for some reason it's missing (even though required), skip
+          // If diagram is missing (even though required), skip updating.
           importLog.unchangedEntries++;
           continue;
         }
@@ -75,9 +75,11 @@ export async function updateGraphs(strapi: Strapi): Promise<void> {
         const newDiagramId = updatedDiagramMap[oldDiagramName];
 
         if (newDiagramId) {
-          // Update the evaluation with the new diagram file ID
-          await strapi.entityService.update('api::evaluation.evaluation', evaluation.id, {
-            data: { diagram: newDiagramId } as any // Casting to any, due to TS strictness
+          // Update the evaluation with the new diagram file ID.
+          // Convert evaluation.id (number) to string for documentId.
+          await strapi.documents('api::evaluation.evaluation').update({
+            documentId: evaluation.id.toString(),
+            data: { diagram: newDiagramId } as any
           });
           importLog.updatedEntries++;
         } else {
