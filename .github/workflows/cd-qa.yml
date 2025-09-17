@@ -4,12 +4,11 @@ name: Continuous Deployment Workflow QA
 on:
   workflow_dispatch:
   push:
-    branches:
-      - develop
+    branches: [ develop ]
 
 jobs:
   build:
-    name: 'Builds the strapi CMS'
+    name: Builds the strapi CMS
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -23,15 +22,15 @@ jobs:
         run: yarn build
 
   deploy:
-    name: 'Deploy to QA'
+    name: Deploy to QA
     runs-on: ubuntu-latest
     needs: build
-    timeout-minutes: 5
+    timeout-minutes: 15
     steps:
       - name: Extract branch name
+        id: extract_branch
         shell: bash
         run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
-        id: extract_branch
 
       - name: Deploy to QA
         uses: appleboy/ssh-action@v0.1.10
@@ -42,30 +41,68 @@ jobs:
           port: ${{ secrets.QA_PORT }}
           command_timeout: 30m
           script: |
-            set -e
-            source ~/.bashrc || true
-            source ~/.profile || true
+            set -euo pipefail
 
-            # fresh clone
-            cd ~
-            rm -rf cms.old
-            [ -d zoonotify-cms ] && mv zoonotify-cms cms.old || true
-            git clone https://github.com/SiLeBAT/zoonotify-cms.git
+            # Helpful vars
+            APP_DIR="${{ secrets.QA_PATH }}"
+            REPO_URL="https://github.com/SiLeBAT/zoonotify-cms.git"
+            BRANCH="${{ steps.extract_branch.outputs.branch }}"
 
-            # env
-            cp ~/env.qa ${{ secrets.QA_PATH }}/.env
+            # Load shell profile if present
+            [ -f ~/.bashrc ] && source ~/.bashrc || true
+            [ -f ~/.profile ] && source ~/.profile || true
 
-            # checkout the pushed branch
-            cd ${{ secrets.QA_PATH }}
-            git checkout ${{ steps.extract_branch.outputs.branch }}
-            git pull --ff-only
+            # OPTIONAL: use Node 18 if nvm exists
+            if [ -s "$HOME/.nvm/nvm.sh" ]; then
+              . "$HOME/.nvm/nvm.sh"
+              nvm install 18 >/dev/null 2>&1 || true
+              nvm use 18 >/dev/null 2>&1 || true
+            fi
 
-            # ▼ LINE 1: ensure persistent folder + relink uploads (idempotent)
-            mkdir -p ~/strapi-uploads
-            bash scripts/ensure-uploads-symlink.sh
+            echo "Cloning branch '$BRANCH' to $APP_DIR ..."
+            rm -rf "${APP_DIR}.old"
+            [ -d "$APP_DIR" ] && mv "$APP_DIR" "${APP_DIR}.old" || true
+            git clone "$REPO_URL" "$APP_DIR"
 
-            # build/start (your deploy script may already do this)
-            bash ./deploy.sh
+            # env file
+            cp "$HOME/env.qa" "$APP_DIR/.env" || true
 
-            # ▼ LINE 2: reload via local PM2 (safe even if deploy.sh already reloaded)
-            ./node_modules/.bin/pm2 reload ecosystem.config.js --update-env || true
+            cd "$APP_DIR"
+            # ensure correct branch
+            git fetch origin
+            git checkout "$BRANCH" || git checkout -B "$BRANCH" "origin/$BRANCH"
+            git pull --ff-only || true
+
+            # ===== Ensure persistent uploads (NO external script needed) =====
+            mkdir -p "$HOME/strapi-uploads"
+            if [ -d public/uploads ] && [ ! -L public/uploads ]; then
+              cp -a public/uploads/. "$HOME/strapi-uploads/" 2>/dev/null || true
+              rm -rf public/uploads
+            fi
+            ln -sfn "$HOME/strapi-uploads" public/uploads
+            ls -l public | grep uploads || true
+            # =================================================================
+
+            # Build & start
+            if [ -x ./deploy.sh ]; then
+              bash ./deploy.sh
+            else
+              # Fallback if deploy.sh is missing
+              if [ -f yarn.lock ]; then
+                yarn install --frozen-lockfile
+                yarn build
+              else
+                npm ci --omit=dev
+                npm run build
+              fi
+            fi
+
+            # Reload/start via local PM2 (zero-downtime if already running)
+            if [ -f ./ecosystem.config.js ]; then
+              ./node_modules/.bin/pm2 reload ecosystem.config.js --update-env || ./node_modules/.bin/pm2 start ecosystem.config.js
+            else
+              # last resort: try app name
+              ./node_modules/.bin/pm2 reload zoonotify-cms || true
+            fi
+
+            echo "Deployed successfully."
