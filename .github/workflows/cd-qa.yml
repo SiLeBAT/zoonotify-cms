@@ -1,3 +1,4 @@
+
 name: Continuous Deployment Workflow QA
 
 on:
@@ -31,6 +32,7 @@ jobs:
         shell: bash
         run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
         id: extract_branch
+
       - name: Deploy to QA
         uses: appleboy/ssh-action@v0.1.10
         with:
@@ -40,14 +42,30 @@ jobs:
           port: ${{ secrets.QA_PORT }}
           command_timeout: 30m
           script: |
-            source .bashrc
-            source .profile
+            set -e
+            source ~/.bashrc || true
+            source ~/.profile || true
+
+            # fresh clone
+            cd ~
             rm -rf cms.old
-            mv zoonotify-cms cms.old
+            [ -d zoonotify-cms ] && mv zoonotify-cms cms.old || true
             git clone https://github.com/SiLeBAT/zoonotify-cms.git
-            cp env.qa ${{ secrets.QA_PATH }}/.env
+
+            # env
+            cp ~/env.qa ${{ secrets.QA_PATH }}/.env
+
+            # checkout the pushed branch
             cd ${{ secrets.QA_PATH }}
             git checkout ${{ steps.extract_branch.outputs.branch }}
-            git pull
-            ./deploy.sh
+            git pull --ff-only
 
+            # ▼ LINE 1: ensure persistent folder + relink uploads (idempotent)
+            mkdir -p ~/strapi-uploads
+            bash scripts/ensure-uploads-symlink.sh
+
+            # build/start (your deploy script may already do this)
+            bash ./deploy.sh
+
+            # ▼ LINE 2: reload via local PM2 (safe even if deploy.sh already reloaded)
+            ./node_modules/.bin/pm2 reload ecosystem.config.js --update-env || true
