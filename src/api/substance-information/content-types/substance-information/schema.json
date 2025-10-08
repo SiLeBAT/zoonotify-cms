@@ -1,0 +1,35 @@
+{
+  "kind": "singleType",
+  "collectionName": "substance_informations",
+  "info": {
+    "singularName": "substance-information",
+    "pluralName": "substance-informations",
+    "displayName": "Substance Information"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "title": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "description": {
+      "type": "richtext",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    }
+  }
+}
