@@ -1,7 +1,7 @@
 {
   "name": "zoonotify-cms",
   "private": true,
-  "version": "4.0.0",
+  "version": "4.1.0",
   "description": "A Strapi application",
   "scripts": {
     "develop": "strapi develop",
@@ -35,7 +35,7 @@
     "telemetryDisabled": true
   },
   "engines": {
-    "node": "18.20.5",
+    "node": ">=20.19.5",
     "npm": ">=6.0.0"
   },
   "license": "MIT"
