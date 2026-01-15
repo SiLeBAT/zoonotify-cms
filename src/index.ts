@@ -1,19 +1,19 @@
 import { importControlledVocabularyTranslations } from './data_import/controlled-vocab-translations.import';
 import { importCutOffData } from './data_import/cut-off.import';
+import { importResistances } from './data_import/importResistances';
 import { importMatrixDetails } from './data_import/matrix-detail.import';
 import { importMatrixGroups } from './data_import/matrix-group.import';
 import { importMatrix } from './data_import/matrix.import';
 import { importMicroorganisms } from './data_import/microorganism.import';
 import { importPrevalences } from './data_import/prevalence.import';
-import { importResistances } from './data_import/importResistances';
 //import { importResistanceData } from './data_import/resistance.import';
 import { importSampleOrigins } from './data_import/sample-origin.import';
 import { importSampleTypes } from './data_import/sample-type.import';
 import { importSamplingStages } from './data_import/sampling-stage.import';
 import { importSuperCategorySampleOrigins } from './data_import/super-category-sample-origin.import';
 //mport { updateGraphs } from './data_import/updateGraphs';
-import { importExternalLinks } from './data_import/importExternalLinks';
 import { importAntimicrobialSubstances } from './data_import/antimicrobial-substance.import'; // Add this import
+import { importExternalLinks } from './data_import/importExternalLinks';
 import { importSpecies } from './data_import/specie.import'; // Add this import
 import fileLifecycles from './extensions/upload/content-types/file/lifecycles';
 
@@ -981,7 +981,7 @@ export default {
         }
       }
 
-      
+
 
       strapi
         .plugin('documentation')
@@ -1018,7 +1018,7 @@ export default {
 
   },
 
-  
+
 
   /**
    * An asynchronous bootstrap function that runs before
@@ -1046,12 +1046,12 @@ export default {
     await importMicroorganisms(strapi);
     await importMatrix(strapi);
     //await updateGraphs(strapi);
-    await importExternalLinks(strapi); 
-  //await importAndCleanupResistances(strapi);
-  await importResistances(strapi);
+    await importExternalLinks(strapi);
+    //await importAndCleanupResistances(strapi);
+    await importResistances(strapi);
 
-  await importAntimicrobialSubstances(strapi); // Add this line to call the new import function
-  await importSpecies(strapi); // Add this line to call the new import function
+    await importAntimicrobialSubstances(strapi); // Add this line to call the new import function
+    await importSpecies(strapi); // Add this line to call the new import function
 
     // Add this line to call your new import function
     await importControlledVocabularyTranslations(strapi);
