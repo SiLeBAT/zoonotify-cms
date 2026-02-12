@@ -1,5 +1,5 @@
 
-name: Continuous Deployment Workflow QA
+name: Continuous Delivery Workflow QA
 
 on:
   workflow_dispatch:
