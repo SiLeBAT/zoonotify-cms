@@ -1,13 +1,14 @@
 {
   "name": "zoonotify-cms",
   "private": true,
-  "version": "4.1.0",
+  "version": "4.2.0",
   "description": "A Strapi application",
   "scripts": {
     "develop": "strapi develop",
     "start": "strapi start",
     "build": "strapi build",
-    "strapi": "strapi"
+    "strapi": "strapi",
+    "key-gen": "node ./generate-strapi-keys.js"
   },
   "dependencies": {
     "@strapi/plugin-documentation": "5.10.2",
