@@ -137,6 +137,7 @@ function prepareRecord(res, bacteria, tableId) {
 
 async function saveResistanceRecord(records: any[]) {
     const response = [];
+    const collection = 'api::resistance-table.resistance-table' as const;
 
     for (const record of records) {
         if (!record) {
@@ -146,62 +147,69 @@ async function saveResistanceRecord(records: any[]) {
         }
 
         try {
-            // Fetch existing English entries
-            const enEntries = await strapi.documents('api::resistance-table.resistance-table').findMany({
-                fields: ['id', 'table_id', 'locale', 'documentId'],
-                filters: { table_id: record.table_id, locale: 'en' }
+            // Use entityService (same as other working imports: specie, matrix, microorganism)
+            const enRecords = await strapi.entityService.findMany(collection, {
+                filters: { table_id: record.table_id },
+                locale: 'en',
+                populate: ['localizations']
             });
-            console.log(`Found ${enEntries.length} English entries for table_id ${record.table_id}:`, enEntries);
+            console.log(`Found ${enRecords.length} English entries for table_id ${record.table_id}`);
 
-            // Fetch existing German entries
-            const deEntries = await strapi.documents('api::resistance-table.resistance-table').findMany({
-                fields: ['id', 'table_id', 'locale', 'documentId'],
-                filters: { table_id: record.table_id, locale: 'de' }
-            });
-            console.log(`Found ${deEntries.length} German entries for table_id ${record.table_id}:`, deEntries);
-
-            let enEntry;
-            // Handle English entry
-            if (enEntries.length === 0) {
-                const enData = {
-                    table_id: record.table_id,
-                    description: record.description,
-                    title: record.title,
-                    cut_offs: record.cut_offs,
-                    publishedAt: new Date(),
+            let englishId, englishDocumentId;
+            if (enRecords.length > 0) {
+                englishId = enRecords[0].id;
+                englishDocumentId = enRecords[0].documentId;
+                console.log(`Using existing English entry for table_id ${record.table_id}`);
+            } else {
+                const enEntry = await strapi.entityService.create(collection, {
+                    data: {
+                        table_id: record.table_id,
+                        description: record.description,
+                        title: record.title,
+                        cut_offs: record.cut_offs,
+                        publishedAt: new Date(),
+                    },
                     locale: 'en'
-                };
-                console.log(`Creating English entry with data for table_id ${record.table_id}:`, enData);
-                enEntry = await strapi.documents('api::resistance-table.resistance-table').create({
-                    data: enData,
                 });
+                englishId = enEntry.id;
+                englishDocumentId = enEntry.documentId;
                 console.log(`Created English entry for table_id ${record.table_id}:`, enEntry);
                 response.push({ statusCode: 201, entry: enEntry, locale: 'en', table_id: record.table_id });
-            } else {
-                enEntry = enEntries[0];
-                console.log(`Using existing English entry for table_id ${record.table_id}:`, enEntry);
             }
 
-            // Handle German entry
-            if (deEntries.length === 0) {
-                const deData = {
-                    table_id: record.table_id,
-                    description: record.description,
-                    title: record.title,
-                    cut_offs: record.cut_offs,
-                    localizations: [enEntry.documentId],
-                    publishedAt: new Date(),
+            // Check if German localization already exists (same pattern as working imports)
+            const englishWithLocalizations = await strapi.entityService.findOne(collection, englishId, {
+                populate: ['localizations'],
+                locale: 'en'
+            });
+            const germanLocalization = (englishWithLocalizations as any).localizations?.find((loc: any) => loc.locale === 'de');
+
+            if (!germanLocalization) {
+                // Create German using entityService — exactly the same way English is created.
+                // We know entityService handles cut_offs (component + antibiotic relation) correctly
+                // because English creation succeeds with the same data and same method.
+                const deEntry = await strapi.entityService.create(collection, {
+                    data: {
+                        table_id: record.table_id,
+                        description: record.description,
+                        title: record.title,
+                        cut_offs: JSON.parse(JSON.stringify(record.cut_offs)),
+                        publishedAt: new Date(),
+                    } as any,
                     locale: 'de'
-                };
-                console.log(`Creating German entry with data for table_id ${record.table_id}:`, deData);
-                const deEntry = await strapi.documents('api::resistance-table.resistance-table').create({
-                    data: deData,
-                    locale: 'de' // Explicitly pass locale as a top-level parameter
                 });
-                console.log(`Created German entry for table_id ${record.table_id}:`, deEntry);
+                console.log(`Created German entry for table_id ${record.table_id}, got documentId=${deEntry.documentId}`);
+
+                // Update document_id column directly via Knex to match the English record.
+                // This links en and de as proper Strapi v5 i18n localizations (shared documentId).
+                await (strapi.db as any).connection('resistance_tables')
+                    .where({ id: deEntry.id })
+                    .update({ document_id: englishDocumentId });
+                console.log(`Linked German entry id=${deEntry.id} to English documentId=${englishDocumentId}`);
+
                 response.push({ statusCode: 201, entry: deEntry, locale: 'de', table_id: record.table_id });
             } else {
-                console.log(`German entry already exists for table_id ${record.table_id}, skipping creation:`, deEntries[0]);
+                console.log(`German entry already exists for table_id ${record.table_id}, skipping:`, germanLocalization);
             }
         } catch (error) {
             console.error("Error saving record for table_id:", record.table_id, error);

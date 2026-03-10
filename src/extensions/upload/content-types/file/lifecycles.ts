@@ -721,17 +721,19 @@ async function saveResistanceRecord(records: any[], strapi: StrapiType): Promise
           table_id: record.table_id,
           description: record.description,
           title: record.title,
-          cut_offs: record.cut_offs,
-          localizations: [enEntry.documentId],
+          cut_offs: JSON.parse(JSON.stringify(record.cut_offs)),
           publishedAt: new Date(),
-          locale: 'de'
         };
         console.log(`Creating German entry with data for table_id ${record.table_id}:`, deData);
         const deEntry = await strapi.documents('api::resistance-table.resistance-table').create({
           data: deData,
           locale: 'de'
         });
-        console.log(`Created German entry for table_id ${record.table_id}:`, deEntry);
+        // Link German entry to English via shared document_id (Strapi v5 i18n pattern)
+        await (strapi.db as any).connection('resistance_tables')
+          .where({ id: deEntry.id })
+          .update({ document_id: enEntry.documentId });
+        console.log(`Created and linked German entry for table_id ${record.table_id} -> documentId ${enEntry.documentId}`);
         response.push({ statusCode: 201, entry: deEntry, locale: 'de', table_id: record.table_id });
       } else {
         console.log(`German entry already exists for table_id ${record.table_id}, skipping creation:`, deEntries[0]);
