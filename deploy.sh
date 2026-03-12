@@ -13,6 +13,10 @@ if [ -d public/uploads ] && [ ! -L public/uploads ]; then
 fi
 ln -sfn "$HOME/strapi-uploads" public/uploads
 
+if [ -d data/master-data ] && [ ! -L data/master-data ]; then
+  mkdir -p data/master-data
+fi
+
 "$HOME/.yarn/bin/yarn" install --frozen-lockfile
 "$HOME/.yarn/bin/yarn" build
 ./node_modules/.bin/pm2 stop all
