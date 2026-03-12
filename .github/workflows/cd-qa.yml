@@ -42,6 +42,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.QA_PORT }}
           command_timeout: 30m
+          debug: true
           script: |
             set -euo pipefail
 
