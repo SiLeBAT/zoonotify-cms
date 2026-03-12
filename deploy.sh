@@ -13,7 +13,7 @@ if [ -d public/uploads ] && [ ! -L public/uploads ]; then
 fi
 ln -sfn "$HOME/strapi-uploads" public/uploads
 
-if [ -d data/master-data ] && [ ! -L data/master-data ]; then
+if [ ! -d data/master-data ]; then
   mkdir -p data/master-data
 fi
 
