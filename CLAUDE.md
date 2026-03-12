@@ -27,9 +27,33 @@ The primary purpose beyond content management is **bulk data import** from Excel
 
 The main data types are **Prevalence** (from `prevalence.xlsx`) and **Resistance** (from `ZooNotify_DB.xlsx`, sheet `amr_resrate`). Most other imports handle reference/lookup data (Matrix, Microorganism, SampleType, etc.).
 
+Import scripts use two Excel libraries: `exceljs` (resistance/AMR imports) and `node-xlsx` (everything else). Resistance imports use `p-limit` for concurrency control.
+
+#### Upload-Triggered Imports
+
+The file upload lifecycle (`src/extensions/upload/content-types/file/lifecycles.ts`) triggers additional imports on `afterCreate` based on the upload folder name:
+- `Prevalence` — re-imports prevalence data from the uploaded Excel file
+- `evaluation-en` / `evaluation-de` — links uploaded diagrams/CSV files to matching `Evaluation` records by filename; moves old files to an `Archive` folder
+- `Cutt_Off` — re-imports cut-off data from the uploaded Excel file
+
+#### Strapi v5 i18n Linking Pattern
+
+When creating German locale records during import, the code uses a raw Knex query to align the `document_id` column with the English entry's `documentId`. This is required because Strapi v5 links i18n locales via a shared `document_id`. Example from `importResistances`:
+```ts
+await strapi.db.connection('resistance_tables')
+  .where({ id: deEntry.id })
+  .update({ document_id: enEntry.documentId });
+```
+
+#### Strapi API Usage
+
+Two Strapi data access APIs are used (sometimes mixed within the same file):
+- `strapi.documents(uid)` — preferred Strapi v5 Document Service API
+- `strapi.entityService` — older v4-style API (still present in some import scripts)
+
 ### Key Directories
 
-- `src/api/` — Strapi content types (controllers, services, routes, content-type schemas). Most use the default Strapi factory (core controller/service).
+- `src/api/` — Strapi content types (controllers, services, routes, content-type schemas). Most use the default Strapi factory (core controller/service). **Exception:** `isolate` has a custom `import` action (POST `/api/isolates/import`) that parses an uploaded Excel file via `node-xlsx` and upserts records using `mapAllSettled` workers.
 - `src/data_import/` — Import scripts, one per content type. Called during bootstrap in `src/index.ts`.
 - `src/extensions/` — Strapi extensions: custom file upload lifecycle (`upload/content-types/file/lifecycles.ts`) and a helper with async worker utilities (`helper.ts`).
 - `src/middlewares/version-injector.ts` — Adds `cms-version` response header (reads from `package.json`).
