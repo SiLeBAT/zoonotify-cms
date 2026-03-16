@@ -712,7 +712,14 @@ async function saveResistanceRecord(records: any[], strapi: StrapiType): Promise
         response.push({ statusCode: 201, entry: enEntry, locale: 'en', table_id: record.table_id });
       } else {
         enEntry = enEntries[0];
-        console.log(`Using existing English entry for table_id ${record.table_id}:`, enEntry);
+        // Table exists: keep title/description, replace cut_offs with new data
+        await strapi.documents('api::resistance-table.resistance-table').update({
+          documentId: enEntry.documentId,
+          data: { cut_offs: record.cut_offs } as any,
+          locale: 'en'
+        });
+        console.log(`Updated cut_offs for existing English entry table_id ${record.table_id}`);
+        response.push({ statusCode: 200, entry: enEntry, locale: 'en', table_id: record.table_id });
       }
 
       // Handle German entry
@@ -736,7 +743,15 @@ async function saveResistanceRecord(records: any[], strapi: StrapiType): Promise
         console.log(`Created and linked German entry for table_id ${record.table_id} -> documentId ${enEntry.documentId}`);
         response.push({ statusCode: 201, entry: deEntry, locale: 'de', table_id: record.table_id });
       } else {
-        console.log(`German entry already exists for table_id ${record.table_id}, skipping creation:`, deEntries[0]);
+        const deEntry = deEntries[0];
+        // Table exists: keep title/description, replace cut_offs with new data
+        await strapi.documents('api::resistance-table.resistance-table').update({
+          documentId: deEntry.documentId,
+          data: { cut_offs: JSON.parse(JSON.stringify(record.cut_offs)) } as any,
+          locale: 'de'
+        });
+        console.log(`Updated cut_offs for existing German entry table_id ${record.table_id}`);
+        response.push({ statusCode: 200, entry: deEntry, locale: 'de', table_id: record.table_id });
       }
     } catch (error: any) {
       console.error("Error saving record for table_id:", record.table_id, error);
