@@ -159,7 +159,13 @@ async function saveResistanceRecord(records: any[]) {
             if (enRecords.length > 0) {
                 englishId = enRecords[0].id;
                 englishDocumentId = enRecords[0].documentId;
-                console.log(`Using existing English entry for table_id ${record.table_id}`);
+                // Table exists: keep title/description, replace cut_offs with new data
+                await strapi.entityService.update(collection, englishId, {
+                    data: { cut_offs: record.cut_offs } as any,
+                    locale: 'en'
+                });
+                console.log(`Updated cut_offs for existing English entry table_id ${record.table_id}`);
+                response.push({ statusCode: 200, table_id: record.table_id, locale: 'en' });
             } else {
                 const enEntry = await strapi.entityService.create(collection, {
                     data: {
@@ -185,9 +191,6 @@ async function saveResistanceRecord(records: any[]) {
             const germanLocalization = (englishWithLocalizations as any).localizations?.find((loc: any) => loc.locale === 'de');
 
             if (!germanLocalization) {
-                // Create German using entityService — exactly the same way English is created.
-                // We know entityService handles cut_offs (component + antibiotic relation) correctly
-                // because English creation succeeds with the same data and same method.
                 const deEntry = await strapi.entityService.create(collection, {
                     data: {
                         table_id: record.table_id,
@@ -200,8 +203,6 @@ async function saveResistanceRecord(records: any[]) {
                 });
                 console.log(`Created German entry for table_id ${record.table_id}, got documentId=${deEntry.documentId}`);
 
-                // Update document_id column directly via Knex to match the English record.
-                // This links en and de as proper Strapi v5 i18n localizations (shared documentId).
                 await (strapi.db as any).connection('resistance_tables')
                     .where({ id: deEntry.id })
                     .update({ document_id: englishDocumentId });
@@ -209,7 +210,13 @@ async function saveResistanceRecord(records: any[]) {
 
                 response.push({ statusCode: 201, entry: deEntry, locale: 'de', table_id: record.table_id });
             } else {
-                console.log(`German entry already exists for table_id ${record.table_id}, skipping:`, germanLocalization);
+                // German exists: keep title/description, replace cut_offs with new data
+                await strapi.entityService.update(collection, germanLocalization.id, {
+                    data: { cut_offs: JSON.parse(JSON.stringify(record.cut_offs)) } as any,
+                    locale: 'de'
+                });
+                console.log(`Updated cut_offs for existing German entry table_id ${record.table_id}`);
+                response.push({ statusCode: 200, table_id: record.table_id, locale: 'de' });
             }
         } catch (error) {
             console.error("Error saving record for table_id:", record.table_id, error);
@@ -226,7 +233,7 @@ async function importCutOffData(strapi) {
     const cutoffDataPath = path.join(__dirname, '../../../data/master-data/cutoff-data.xlsx');
     const cutoffDataResultPath = path.join(__dirname, '../../../data/master-data/cutoff-import-result.json');
 
-    if (fs.existsSync(cutoffDataPath) && !fs.existsSync(cutoffDataResultPath)) {
+    if (fs.existsSync(cutoffDataPath)) {
         const begin = Date.now();
 
         const buffer = fs.readFileSync(cutoffDataPath);
