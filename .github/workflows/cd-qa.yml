@@ -12,9 +12,9 @@ jobs:
     name: 'Builds the strapi CMS'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Set up Node.js
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
           node-version: '20.19.5'
       - name: Install dependencies
@@ -42,8 +42,9 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.QA_PORT }}
           command_timeout: 30m
+          debug: true
           script: |
-            set -euo pipefail
+            set -x
 
             APP_DIR="${{ secrets.QA_PATH }}"
             REPO_URL="https://github.com/SiLeBAT/zoonotify-cms.git"
@@ -75,31 +76,6 @@ jobs:
             git checkout "$BRANCH" || git checkout -B "$BRANCH" "origin/$BRANCH"
             git pull --ff-only || true
 
-            # ===== Ensure persistent uploads (inline, idempotent) =====
-            mkdir -p "$HOME/strapi-uploads"
-            if [ -d public/uploads ] && [ ! -L public/uploads ]; then
-              cp -a public/uploads/. "$HOME/strapi-uploads/" 2>/dev/null || true
-              rm -rf public/uploads
-            fi
-            ln -sfn "$HOME/strapi-uploads" public/uploads
-            ls -l public | grep uploads || true
-            # =========================================================
-
-            # build/start (your deploy script may already do this)
-            if [ -x ./deploy.sh ]; then
-              bash ./deploy.sh
-            else
-              yarn install --frozen-lockfile
-              yarn build
-            fi
-
-            # reload via local PM2 (harmless if deploy.sh already did it)
-            if [ -f ./ecosystem.config.js ]; then
-              if [ -x ./node_modules/.bin/pm2 ]; then
-                ./node_modules/.bin/pm2 reload ecosystem.config.js --update-env || ./node_modules/.bin/pm2 start ecosystem.config.js
-              else
-                npx pm2 reload ecosystem.config.js --update-env || npx pm2 start ecosystem.config.js
-              fi
-            fi
+            bash ./deploy.sh
 
             echo "Deploy finished."
