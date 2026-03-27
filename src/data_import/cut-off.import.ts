@@ -161,7 +161,7 @@ async function saveResistanceRecord(records: any[]) {
                 englishDocumentId = enRecords[0].documentId;
                 // Table exists: keep title/description, replace cut_offs with new data
                 await strapi.entityService.update(collection, englishId, {
-                    data: { cut_offs: record.cut_offs } as any,
+                    data: { cut_offs: record.cut_offs, publishedAt: new Date() } as any,
                     locale: 'en'
                 });
                 console.log(`Updated cut_offs for existing English entry table_id ${record.table_id}`);
@@ -212,7 +212,7 @@ async function saveResistanceRecord(records: any[]) {
             } else {
                 // German exists: keep title/description, replace cut_offs with new data
                 await strapi.entityService.update(collection, germanLocalization.id, {
-                    data: { cut_offs: JSON.parse(JSON.stringify(record.cut_offs)) } as any,
+                    data: { cut_offs: JSON.parse(JSON.stringify(record.cut_offs)), publishedAt: new Date() } as any,
                     locale: 'de'
                 });
                 console.log(`Updated cut_offs for existing German entry table_id ${record.table_id}`);
