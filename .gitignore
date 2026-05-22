@@ -119,3 +119,9 @@ export_20*
 src/extensions/documentation/
 src/api/*/documentation/
 types/generated/*
+.gitnexus
+
+# AI
+CLAUDE.md
+.claude/
+AGENTS.md
