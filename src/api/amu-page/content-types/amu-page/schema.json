@@ -1,11 +1,10 @@
 {
-  "kind": "collectionType",
-  "collectionName": "antimicrobials",
+  "kind": "singleType",
+  "collectionName": "amu_pages",
   "info": {
-    "singularName": "antimicrobial",
-    "pluralName": "antimicrobials",
-    "displayName": "antimicrobial",
-    "description": ""
+    "singularName": "amu-page",
+    "pluralName": "amu-pages",
+    "displayName": "AMU Page"
   },
   "options": {
     "draftAndPublish": true
@@ -18,7 +17,6 @@
   "attributes": {
     "title": {
       "type": "string",
-      "required": true,
       "pluginOptions": {
         "i18n": {
           "localized": true
@@ -31,8 +29,7 @@
         "i18n": {
           "localized": true
         }
-      },
-      "required": true
+      }
     }
   }
 }
