@@ -8,7 +8,9 @@
     "start": "strapi start",
     "build": "strapi build",
     "strapi": "strapi",
-    "key-gen": "node ./generate-strapi-keys.js"
+    "key-gen": "node ./generate-strapi-keys.js",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@strapi/plugin-documentation": "5.10.2",
@@ -41,5 +43,8 @@
     "node": ">=20.19.5",
     "npm": ">=6.0.0"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "vitest": "^4.1.7"
+  }
 }
