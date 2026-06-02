@@ -21,7 +21,15 @@ describe('toLocalePayloads', () => {
     );
   });
 
-  it('treats a flat (non-localized) row as the whole base payload', () => {
+  it('unwraps the en payload of a flat (non-localized) row from the CLI', () => {
+    // The CLI always wraps records under `en`, even for non-localized collections.
+    const row = { en: { name: 'Caecum', iri: 'http://example.org/caecum' } };
+    expect(toLocalePayloads(false, row)).toStrictEqual({
+      base: { name: 'Caecum', iri: 'http://example.org/caecum' },
+    });
+  });
+
+  it('tolerates an already-flat non-localized row as the whole base payload', () => {
     const row = { name: 'Caecum', iri: 'http://example.org/caecum' };
     expect(toLocalePayloads(false, row)).toStrictEqual({ base: row });
   });
