@@ -15,8 +15,10 @@ export class MissingBaseLocaleError extends Error {
 
 export function toLocalePayloads(localized: boolean, row: any): LocalePayloads {
   if (!localized) {
-    // Flat collections (matrix-detail) carry no en/de split — the whole row is the record.
-    return { base: row };
+    // Flat collections (matrix-detail) carry no en/de split. The CLI still wraps
+    // the record under `en` (its rows are always `{ en, de? }`), so unwrap it;
+    // tolerate a already-flat row too.
+    return { base: row?.en ?? row };
   }
   if (!row.en) {
     throw new MissingBaseLocaleError();
