@@ -53,8 +53,8 @@ export default ({ strapi }: { strapi: any }) => ({
   },
 
   /**
-   * Insert a batch of rows in one transaction. Rows arrive with relation fields
-   * already resolved to integer IDs by the CLI. Returns IDs in input order.
+   * Insert a batch of rows. Rows arrive with relation fields already resolved to
+   * integer IDs by the CLI. Returns IDs in input order.
    */
   async bulkCreate(
     collection: string,
@@ -65,10 +65,22 @@ export default ({ strapi }: { strapi: any }) => ({
     // No wrapping transaction: the Document Service must create the EN entry and
     // then attach the DE localization to the same document, and the second call
     // cannot see the first while it is still uncommitted inside a transaction.
+    //
+    // That makes a batch non-atomic: if the request times out or drops mid-flight,
+    // some rows are already committed. The CLI classifies such failures as
+    // retryable and re-sends the *whole* batch, so any `unique` attribute (e.g.
+    // resistance `dbId`) would collide on the rows that did land. To keep a batch
+    // safely replayable we make each row idempotent: before creating it, delete
+    // any existing document carrying this row's unique value(s). On the normal
+    // post-truncate path the table is empty, so this is a cheap indexed lookup
+    // that finds nothing; only a retry after a partial apply does real work.
+    const uniqueAttrs = uniqueAttributesOf(strapi, uid);
     const results: BulkCreateResult[] = [];
 
     for (let rowIndex = 0; rowIndex < rows.length; rowIndex++) {
       const { base, translation } = toLocalePayloads(localized, rows[rowIndex]);
+
+      await purgeConflictingDocuments(strapi, uid, uniqueAttrs, base);
 
       const created = localized
         ? await strapi.documents(uid).create({ data: base, locale: 'en' })
@@ -97,3 +109,42 @@ export default ({ strapi }: { strapi: any }) => ({
     return results;
   },
 });
+
+/**
+ * The names of a content type's scalar `unique` attributes — the ones a replayed
+ * batch could collide on. Relations are excluded (uniqueness there is structural,
+ * not a value the CLI sends). Read from the live schema so a future `unique` flag
+ * is picked up without touching this code.
+ */
+function uniqueAttributesOf(strapi: any, uid: string): string[] {
+  const attributes: Record<string, { type?: string; unique?: boolean }> =
+    strapi.contentType(uid)?.attributes ?? {};
+  return Object.entries(attributes)
+    .filter(([, def]) => def?.unique === true && def.type !== 'relation')
+    .map(([name]) => name);
+}
+
+/**
+ * Delete any rows that already carry one of this row's unique values, so the row
+ * can be (re)created without a unique-constraint collision. Uses the query
+ * engine's `deleteMany` — the same primitive `truncate` relies on — keyed by the
+ * unique attribute. A localized unique value is shared across a document's
+ * locales, so this clears every locale row (and the query engine cascades the
+ * entry's relation links) in one call, with no `documentId` round-trip to get
+ * silently wrong. On the normal post-truncate path the table is empty, so this
+ * deletes nothing.
+ */
+async function purgeConflictingDocuments(
+  strapi: any,
+  uid: string,
+  uniqueAttrs: string[],
+  base: Record<string, unknown>,
+): Promise<void> {
+  for (const attr of uniqueAttrs) {
+    const value = base[attr];
+    if (value === undefined || value === null) {
+      continue;
+    }
+    await strapi.db.query(uid).deleteMany({ where: { [attr]: value } });
+  }
+}
