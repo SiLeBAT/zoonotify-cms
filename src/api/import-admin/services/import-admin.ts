@@ -125,12 +125,14 @@ function uniqueAttributesOf(strapi: any, uid: string): string[] {
 }
 
 /**
- * Delete any document(s) that already carry one of this row's unique values, so
- * the row can be (re)created without a unique-constraint collision. A localized
- * unique value is shared across a document's locales, so a single document-level
- * delete clears every locale — the query-engine lookup sees all locale rows and
- * we de-duplicate by `documentId`. Deleting through the Document Service (not a
- * raw row delete) keeps localization/relation metadata consistent.
+ * Delete any rows that already carry one of this row's unique values, so the row
+ * can be (re)created without a unique-constraint collision. Uses the query
+ * engine's `deleteMany` — the same primitive `truncate` relies on — keyed by the
+ * unique attribute. A localized unique value is shared across a document's
+ * locales, so this clears every locale row (and the query engine cascades the
+ * entry's relation links) in one call, with no `documentId` round-trip to get
+ * silently wrong. On the normal post-truncate path the table is empty, so this
+ * deletes nothing.
  */
 async function purgeConflictingDocuments(
   strapi: any,
@@ -138,20 +140,11 @@ async function purgeConflictingDocuments(
   uniqueAttrs: string[],
   base: Record<string, unknown>,
 ): Promise<void> {
-  const seen = new Set<string>();
   for (const attr of uniqueAttrs) {
     const value = base[attr];
     if (value === undefined || value === null) {
       continue;
     }
-    const existing: Array<{ documentId?: string }> = await strapi.db
-      .query(uid)
-      .findMany({ select: ['documentId'], where: { [attr]: value } });
-    for (const { documentId } of existing) {
-      if (documentId && !seen.has(documentId)) {
-        seen.add(documentId);
-        await strapi.documents(uid).delete({ documentId });
-      }
-    }
+    await strapi.db.query(uid).deleteMany({ where: { [attr]: value } });
   }
 }
