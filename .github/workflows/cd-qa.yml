@@ -17,8 +17,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20.19.5'
+          cache: 'yarn'
       - name: Install dependencies
-        run: yarn install
+        run: yarn install --frozen-lockfile
       - name: Build
         run: yarn build
 
@@ -26,6 +27,7 @@ jobs:
     name: 'Deploy to QA'
     runs-on: ubuntu-latest
     needs: build
+    environment: QA
     timeout-minutes: 25
     steps:
       # we need the branch name you just pushed (develop or PR head)
@@ -46,7 +48,7 @@ jobs:
           script: |
             set -x
 
-            APP_DIR="${{ secrets.QA_PATH }}"
+            APP_DIR="${{ vars.APP_PATH }}"
             REPO_URL="https://github.com/SiLeBAT/zoonotify-cms.git"
             BRANCH="${{ steps.extract_branch.outputs.branch }}"
 
