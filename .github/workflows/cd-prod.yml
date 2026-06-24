@@ -1,0 +1,124 @@
+name: Continuous Delivery Workflow Production
+
+# Production deploys are MANUAL ONLY. Trigger from the Actions tab
+# ("Run workflow") and provide the exact branch or tag to ship.
+#
+# Required repository secrets (production server):
+#   PROD_SERVER          - hostname / IP of the production server
+#   PROD_USER            - SSH user
+#   PROD_PORT            - SSH port
+#   PROD_SSH_PRIVATE_KEY - private key authorised for PROD_USER@PROD_SERVER
+#
+# The app directory on the server is the APP_PATH env var below (relative to the
+# SSH user's home), not a secret.
+#
+# Server prerequisites (set up once, out of band):
+#   - $HOME/env.prod : the production .env, copied into the app on each deploy
+#   - nvm with Node 20.19.5 available
+
+env:
+  # App directory on the production server, relative to the SSH user's home.
+  APP_PATH: zoonotify-cms
+
+on:
+  workflow_dispatch:
+    inputs:
+      git_ref:
+        description: 'Exact branch or tag to deploy to PRODUCTION (e.g. v4.3.0)'
+        required: true
+        type: string
+
+# Never let two production deploys run at the same time.
+concurrency:
+  group: cd-prod
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: 'Build the strapi CMS (gate)'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.git_ref }}
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.19.5'
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+      - name: Build
+        run: yarn build
+
+  deploy:
+    name: 'Deploy to Production'
+    runs-on: ubuntu-latest
+    needs: build
+    timeout-minutes: 30
+    # Bind to a GitHub "production" environment so branch/reviewer
+    # protection rules (if configured) gate this deploy.
+    environment: production
+    steps:
+      - name: Deploy to Production
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.PROD_SERVER }}
+          username: ${{ secrets.PROD_USER }}
+          key: ${{ secrets.PROD_SSH_PRIVATE_KEY }}
+          port: ${{ secrets.PROD_PORT }}
+          command_timeout: 30m
+          debug: true
+          script: |
+            set -euo pipefail
+            set -x
+
+            APP_DIR="${{ env.APP_PATH }}"
+            REPO_URL="https://github.com/SiLeBAT/zoonotify-cms.git"
+            REF="${{ inputs.git_ref }}"
+
+            # load shell profile if present
+            [ -f ~/.bashrc ] && . ~/.bashrc || true
+            [ -f ~/.profile ] && . ~/.profile || true
+
+            # ensure Node 20.19.5 on the server if nvm exists (avoids engine mismatch)
+            export NVM_DIR="$HOME/.nvm"
+            if [ -s "$NVM_DIR/nvm.sh" ]; then
+              . "$NVM_DIR/nvm.sh"
+              nvm install 20.19.5
+              nvm use 20.19.5
+            fi
+
+            # Refuse to deploy without a production env file.
+            if [ ! -f "$HOME/env.prod" ]; then
+              echo "ERROR: $HOME/env.prod not found on server. Aborting." >&2
+              exit 1
+            fi
+
+            # 1) Back up the CURRENT live deployment before we replace it.
+            #    The running app dir has node_modules + .env; a fresh clone would not.
+            if [ -d "$APP_DIR/node_modules" ] && [ -f "$APP_DIR/.env" ]; then
+              echo "==> Backing up current production data"
+              ( cd "$APP_DIR" && bash ./backup.sh )
+            else
+              echo "==> No existing deployment found; skipping pre-deploy backup"
+            fi
+
+            # 2) Fresh clone into $APP_DIR (previous copy kept as .old for rollback)
+            echo "==> Fresh clone into $APP_DIR"
+            cd ~
+            rm -rf "${APP_DIR}.old"
+            [ -d "$APP_DIR" ] && mv "$APP_DIR" "${APP_DIR}.old" || true
+            git clone "$REPO_URL" "$APP_DIR"
+
+            # 3) Put the production environment file in place
+            echo "==> Put environment file"
+            cp "$HOME/env.prod" "$APP_DIR/.env"
+
+            # 4) Check out the exact requested ref and deploy
+            cd "$APP_DIR"
+            git fetch --all --tags
+            git checkout "$REF"
+
+            bash ./deploy.sh
+
+            echo "Production deploy of '$REF' finished."
