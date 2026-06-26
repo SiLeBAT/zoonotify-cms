@@ -1,14 +1,16 @@
 {
   "name": "zoonotify-cms",
   "private": true,
-  "version": "4.2.1",
+  "version": "4.3.0",
   "description": "A Strapi application",
   "scripts": {
     "develop": "strapi develop",
     "start": "strapi start",
     "build": "strapi build",
     "strapi": "strapi",
-    "key-gen": "node ./generate-strapi-keys.js"
+    "key-gen": "node ./generate-strapi-keys.js",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@strapi/plugin-documentation": "5.10.2",
@@ -25,8 +27,7 @@
     "react-dom": "^18.0.0",
     "react-redux": "^9.2.0",
     "react-router-dom": "^6.0.0",
-    "styled-components": "^6.0.0",
-    "zoonotify-cms": "file:"
+    "styled-components": "^6.0.0"
   },
   "author": {
     "name": "A Strapi developer"
@@ -35,9 +36,15 @@
     "uuid": "441569a4-b85a-4948-8bd6-c0afb367c730",
     "telemetryDisabled": true
   },
+  "resolutions": {
+    "@types/minimatch": "^5.1.2"
+  },
   "engines": {
     "node": ">=20.19.5",
     "npm": ">=6.0.0"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "vitest": "^4.1.7"
+  }
 }

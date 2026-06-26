@@ -4,7 +4,7 @@
   "info": {
     "singularName": "resistance-table",
     "pluralName": "resistance-tables",
-    "displayName": "Resistance_Table",
+    "displayName": "AMR Cutoff Table",
     "description": ""
   },
   "options": {
