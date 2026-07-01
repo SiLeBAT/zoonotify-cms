@@ -16,7 +16,7 @@
     "@strapi/plugin-documentation": "5.49.0",
     "@strapi/plugin-users-permissions": "5.49.0",
     "@strapi/provider-email-nodemailer": "5.49.0",
-    "@strapi/strapi": "5.48.1",
+    "@strapi/strapi": "5.49.0",
     "event-stream": "^4.0.1",
     "exceljs": "^4.4.0",
     "JSONStream": "^1.3.5",
