@@ -7,7 +7,9 @@ set -euo pipefail
 
 mkdir -p ../backup
 
-yarn run strapi export --no-encrypt -f "../backup/cms-$(date -d "today" +"%Y%m%d%H%M")"
+# Use the absolute yarn path (like deploy.sh): a non-interactive SSH shell does
+# not add ~/.yarn/bin to PATH, so bare `yarn` may not resolve.
+"$HOME/.yarn/bin/yarn" run strapi export --no-encrypt -f "../backup/cms-$(date -d "today" +"%Y%m%d%H%M")"
 
 cd ../backup/
 

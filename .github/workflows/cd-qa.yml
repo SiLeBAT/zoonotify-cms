@@ -72,6 +72,10 @@ jobs:
               nvm use 20.19.5
             fi
 
+            # Match the prod deploy: put yarn on PATH, since the non-interactive
+            # SSH shell doesn't run the ~/.bashrc lines that add it.
+            export PATH="$HOME/.yarn/bin:$PATH"
+
             echo "==> Fresh clone into $APP_DIR"
             cd ~
             rm -rf "${APP_DIR}.old"

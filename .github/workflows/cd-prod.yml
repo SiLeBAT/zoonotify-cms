@@ -96,6 +96,11 @@ jobs:
               fi
             fi
 
+            # Put yarn on PATH. The non-interactive SSH shell does NOT run the
+            # ~/.bashrc lines that add it (they are gated to interactive shells),
+            # so a bare `yarn` (as used by the live backup.sh) would not resolve.
+            export PATH="$HOME/.yarn/bin:$PATH"
+
             # Refuse to deploy without a production env file.
             if [ ! -f "$HOME/env.prod" ]; then
               echo "ERROR: $HOME/env.prod not found on server. Aborting." >&2
