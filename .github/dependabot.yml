@@ -1,0 +1,15 @@
+version: 2
+updates:
+  # Strapi/Node dependencies (yarn). Patch/minor auto-merge once CI is green
+  # (see dependabot-auto-merge.yml); major updates are left for manual review.
+  - package-ecosystem: 'npm'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+    open-pull-requests-limit: 10
+
+  # Keep the GitHub Actions used by the pipeline up to date.
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    schedule:
+      interval: 'weekly'

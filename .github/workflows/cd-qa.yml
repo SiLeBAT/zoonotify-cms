@@ -1,11 +1,16 @@
-
 name: Continuous Delivery Workflow QA
 
+# Auto-deploys develop to QA on every push. Manual dispatch on an rc-* branch
+# doubles as the "stabilize the release candidate on QA" step (ADR 0001, step 3).
 on:
   workflow_dispatch:
   push:
     branches:
       - develop
+
+concurrency:
+  group: deploy-qa
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -16,7 +21,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20.19.5'
+          node-version-file: '.nvmrc'
           cache: 'yarn'
       - name: Install dependencies
         run: yarn install --frozen-lockfile
@@ -39,16 +44,16 @@ jobs:
       - name: Deploy to QA
         uses: appleboy/ssh-action@v0.1.10
         with:
-          host: ${{ secrets.QA_SERVER }}
-          username: ${{ secrets.QA_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: ${{ secrets.QA_PORT }}
+          host: ${{ secrets.QA_SSH_HOST }}
+          username: ${{ secrets.QA_SSH_USER }}
+          key: ${{ secrets.QA_SSH_KEY }}
+          port: ${{ vars.QA_SSH_PORT }}
           command_timeout: 30m
           debug: true
           script: |
             set -x
 
-            APP_DIR="${{ vars.APP_PATH }}"
+            APP_DIR="${{ vars.QA_DEPLOY_DIR }}"
             REPO_URL="https://github.com/SiLeBAT/zoonotify-cms.git"
             BRANCH="${{ steps.extract_branch.outputs.branch }}"
 

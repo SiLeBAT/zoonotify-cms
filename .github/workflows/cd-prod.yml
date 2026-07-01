@@ -1,30 +1,24 @@
 name: Continuous Delivery Workflow Production
 
-# Production deploys are MANUAL ONLY. Trigger from the Actions tab
-# ("Run workflow") and provide the exact branch or tag to ship.
+# Production deploys are MANUAL ONLY and tag-pinned (ADR 0001, step 6). Trigger
+# from the Actions tab ("Run workflow") and provide the exact release tag to ship.
 #
-# Required repository secrets (production server):
-#   PROD_SERVER          - hostname / IP of the production server
-#   PROD_USER            - SSH user
-#   PROD_PORT            - SSH port
-#   PROD_SSH_PRIVATE_KEY - private key authorised for PROD_USER@PROD_SERVER
-#
-# The app directory on the server is the APP_PATH env var below (relative to the
-# SSH user's home), not a secret.
+# Secrets/variables are scoped to the `production` GitHub environment (below):
+#   PROD_SSH_HOST   (secret)   - hostname / IP of the production server
+#   PROD_SSH_USER   (secret)   - SSH user
+#   PROD_SSH_KEY    (secret)   - private key authorised for PROD_SSH_USER@PROD_SSH_HOST
+#   PROD_SSH_PORT   (variable) - SSH port (omit to default to 22)
+#   PROD_DEPLOY_DIR (variable) - app directory relative to the SSH user's home
 #
 # Server prerequisites (set up once, out of band):
 #   - $HOME/env.prod : the production .env, copied into the app on each deploy
 #   - nvm with Node 20.19.5 available
 
-env:
-  # App directory on the production server, relative to the SSH user's home.
-  APP_PATH: zoonotify-cms
-
 on:
   workflow_dispatch:
     inputs:
-      git_ref:
-        description: 'Exact branch or tag to deploy to PRODUCTION (e.g. v4.3.0)'
+      tag:
+        description: 'Release tag to deploy to PRODUCTION (e.g. v4.4.0)'
         required: true
         type: string
 
@@ -40,10 +34,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.git_ref }}
+          ref: ${{ inputs.tag }}
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
+          # Pinned (not node-version-file) because this job checks out an
+          # arbitrary release tag, and older tags predate .nvmrc.
           node-version: '20.19.5'
       - name: Install dependencies
         run: yarn install --frozen-lockfile
@@ -62,19 +58,19 @@ jobs:
       - name: Deploy to Production
         uses: appleboy/ssh-action@v0.1.10
         with:
-          host: ${{ secrets.PROD_SERVER }}
-          username: ${{ secrets.PROD_USER }}
-          key: ${{ secrets.PROD_SSH_PRIVATE_KEY }}
-          port: ${{ secrets.PROD_PORT }}
+          host: ${{ secrets.PROD_SSH_HOST }}
+          username: ${{ secrets.PROD_SSH_USER }}
+          key: ${{ secrets.PROD_SSH_KEY }}
+          port: ${{ vars.PROD_SSH_PORT }}
           command_timeout: 30m
           debug: true
           script: |
             set -euo pipefail
             set -x
 
-            APP_DIR="${{ env.APP_PATH }}"
+            APP_DIR="${{ vars.PROD_DEPLOY_DIR }}"
             REPO_URL="https://github.com/SiLeBAT/zoonotify-cms.git"
-            REF="${{ inputs.git_ref }}"
+            REF="${{ inputs.tag }}"
 
             # load shell profile if present
             [ -f ~/.bashrc ] && . ~/.bashrc || true
