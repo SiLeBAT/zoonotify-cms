@@ -10,6 +10,11 @@ on:
     branches:
       - develop
 
+# Cancel superseded runs on the same ref (e.g. a new push to an open PR).
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     name: 'Build'
@@ -22,7 +27,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20.19.5'
+          node-version-file: '.nvmrc'
           cache: 'yarn'
 
       - name: Install dependencies

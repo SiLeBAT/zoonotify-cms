@@ -1,0 +1,55 @@
+name: Cut release
+
+# Run this on an rc-* branch to cut a release (ADR 0001, step 4):
+# bumps package.json, creates the vX.Y.Z tag, and publishes a GitHub Release
+# with auto-generated notes. Afterwards, merge the bump commit back into develop
+# and deploy the tag to prod via "Continuous Delivery Workflow Production".
+on:
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: 'Semver bump'
+        required: true
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+
+permissions:
+  contents: write
+
+jobs:
+  cut:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+
+      - name: Configure git identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Bump version, commit and tag
+        id: bump
+        run: |
+          NEW=$(npm version ${{ inputs.bump }} -m "chore(release): %s")
+          echo "version=$NEW" >> "$GITHUB_OUTPUT"
+
+      - name: Push commit and tag
+        run: git push --follow-tags origin HEAD
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        # The tag was already created by `npm version` and pushed above, so
+        # gh attaches the Release to that existing tag.
+        run: >
+          gh release create "${{ steps.bump.outputs.version }}"
+          --title "${{ steps.bump.outputs.version }}"
+          --generate-notes
