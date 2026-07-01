@@ -56,7 +56,7 @@ jobs:
     environment: production
     steps:
       - name: Deploy to Production
-        uses: appleboy/ssh-action@v0.1.10
+        uses: appleboy/ssh-action@v1.2.5
         with:
           host: ${{ secrets.PROD_SSH_HOST }}
           username: ${{ secrets.PROD_SSH_USER }}
