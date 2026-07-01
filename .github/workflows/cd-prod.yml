@@ -118,9 +118,18 @@ jobs:
 
             # 1) Back up the CURRENT live deployment before we replace it.
             #    The running app dir has node_modules + .env; a fresh clone would not.
+            #    Best-effort: the `strapi export` is the recovery point, but a
+            #    non-zero exit from the on-server backup.sh (e.g. an older copy
+            #    whose prune `xargs rm` fails when <=5 backups exist) must NOT
+            #    abort the deploy. Warn loudly instead.
             if [ -d "$APP_DIR/node_modules" ] && [ -f "$APP_DIR/.env" ]; then
               echo "==> Backing up current production data"
-              ( cd "$APP_DIR" && bash ./backup.sh )
+              if ( cd "$APP_DIR" && bash ./backup.sh ); then
+                echo "==> Backup completed"
+              else
+                echo "WARNING: pre-deploy backup.sh exited non-zero; continuing." >&2
+                echo "         Confirm a backup archive was written before relying on rollback." >&2
+              fi
             else
               echo "==> No existing deployment found; skipping pre-deploy backup"
             fi
