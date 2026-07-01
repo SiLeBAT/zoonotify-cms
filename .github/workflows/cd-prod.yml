@@ -79,9 +79,21 @@ jobs:
             # ensure Node 20.19.5 on the server if nvm exists (avoids engine mismatch)
             export NVM_DIR="$HOME/.nvm"
             if [ -s "$NVM_DIR/nvm.sh" ]; then
-              . "$NVM_DIR/nvm.sh"
+              # nvm's auto-use (triggered when sourcing nvm.sh) returns a
+              # non-zero exit when no default alias is set, which aborts the
+              # script under `set -e`. Source with --no-use to skip it, and
+              # disable errexit across nvm setup as a belt-and-suspenders guard.
+              # Then verify Node 20 was actually selected and fail loudly if not.
+              set +e
+              . "$NVM_DIR/nvm.sh" --no-use
               nvm install 20.19.5
               nvm use 20.19.5
+              nvm_status=$?
+              set -e
+              if [ "$nvm_status" -ne 0 ]; then
+                echo "ERROR: failed to select Node 20.19.5 via nvm" >&2
+                exit 1
+              fi
             fi
 
             # Refuse to deploy without a production env file.

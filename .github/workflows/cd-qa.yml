@@ -64,7 +64,10 @@ jobs:
             # ensure Node 20.19.5 on the server if nvm exists (avoids engine mismatch)
             export NVM_DIR="$HOME/.nvm"
             if [ -s "$NVM_DIR/nvm.sh" ]; then
-              . "$NVM_DIR/nvm.sh"
+              # Match the prod deploy: source with --no-use so nvm's auto-use
+              # (which returns non-zero when no default alias is set) cannot
+              # abort the script, then select the Node version explicitly.
+              . "$NVM_DIR/nvm.sh" --no-use
               nvm install 20.19.5
               nvm use 20.19.5
             fi
