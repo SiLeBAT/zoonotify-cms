@@ -12,7 +12,7 @@ name: Continuous Delivery Workflow Production
 #
 # Server prerequisites (set up once, out of band):
 #   - $HOME/env.prod : the production .env, copied into the app on each deploy
-#   - nvm with Node 20.19.5 available
+#   - nvm available (the Node version is read from the repo's .nvmrc)
 
 on:
   workflow_dispatch:
@@ -31,6 +31,9 @@ jobs:
   build:
     name: 'Build the strapi CMS (gate)'
     runs-on: ubuntu-latest
+    # Expose the deployed tag's pinned Node version to the deploy job.
+    outputs:
+      node_version: ${{ steps.nvmrc.outputs.version }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -38,9 +41,13 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          # Pinned (not node-version-file) because this job checks out an
-          # arbitrary release tag, and older tags predate .nvmrc.
-          node-version: '20.19.5'
+          # Reads the .nvmrc of the checked-out tag, so each release builds with
+          # the Node version it pinned (single source of truth). Deploying a tag
+          # older than .nvmrc's introduction is not supported.
+          node-version-file: '.nvmrc'
+      - name: Read Node version from .nvmrc
+        id: nvmrc
+        run: echo "version=$(cat .nvmrc)" >> "$GITHUB_OUTPUT"
       - name: Install dependencies
         run: yarn install --frozen-lockfile
       - name: Build
@@ -71,27 +78,29 @@ jobs:
             APP_DIR="${{ vars.PROD_DEPLOY_DIR }}"
             REPO_URL="https://github.com/SiLeBAT/zoonotify-cms.git"
             REF="${{ inputs.tag }}"
+            # Node version comes from the deployed tag's .nvmrc (via the build job).
+            NODE_VERSION="${{ needs.build.outputs.node_version }}"
 
             # load shell profile if present
             [ -f ~/.bashrc ] && . ~/.bashrc || true
             [ -f ~/.profile ] && . ~/.profile || true
 
-            # ensure Node 20.19.5 on the server if nvm exists (avoids engine mismatch)
+            # ensure the pinned Node version on the server (avoids engine mismatch)
             export NVM_DIR="$HOME/.nvm"
             if [ -s "$NVM_DIR/nvm.sh" ]; then
               # nvm's auto-use (triggered when sourcing nvm.sh) returns a
               # non-zero exit when no default alias is set, which aborts the
               # script under `set -e`. Source with --no-use to skip it, and
               # disable errexit across nvm setup as a belt-and-suspenders guard.
-              # Then verify Node 20 was actually selected and fail loudly if not.
+              # Then verify the version was selected and fail loudly if not.
               set +e
               . "$NVM_DIR/nvm.sh" --no-use
-              nvm install 20.19.5
-              nvm use 20.19.5
+              nvm install "$NODE_VERSION"
+              nvm use "$NODE_VERSION"
               nvm_status=$?
               set -e
               if [ "$nvm_status" -ne 0 ]; then
-                echo "ERROR: failed to select Node 20.19.5 via nvm" >&2
+                echo "ERROR: failed to select Node $NODE_VERSION via nvm" >&2
                 exit 1
               fi
             fi

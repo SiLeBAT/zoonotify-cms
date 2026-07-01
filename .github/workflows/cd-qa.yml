@@ -16,6 +16,9 @@ jobs:
   build:
     name: 'Builds the strapi CMS'
     runs-on: ubuntu-latest
+    # Expose the pinned Node version (from .nvmrc) to the deploy job.
+    outputs:
+      node_version: ${{ steps.nvmrc.outputs.version }}
     steps:
       - uses: actions/checkout@v4
       - name: Set up Node.js
@@ -23,6 +26,9 @@ jobs:
         with:
           node-version-file: '.nvmrc'
           cache: 'yarn'
+      - name: Read Node version from .nvmrc
+        id: nvmrc
+        run: echo "version=$(cat .nvmrc)" >> "$GITHUB_OUTPUT"
       - name: Install dependencies
         run: yarn install --frozen-lockfile
       - name: Build
@@ -56,20 +62,22 @@ jobs:
             APP_DIR="${{ vars.QA_DEPLOY_DIR }}"
             REPO_URL="https://github.com/SiLeBAT/zoonotify-cms.git"
             BRANCH="${{ steps.extract_branch.outputs.branch }}"
+            # Node version comes from the repo's .nvmrc (via the build job).
+            NODE_VERSION="${{ needs.build.outputs.node_version }}"
 
             # load shell profile if present
             [ -f ~/.bashrc ] && . ~/.bashrc || true
             [ -f ~/.profile ] && . ~/.profile || true
 
-            # ensure Node 20.19.5 on the server if nvm exists (avoids engine mismatch)
+            # ensure the pinned Node version on the server (avoids engine mismatch)
             export NVM_DIR="$HOME/.nvm"
             if [ -s "$NVM_DIR/nvm.sh" ]; then
               # Match the prod deploy: source with --no-use so nvm's auto-use
               # (which returns non-zero when no default alias is set) cannot
-              # abort the script, then select the Node version explicitly.
+              # abort the script, then select the pinned Node version.
               . "$NVM_DIR/nvm.sh" --no-use
-              nvm install 20.19.5
-              nvm use 20.19.5
+              nvm install "$NODE_VERSION"
+              nvm use "$NODE_VERSION"
             fi
 
             # Match the prod deploy: put yarn on PATH, since the non-interactive
