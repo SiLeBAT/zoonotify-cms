@@ -2622,6 +2622,74 @@
     yup "0.32.9"
     zod "3.25.67"
 
+"@strapi/admin@5.50.0":
+  version "5.50.0"
+  resolved "https://registry.yarnpkg.com/@strapi/admin/-/admin-5.50.0.tgz#eb89650305b51b06e968f177771a962b4156a0ee"
+  integrity sha512-kgP1VBr9LORp6X2sGBRGl0Hg8NS43YSI0Wva1mAM+9EcS1e2F+6+5kvvo3W0JKvAMzqUJhqU5p/AbyGLp8okeA==
+  dependencies:
+    "@casl/ability" "6.7.5"
+    "@internationalized/date" "3.5.4"
+    "@radix-ui/react-context" "1.0.1"
+    "@radix-ui/react-toolbar" "1.0.4"
+    "@reduxjs/toolkit" "1.9.7"
+    "@strapi/design-system" "2.2.1"
+    "@strapi/icons" "2.2.1"
+    "@strapi/permissions" "5.50.0"
+    "@strapi/types" "5.50.0"
+    "@strapi/typescript-utils" "5.50.0"
+    "@strapi/utils" "5.50.0"
+    "@testing-library/dom" "10.4.1"
+    "@testing-library/react" "16.3.2"
+    "@testing-library/user-event" "14.6.1"
+    axios "1.18.1"
+    bcryptjs "2.4.3"
+    boxen "5.1.2"
+    chalk "^4.1.2"
+    codemirror5 "npm:codemirror@^5.65.11"
+    cross-env "^7.0.3"
+    date-fns "2.30.0"
+    execa "5.1.1"
+    fast-deep-equal "3.1.3"
+    formik "2.4.5"
+    fractional-indexing "3.2.0"
+    fs-extra "11.3.4"
+    highlight.js "^10.4.1"
+    immer "9.0.21"
+    inquirer "9.3.8"
+    invariant "^2.2.4"
+    is-localhost-ip "2.0.0"
+    json-logic-js "2.0.5"
+    jsonwebtoken "9.0.0"
+    koa "2.16.4"
+    koa-compose "4.1.0"
+    koa-passport "6.0.0"
+    koa-static "5.0.0"
+    koa2-ratelimit "^1.1.3"
+    lodash "4.18.1"
+    motion "12.23.24"
+    ora "5.4.1"
+    p-map "4.0.0"
+    passport-local "1.0.0"
+    pluralize "8.0.0"
+    qs "6.15.2"
+    react-dnd "16.0.1"
+    react-dnd-html5-backend "16.0.1"
+    react-intl "6.6.2"
+    react-is "^18.2.0"
+    react-query "3.39.3"
+    react-redux "8.1.3"
+    react-select "5.8.0"
+    react-window "1.8.10"
+    rimraf "6.1.3"
+    scheduler "0.23.0"
+    semver "7.7.4"
+    sift "16.0.1"
+    sonner "2.0.7"
+    typescript "5.9.3"
+    use-context-selector "1.4.1"
+    yup "0.32.9"
+    zod "3.25.67"
+
 "@strapi/cloud-cli@5.49.0":
   version "5.49.0"
   resolved "https://registry.yarnpkg.com/@strapi/cloud-cli/-/cloud-cli-5.49.0.tgz#8e04686fee5f9821fddff31943ed487b25c8290c"
@@ -2854,6 +2922,22 @@
     semver "7.7.4"
     umzug "3.8.1"
 
+"@strapi/database@5.50.0":
+  version "5.50.0"
+  resolved "https://registry.yarnpkg.com/@strapi/database/-/database-5.50.0.tgz#493897a2532814c2e250addeb78d7c6577eaf108"
+  integrity sha512-LORxxN12J/u6T12PyXNIRTLZS1bAnZZ1LA28f6tNcNo20BmGhDJ2Ccv/e8nR5/24q0047xccP/+t5fl+e8tjVw==
+  dependencies:
+    "@paralleldrive/cuid2" "2.2.2"
+    "@strapi/utils" "5.50.0"
+    ajv "8.20.0"
+    date-fns "2.30.0"
+    debug "4.3.4"
+    fs-extra "11.3.4"
+    knex "3.0.1"
+    lodash "4.18.1"
+    semver "7.7.4"
+    umzug "3.8.1"
+
 "@strapi/design-system@2.2.0":
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/@strapi/design-system/-/design-system-2.2.0.tgz#fbd9dfdee8f46eb0a4fbe276ce1b58b8f4624924"
@@ -2883,6 +2967,37 @@
     "@strapi/ui-primitives" "2.2.0"
     "@uiw/react-codemirror" "4.22.2"
     lodash "4.17.23"
+    react-remove-scroll "2.5.10"
+
+"@strapi/design-system@2.2.1":
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/@strapi/design-system/-/design-system-2.2.1.tgz#0a33a5cccabe4cd1ee4e5c1f6047927b7503f526"
+  integrity sha512-g0xzs/cjY8DxI/QhGu9N6fjqrTrCnSao6+6TFXsbhFq0Av5h0hUV/3wsHWb8ArhWzXEjO594nW7cwc7Tv0osZw==
+  dependencies:
+    "@codemirror/lang-json" "6.0.1"
+    "@floating-ui/react-dom" "2.1.0"
+    "@internationalized/date" "3.5.4"
+    "@internationalized/number" "3.5.3"
+    "@radix-ui/react-accordion" "1.1.2"
+    "@radix-ui/react-alert-dialog" "1.0.5"
+    "@radix-ui/react-avatar" "1.0.4"
+    "@radix-ui/react-checkbox" "1.0.4"
+    "@radix-ui/react-dialog" "1.0.5"
+    "@radix-ui/react-dismissable-layer" "1.0.5"
+    "@radix-ui/react-dropdown-menu" "2.0.6"
+    "@radix-ui/react-focus-guards" "1.0.1"
+    "@radix-ui/react-focus-scope" "1.0.4"
+    "@radix-ui/react-popover" "1.0.7"
+    "@radix-ui/react-progress" "1.0.3"
+    "@radix-ui/react-radio-group" "1.1.3"
+    "@radix-ui/react-scroll-area" "1.0.5"
+    "@radix-ui/react-switch" "1.0.3"
+    "@radix-ui/react-tabs" "1.0.4"
+    "@radix-ui/react-tooltip" "1.0.7"
+    "@radix-ui/react-use-callback-ref" "1.0.1"
+    "@strapi/ui-primitives" "2.2.1"
+    "@uiw/react-codemirror" "4.22.2"
+    lodash "4.18.1"
     react-remove-scroll "2.5.10"
 
 "@strapi/email@5.49.0":
@@ -2938,10 +3053,23 @@
   resolved "https://registry.yarnpkg.com/@strapi/icons/-/icons-2.2.0.tgz#fe574fb26c991665a9bfc900c49afdf23a479add"
   integrity sha512-wVItrWIDYtvGpv1S5Lg580b5PXH2iw6dgcFnri5vVz4qZDP6ZOTpLmkwZybkfZcpIzq1KkjKyA1JZ6NLBE59cQ==
 
+"@strapi/icons@2.2.1":
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/@strapi/icons/-/icons-2.2.1.tgz#84779050b1a78e04591399645e37773a22e9bc4a"
+  integrity sha512-u/MRGJuy9+jAzBHyAUA1Q+A3Ckax4TRFh69fAxIpR30TcZtvRoi2LYWbYkl5nPDaJWljuesNuVT4pNJV8yfbeg==
+
 "@strapi/logger@5.49.0":
   version "5.49.0"
   resolved "https://registry.yarnpkg.com/@strapi/logger/-/logger-5.49.0.tgz#8fe8849482c900f67be8b4efd538187208dcc331"
   integrity sha512-+QesglR/rYGRymwzUVNCZmaJ3MUAdQO4R/uli0pPAaBMJrwbjD2zv6d4OY3hNvxcuTOdSR863g8lYTUm3x3eRg==
+  dependencies:
+    lodash "4.18.1"
+    winston "3.10.0"
+
+"@strapi/logger@5.50.0":
+  version "5.50.0"
+  resolved "https://registry.yarnpkg.com/@strapi/logger/-/logger-5.50.0.tgz#8c6c6a72f4d4ef08cb8dc452e4cdf4c5a873d940"
+  integrity sha512-P9IN9cuis5BAfAOIgn4YZbMtPiuRLdS8M8pgM7sovTaFavmhebR2+qqJRy7dIHULZGmRId5VOC51KwhGhYeqzQ==
   dependencies:
     lodash "4.18.1"
     winston "3.10.0"
@@ -2966,16 +3094,27 @@
     qs "6.15.2"
     sift "16.0.1"
 
-"@strapi/plugin-documentation@5.49.0":
-  version "5.49.0"
-  resolved "https://registry.yarnpkg.com/@strapi/plugin-documentation/-/plugin-documentation-5.49.0.tgz#fa3178126fb3e090d0111221cada0f0524e4201b"
-  integrity sha512-qzmd4UT0swpqSrFFKVRGeYWLoFStyf+9fo9j3Y2klT2HaQCH5ViHIAZ9/N5keSV92c6xA4GrR/BLSHvS9ila0Q==
+"@strapi/permissions@5.50.0":
+  version "5.50.0"
+  resolved "https://registry.yarnpkg.com/@strapi/permissions/-/permissions-5.50.0.tgz#a048ca80334e6134e547341510e2cf1e8c98b3f0"
+  integrity sha512-9XLPcvqluLKiBb3P5ZnW0C/zUP4yKMncIdMmoJptdF9ULRkjpcH6hZjf6CaSrkA3owfpiwgZ3Ghg54Jywwxn8A==
+  dependencies:
+    "@casl/ability" "6.7.5"
+    "@strapi/utils" "5.50.0"
+    lodash "4.18.1"
+    qs "6.15.2"
+    sift "16.0.1"
+
+"@strapi/plugin-documentation@5.50.0":
+  version "5.50.0"
+  resolved "https://registry.yarnpkg.com/@strapi/plugin-documentation/-/plugin-documentation-5.50.0.tgz#657b7f7fc4a989af5fc3b1ad8a03f5974bef256a"
+  integrity sha512-on+XoxTE1P22fbHvPE5tDWVaIWi0aVukcZ3Zu76v69afBh+1AqT8kjHiyvZrUiCV5ztFdS2Oe9xL2GmJPZUnsQ==
   dependencies:
     "@reduxjs/toolkit" "1.9.7"
-    "@strapi/admin" "5.49.0"
-    "@strapi/design-system" "2.2.0"
-    "@strapi/icons" "2.2.0"
-    "@strapi/utils" "5.49.0"
+    "@strapi/admin" "5.50.0"
+    "@strapi/design-system" "2.2.1"
+    "@strapi/icons" "2.2.1"
+    "@strapi/utils" "5.50.0"
     bcryptjs "2.4.3"
     cheerio "^1.2.0"
     formik "2.4.5"
@@ -3145,6 +3284,29 @@
     typedoc-plugin-markdown "4.11.0"
     zod "3.25.67"
 
+"@strapi/types@5.50.0":
+  version "5.50.0"
+  resolved "https://registry.yarnpkg.com/@strapi/types/-/types-5.50.0.tgz#fecf9caaa57f4396bc82f3be400ca8ce01bb1fc6"
+  integrity sha512-4UIuSoxiNtyLyGWZByieELdLRVlYpT/Tvb8lTZLwM+x6yFSn+LQtuCZghHInB96WX/0aJOIvPpq1MU6s/UVsuA==
+  dependencies:
+    "@casl/ability" "6.7.5"
+    "@koa/cors" "5.0.0"
+    "@koa/router" "12.0.2"
+    "@modelcontextprotocol/sdk" "1.29.0"
+    "@strapi/database" "5.50.0"
+    "@strapi/logger" "5.50.0"
+    "@strapi/permissions" "5.50.0"
+    "@strapi/utils" "5.50.0"
+    commander "8.3.0"
+    json-logic-js "2.0.5"
+    koa "2.16.4"
+    koa-body "6.0.1"
+    node-schedule "2.1.1"
+    typedoc "0.28.19"
+    typedoc-github-wiki-theme "2.1.0"
+    typedoc-plugin-markdown "4.11.0"
+    zod "3.25.67"
+
 "@strapi/typescript-utils@5.49.0":
   version "5.49.0"
   resolved "https://registry.yarnpkg.com/@strapi/typescript-utils/-/typescript-utils-5.49.0.tgz#b39c716d180eaa1af8f0dbfad79029101336d6ac"
@@ -3157,10 +3319,49 @@
     prettier "3.3.3"
     typescript "5.4.5"
 
+"@strapi/typescript-utils@5.50.0":
+  version "5.50.0"
+  resolved "https://registry.yarnpkg.com/@strapi/typescript-utils/-/typescript-utils-5.50.0.tgz#d43968ad9c74cd4437a4c878e17cb3a605818076"
+  integrity sha512-JurZxW9yZDCSNP+KxfnvnYVM03+AsM950F7xKCf8Du0Sp9oosHu0zfPedQ7jPH7OKwjwy3YMNNi/HbKRtch8Fg==
+  dependencies:
+    chalk "4.1.2"
+    cli-table3 "0.6.5"
+    fs-extra "11.3.4"
+    lodash "4.18.1"
+    prettier "3.3.3"
+    typescript "5.9.3"
+
 "@strapi/ui-primitives@2.2.0":
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/@strapi/ui-primitives/-/ui-primitives-2.2.0.tgz#6fc083e4656f24e73bcc0f061bb199eaff94a563"
   integrity sha512-CGvyIr+D7ZEuP9x4bmUFUiilHZwCkftiwV8Kh+o/jBETVlm5/8SrE5wihuyqSQTya1NxTHu0O8RTNkX0U6p8bQ==
+  dependencies:
+    "@radix-ui/number" "1.0.1"
+    "@radix-ui/primitive" "1.0.1"
+    "@radix-ui/react-collection" "1.0.3"
+    "@radix-ui/react-compose-refs" "1.0.1"
+    "@radix-ui/react-context" "1.0.1"
+    "@radix-ui/react-direction" "1.0.1"
+    "@radix-ui/react-dismissable-layer" "1.0.5"
+    "@radix-ui/react-focus-guards" "1.0.1"
+    "@radix-ui/react-focus-scope" "1.0.4"
+    "@radix-ui/react-id" "1.0.1"
+    "@radix-ui/react-popper" "1.1.3"
+    "@radix-ui/react-portal" "1.0.4"
+    "@radix-ui/react-primitive" "1.0.3"
+    "@radix-ui/react-slot" "1.0.2"
+    "@radix-ui/react-use-controllable-state" "1.0.1"
+    "@radix-ui/react-use-layout-effect" "1.0.1"
+    "@radix-ui/react-use-previous" "1.0.1"
+    "@radix-ui/react-visually-hidden" "1.0.3"
+    "@tanstack/react-virtual" "^3.10.8"
+    aria-hidden "1.2.4"
+    react-remove-scroll "2.5.10"
+
+"@strapi/ui-primitives@2.2.1":
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/@strapi/ui-primitives/-/ui-primitives-2.2.1.tgz#dffb138f4739955962ff970a07a66760421ccb1a"
+  integrity sha512-g31KAqLv7e32u1B+zhUSIQom7GPG5fJVMAhPMf+GvW277o7/WX91qCy47BuRM5rRNK66Lm/uABTVdF+tPe57qg==
   dependencies:
     "@radix-ui/number" "1.0.1"
     "@radix-ui/primitive" "1.0.1"
@@ -3220,10 +3421,10 @@
     yup "0.32.9"
     zod "3.25.67"
 
-"@strapi/utils@5.48.1":
-  version "5.48.1"
-  resolved "https://registry.yarnpkg.com/@strapi/utils/-/utils-5.48.1.tgz#204179b8496e6e45aed1d397e2c2fede56c0fbf0"
-  integrity sha512-R+zAfXx2RC5ZgaGF4CBMpktdEPVsbWJu14epg9bkZGwleaecbz8iIcDkJCzyv+OmNLVIvk/rpcfhU5Ibo7MDTg==
+"@strapi/utils@5.49.0":
+  version "5.49.0"
+  resolved "https://registry.yarnpkg.com/@strapi/utils/-/utils-5.49.0.tgz#1b9a60441bfd25294764a105a6e1e618a819543b"
+  integrity sha512-/OgXMOj9K7WpVptZL3MrW7XtDEmluKBERjdoXRN6T2vbx8bXyXvPZbO67emigbAR7RzPJbkevXi4bt84fIrruw==
   dependencies:
     "@sindresorhus/slugify" "1.1.0"
     date-fns "2.30.0"
@@ -3236,10 +3437,10 @@
     yup "0.32.9"
     zod "3.25.67"
 
-"@strapi/utils@5.49.0":
-  version "5.49.0"
-  resolved "https://registry.yarnpkg.com/@strapi/utils/-/utils-5.49.0.tgz#1b9a60441bfd25294764a105a6e1e618a819543b"
-  integrity sha512-/OgXMOj9K7WpVptZL3MrW7XtDEmluKBERjdoXRN6T2vbx8bXyXvPZbO67emigbAR7RzPJbkevXi4bt84fIrruw==
+"@strapi/utils@5.50.0":
+  version "5.50.0"
+  resolved "https://registry.yarnpkg.com/@strapi/utils/-/utils-5.50.0.tgz#185cb492947fbe779c3a6ed38727279eb119bd5d"
+  integrity sha512-VVRAX+rBpF+k1oSZktz9lLUAMnxPATUDczz3mvuc/JISmKnDxYn+JCR1k99kEYSeHc0419fRhtUm6z5VqtOhPg==
   dependencies:
     "@sindresorhus/slugify" "1.1.0"
     date-fns "2.30.0"
@@ -4458,6 +4659,16 @@ axios@1.18.0:
   version "1.18.0"
   resolved "https://registry.yarnpkg.com/axios/-/axios-1.18.0.tgz#8a7f8854af280fcaae063272df2ed9f3837d2398"
   integrity sha512-E32NzpYKp++W7XRe52rHiXV2ehxmh3wbdgO7MHeFM+vqxLBYHzt0ElkiImtOBxtOmyp0yoC8C6uESVV84Y2/hw==
+  dependencies:
+    follow-redirects "^1.16.0"
+    form-data "^4.0.5"
+    https-proxy-agent "^5.0.1"
+    proxy-from-env "^2.1.0"
+
+axios@1.18.1:
+  version "1.18.1"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-1.18.1.tgz#d63f9863bcd8938815c86f9e2abd380189d96dfe"
+  integrity sha512-3nTvFlvpn9Zu/RkHUqtc7/+al4UpRW5az71ap5zccp6e8RAYEzhMTecX8Dz1wWDYrPpUoB1HAQEGEAEvUr7S9g==
   dependencies:
     follow-redirects "^1.16.0"
     form-data "^4.0.5"
@@ -11544,6 +11755,11 @@ typescript@5.4.5:
   version "5.4.5"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.4.5.tgz#42ccef2c571fdbd0f6718b1d1f5e6e5ef006f611"
   integrity sha512-vcI4UpRgg81oIRUFwR0WSIHKt11nJ7SAVlYNIu+QpqeyXP+gpQJy/Z4+F0aGxSE4MqwjyXvW/TzgkLAx2AGHwQ==
+
+typescript@5.9.3:
+  version "5.9.3"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.9.3.tgz#5b4f59e15310ab17a216f5d6cf53ee476ede670f"
+  integrity sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==
 
 uc.micro@^2.0.0, uc.micro@^2.1.0:
   version "2.1.0"
