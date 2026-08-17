@@ -108,6 +108,7 @@ coverage
 ############################
 
 .env
+.commit-hash
 license.txt
 exports
 *.cache

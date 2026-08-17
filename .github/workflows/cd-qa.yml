@@ -99,14 +99,15 @@ jobs:
             git pull --ff-only || true
 
             # QA reports the deployed commit instead of the package version:
-            # version-injector picks CMS_COMMIT_HASH up and sends it as the
+            # version-injector reads .commit-hash and sends it as the
             # `cms-commit` response header, which the client footer shows.
-            # Production never sets it, so it keeps reporting the version.
+            # Production never writes the file, so it keeps reporting the
+            # version. Deliberately NOT an .env entry -- appending to .env
+            # glues onto the last credential line when that file has no
+            # trailing newline, which fails silently.
             echo "==> Record deployed commit"
-            COMMIT_HASH="$(git rev-parse --short HEAD)"
-            touch .env
-            sed -i '/^CMS_COMMIT_HASH=/d' .env
-            echo "CMS_COMMIT_HASH=$COMMIT_HASH" >> .env
+            git rev-parse --short HEAD > .commit-hash
+            echo "Stamped .commit-hash: $(cat .commit-hash)"
 
             bash ./deploy.sh
 
