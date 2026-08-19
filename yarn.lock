@@ -3162,14 +3162,14 @@
     yaml "1.10.3"
     yup "0.32.9"
 
-"@strapi/plugin-users-permissions@5.51.2":
-  version "5.51.2"
-  resolved "https://registry.yarnpkg.com/@strapi/plugin-users-permissions/-/plugin-users-permissions-5.51.2.tgz#c7022ad58f07eaab225dae1df04598d1ad5670b2"
-  integrity sha512-ptTgJrC60JymhpU2dH8gBMN2PrVq+i2OKNKUm+Wavo59GtYb25Veau9hX13GBug0s6WzhDir08NXFRnwEB8C2g==
+"@strapi/plugin-users-permissions@5.52.0":
+  version "5.52.0"
+  resolved "https://registry.yarnpkg.com/@strapi/plugin-users-permissions/-/plugin-users-permissions-5.52.0.tgz#832d06dfd67ab1380cb5ed9594bfb8a7363b69b0"
+  integrity sha512-zFYKT4OAjTiAbxJwBzOUkwvSySiWdgI3w6t73gPavMiUNkyTvmyFvhdx+mFEFPcDlo6RX06LKR2zFOP1POXWBQ==
   dependencies:
-    "@strapi/design-system" "2.2.3"
-    "@strapi/icons" "2.2.3"
-    "@strapi/utils" "5.51.2"
+    "@strapi/design-system" "2.2.4"
+    "@strapi/icons" "2.2.4"
+    "@strapi/utils" "5.52.0"
     bcryptjs "2.4.3"
     formik "2.4.9"
     immer "9.0.21"
