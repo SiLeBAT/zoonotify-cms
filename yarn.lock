@@ -3106,10 +3106,10 @@
     yup "0.32.9"
     zod "3.25.76"
 
-"@strapi/provider-email-nodemailer@5.52.3":
-  version "5.52.3"
-  resolved "https://registry.yarnpkg.com/@strapi/provider-email-nodemailer/-/provider-email-nodemailer-5.52.3.tgz#db2a90486ba13acc38901dba028186ab5085a0ea"
-  integrity sha512-IsUYeHsOLARO5oKIh493Ap/bXTi038Wr5n6epJflg2i7Owiled7v84PEFvt42L5y4vdIrybq0qsdHU+vwE2ycw==
+"@strapi/provider-email-nodemailer@5.53.0":
+  version "5.53.0"
+  resolved "https://registry.yarnpkg.com/@strapi/provider-email-nodemailer/-/provider-email-nodemailer-5.53.0.tgz#6f3d808890543540f70c134fdac6d54d85de59bc"
+  integrity sha512-LvTpJo2AqXVBKDc2RLt8Hq8lhWjesj5hMFhKfj27ZNNn4lHFCB7LLoRRsL1DS4oLFWIKrq4bAB8iXy6fc1IVqQ==
   dependencies:
     nodemailer "9.0.1"
 
