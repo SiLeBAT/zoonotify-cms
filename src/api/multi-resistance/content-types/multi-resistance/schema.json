@@ -1,11 +1,11 @@
 {
   "kind": "collectionType",
-  "collectionName": "resistances",
+  "collectionName": "multi_resistances",
   "info": {
-    "singularName": "resistance",
-    "pluralName": "resistances",
-    "displayName": "Resistance",
-    "description": ""
+    "singularName": "multi-resistance",
+    "pluralName": "multi-resistances",
+    "displayName": "Multi-resistance",
+    "description": "Isolate counts per resistance group (susceptible, 1x ... >4x resistant) for one combination and sampling year"
   },
   "options": {
     "draftAndPublish": false
@@ -25,79 +25,67 @@
       },
       "private": true
     },
-    "matrix": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::matrix.matrix"
-    },
-    "matrixGroup": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::matrix-group.matrix-group"
-    },
     "microorganism": {
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::microorganism.microorganism"
-    },
-    "sampleType": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::sample-type.sample-type"
-    },
-    "samplingStage": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::sampling-stage.sampling-stage"
-    },
-    "sampleOrigin": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::sample-origin.sample-origin"
-    },
-    "antimicrobialSubstance": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::antimicrobial-substance.antimicrobial-substance"
     },
     "specie": {
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::specie.specie"
     },
-    "anzahlGetesteterIsolate": {
-      "type": "integer",
-      "required": true
-    },
-    "anzahlResistenterIsolate": {
-      "type": "integer",
-      "required": true
-    },
-    "resistenzrate": {
-      "type": "float",
-      "required": true
-    },
-    "minKonfidenzintervall": {
-      "type": "float",
-      "required": true
-    },
-    "maxKonfidenzintervall": {
-      "type": "float",
-      "required": true
-    },
-    "samplingYear": {
-      "type": "integer",
-      "required": true
-    },
     "superCategorySampleOrigin": {
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::super-category-sample-origin.super-category-sample-origin"
     },
+    "sampleOrigin": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::sample-origin.sample-origin"
+    },
+    "samplingStage": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::sampling-stage.sampling-stage"
+    },
+    "matrixGroup": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::matrix-group.matrix-group"
+    },
+    "matrix": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::matrix.matrix"
+    },
+    "matrixDetail": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::matrix-detail.matrix-detail"
+    },
+    "samplingYear": {
+      "type": "integer",
+      "required": true
+    },
+    "resistanceGroup": {
+      "type": "integer",
+      "required": true,
+      "min": 0,
+      "max": 5
+    },
+    "anzahlIsolate": {
+      "type": "integer",
+      "required": true
+    },
+    "anzahlGetesteterIsolate": {
+      "type": "integer",
+      "required": true
+    },
     "dbId": {
       "type": "string",
       "required": true,
-      "unique": true,
       "private": true,
       "pluginOptions": {
         "i18n": {

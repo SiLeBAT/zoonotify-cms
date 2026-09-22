@@ -14,7 +14,7 @@ export class UnknownCollectionError extends Error {
 }
 
 /**
- * The 12 xlsx-managed collections, the only ones the Import CLI may wipe and
+ * The 13 xlsx-managed collections, the only ones the Import CLI may wipe and
  * refill. `matrix-detail` is the sole flat (non-i18n) collection; every other
  * collection is localized and follows the `{ en, de? }` row shape.
  * See CONTEXT.md § xlsx-managed collection and ADR 0003.
@@ -38,6 +38,7 @@ const ALLOW_LIST: Record<string, ResolvedCollection> = {
   'sampling-stage': { uid: 'api::sampling-stage.sampling-stage', localized: true },
   resistance: { uid: 'api::resistance.resistance', localized: true },
   prevalence: { uid: 'api::prevalence.prevalence', localized: true },
+  'multi-resistance': { uid: 'api::multi-resistance.multi-resistance', localized: true },
 };
 
 export function resolveCollection(name: string): ResolvedCollection {

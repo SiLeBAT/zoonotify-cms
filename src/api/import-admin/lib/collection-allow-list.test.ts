@@ -1,5 +1,23 @@
 import { describe, it, expect } from 'vitest';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { resolveCollection, UnknownCollectionError } from './collection-allow-list';
+
+const XLSX_MANAGED = [
+  ['matrix', 'api::matrix.matrix', true],
+  ['matrix-group', 'api::matrix-group.matrix-group', true],
+  ['matrix-detail', 'api::matrix-detail.matrix-detail', false],
+  ['microorganism', 'api::microorganism.microorganism', true],
+  ['specie', 'api::specie.specie', true],
+  ['antimicrobial-substance', 'api::antimicrobial-substance.antimicrobial-substance', true],
+  ['sample-type', 'api::sample-type.sample-type', true],
+  ['sample-origin', 'api::sample-origin.sample-origin', true],
+  ['super-category-sample-origin', 'api::super-category-sample-origin.super-category-sample-origin', true],
+  ['sampling-stage', 'api::sampling-stage.sampling-stage', true],
+  ['resistance', 'api::resistance.resistance', true],
+  ['prevalence', 'api::prevalence.prevalence', true],
+  ['multi-resistance', 'api::multi-resistance.multi-resistance', true],
+] as const;
 
 describe('resolveCollection', () => {
   it('resolves a localized xlsx-managed collection to its UID', () => {
@@ -27,20 +45,18 @@ describe('resolveCollection', () => {
     },
   );
 
-  it.each([
-    ['matrix', 'api::matrix.matrix', true],
-    ['matrix-group', 'api::matrix-group.matrix-group', true],
-    ['matrix-detail', 'api::matrix-detail.matrix-detail', false],
-    ['microorganism', 'api::microorganism.microorganism', true],
-    ['specie', 'api::specie.specie', true],
-    ['antimicrobial-substance', 'api::antimicrobial-substance.antimicrobial-substance', true],
-    ['sample-type', 'api::sample-type.sample-type', true],
-    ['sample-origin', 'api::sample-origin.sample-origin', true],
-    ['super-category-sample-origin', 'api::super-category-sample-origin.super-category-sample-origin', true],
-    ['sampling-stage', 'api::sampling-stage.sampling-stage', true],
-    ['resistance', 'api::resistance.resistance', true],
-    ['prevalence', 'api::prevalence.prevalence', true],
-  ] as const)('resolves xlsx-managed collection %s', (name, uid, localized) => {
+  it.each(XLSX_MANAGED)('resolves xlsx-managed collection %s', (name, uid, localized) => {
     expect(resolveCollection(name)).toEqual({ uid, localized });
   });
+
+  // The allow-list's `localized` flag decides the `{ en, de? }` row shape the
+  // import accepts, so it must agree with the content type's own i18n setting.
+  it.each(XLSX_MANAGED)(
+    'allow-listed %s matches its content-type schema i18n setting',
+    (name, _uid, localized) => {
+      const schemaPath = join(__dirname, '..', '..', name, 'content-types', name, 'schema.json');
+      const schema = JSON.parse(readFileSync(schemaPath, 'utf-8'));
+      expect(schema.pluginOptions?.i18n?.localized ?? false).toBe(localized);
+    },
+  );
 });

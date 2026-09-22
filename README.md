@@ -27,7 +27,7 @@ CLI (see `/docs/import-cli-spec/adr/0003-cms-import-admin-api.md`):
 `<prefix>` is the configured Strapi REST prefix (`/api` by default — confirm the
 exact URL against the deployed instance).
 
-Both endpoints accept only the 12 xlsx-managed collections; any other
+Both endpoints accept only the 13 xlsx-managed collections; any other
 `collection` value returns 400.
 
 ### Post-deploy operator step — generate the Import API token
@@ -70,3 +70,22 @@ curl -i -X POST "$STRAPI_URL/api/import-admin/bulk-create" \
   -d '{"collection":"microorganism","rows":[{"en":{"name":"Salmonella"},"de":{"name":"Salmonellen"}}]}'
 ```
 
+
+## Public read permissions
+
+Strapi keeps role permissions in the database, not in code, so a new content
+type is **not** readable by the client until an operator grants it on each
+environment (local, QA, prod) after the deploy that introduces it:
+
+1. Open the Strapi admin panel → **Settings → Users & Permissions plugin →
+   Roles → Public**.
+2. Tick **`find` only** for the content type. Leave `findOne`, `create`,
+   `update` and `delete` unchecked.
+3. Save, then check `GET <prefix>/<plural-name>` returns 200 without a token.
+
+Types that need this grant:
+
+| Content type | Kind | Endpoint |
+|---|---|---|
+| `multi-resistance` | collection | `GET <prefix>/multi-resistances` |
+| `multi-resistance-information` | single type | `GET <prefix>/multi-resistance-information` |
