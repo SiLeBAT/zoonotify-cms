@@ -5,7 +5,7 @@
     "singularName": "multi-resistance",
     "pluralName": "multi-resistances",
     "displayName": "Multi-resistance",
-    "description": "Isolate counts per resistance group (susceptible, 1x ... >4x resistant) for one combination and sampling year"
+    "description": "Isolate counts per resistance group for one combination and sampling year. Codes: 0 susceptible, 1-4 = n x, 5 = >4x, 6-9 = 5x-8x, 10 = >8x (MRSA scheme)"
   },
   "options": {
     "draftAndPublish": false
@@ -73,7 +73,7 @@
       "type": "integer",
       "required": true,
       "min": 0,
-      "max": 5
+      "max": 10
     },
     "anzahlIsolate": {
       "type": "integer",
