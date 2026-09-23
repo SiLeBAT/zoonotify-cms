@@ -13,7 +13,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@strapi/plugin-documentation": "5.53.0",
+    "@strapi/plugin-documentation": "5.54.0",
     "@strapi/plugin-users-permissions": "5.52.1",
     "@strapi/provider-email-nodemailer": "5.53.0",
     "@strapi/strapi": "5.53.0",
