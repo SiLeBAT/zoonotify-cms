@@ -19,6 +19,10 @@ fi
 
 "$HOME/.yarn/bin/yarn" install --frozen-lockfile
 "$HOME/.yarn/bin/yarn" build
-./node_modules/.bin/pm2 stop all
+# delete, not stop: the PM2 daemon survives `killall node` (its process title
+# is "PM2 vX: God Daemon"), and `pm2 start` on a merely stopped app restarts it
+# with the env cached at first registration, silently ignoring changes to the
+# ecosystem file's `env` block.
+./node_modules/.bin/pm2 delete all || true
 killall node || true
 ./node_modules/.bin/pm2 start "$(dirname "$0")/ecosystem.config.js"
