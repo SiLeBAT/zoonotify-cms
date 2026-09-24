@@ -3,7 +3,19 @@ set -euo pipefail
 
 PATH=$PATH:~/bin
 source ~/.bashrc
-source ~/.nvm/nvm.sh
+# --no-use: a plain source switches to nvm's `default` alias, silently undoing
+# whatever version the caller selected. Pick the version from .nvmrc instead.
+# nvm is not errexit/nounset-safe, so relax both around it and check the result.
+set +eu
+source ~/.nvm/nvm.sh --no-use
+nvm install
+nvm use
+nvm_status=$?
+set -eu
+if [ "$nvm_status" -ne 0 ] || [ "$(node --version)" != "v$(cat .nvmrc)" ]; then
+  echo "ERROR: expected Node v$(cat .nvmrc), got $(node --version 2>&1)" >&2
+  exit 1
+fi
 
 # Ensure persistent uploads symlink (idempotent)
 mkdir -p "$HOME/strapi-uploads"
