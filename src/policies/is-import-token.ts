@@ -18,7 +18,9 @@
 export default (policyContext: any, _config: unknown, { strapi }: { strapi: any }): boolean => {
   const auth = policyContext.state?.auth;
 
-  if (!auth || auth.strategy?.name !== 'api-token') {
+  // Strapi renamed this strategy from `api-token` (5.10) to `content-api-token`;
+  // matching the old name made every Import call fail with `403 Policy Failed`.
+  if (!auth || auth.strategy?.name !== 'content-api-token') {
     return false;
   }
 
