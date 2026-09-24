@@ -14,6 +14,12 @@ module.exports = {
         interpreter: `node@${nodeVersion}`,
         env: {
             NODE_ENV: "production",
+            // Strapi's admin sessions store an absolute expiresAt. With the
+            // process on server-local time (CEST) the value round-trips
+            // through the DB shifted by the UTC offset; a non-"remember me"
+            // session (2h idle lifespan) then reads back as already expired
+            // and every login bounces to the login screen.
+            TZ: "UTC",
           }
       },
     ],
