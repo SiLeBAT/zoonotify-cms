@@ -1,0 +1,3857 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Zoonotify Public Data API",
+    "version": "1.0.0",
+    "description": "Read-only, anonymous access to the zoonoses surveillance data published on\n[Zoonotify](https://zoonotify.bfr.berlin), plus the reference vocabularies needed to\ninterpret it. No authentication is required.\n\nOnly the collections, fields and query parameters described here are supported.\nAnything else the server happens to answer is unsupported and may change or disappear\nwithout notice.\n\nThe API is versioned independently of the Zoonotify site. A new major version may\nbreak existing scripts; minor versions only add.\n\nMost collections hold records in English (`en`, the default) and German (`de`); pick one\nwith the `locale` parameter. The same `documentId` names a record in both languages.\nCollections without a `locale` parameter exist in one language only.",
+    "contact": {
+      "name": "BfR",
+      "url": "https://zoonotify.bfr.berlin"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://zoonotify.bfr.berlin/cms/api"
+    }
+  ],
+  "security": [],
+  "tags": [
+    {
+      "name": "Surveillance data",
+      "description": "Prevalence and antimicrobial-resistance results from German zoonoses monitoring."
+    },
+    {
+      "name": "Reference vocabularies",
+      "description": "Controlled lists of terms that surveillance records point to. Use them to find valid filter values."
+    }
+  ],
+  "paths": {
+    "/prevalences": {
+      "get": {
+        "tags": [
+          "Surveillance data"
+        ],
+        "operationId": "findPrevalences",
+        "summary": "List Prevalence records",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/filters"
+          },
+          {
+            "$ref": "#/components/parameters/sort"
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "description": "Return only these attributes (`id` and `documentId` are always returned). Repeat the parameter for several.",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "samplingYear",
+                  "numberOfSamples",
+                  "numberOfPositive",
+                  "percentageOfPositive",
+                  "ciMin",
+                  "ciMax",
+                  "createdAt",
+                  "updatedAt",
+                  "publishedAt",
+                  "locale"
+                ]
+              }
+            }
+          },
+          {
+            "name": "populate",
+            "in": "query",
+            "description": "Embed these relations or components, which are omitted by default. Only the names listed here are supported; `*` and nested (deep) populate are not part of the Public Data API.",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "matrix",
+                  "microorganism",
+                  "samplingStage",
+                  "matrixGroup",
+                  "superCategorySampleOrigin",
+                  "sampleOrigin"
+                ]
+              }
+            }
+          },
+          {
+            "$ref": "#/components/parameters/locale"
+          },
+          {
+            "$ref": "#/components/parameters/paginationPage"
+          },
+          {
+            "$ref": "#/components/parameters/paginationPageSize"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PrevalenceListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/prevalences/{documentId}": {
+      "get": {
+        "tags": [
+          "Surveillance data"
+        ],
+        "operationId": "findOnePrevalence",
+        "summary": "Get one Prevalence record",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/documentId"
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "description": "Return only these attributes (`id` and `documentId` are always returned). Repeat the parameter for several.",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "samplingYear",
+                  "numberOfSamples",
+                  "numberOfPositive",
+                  "percentageOfPositive",
+                  "ciMin",
+                  "ciMax",
+                  "createdAt",
+                  "updatedAt",
+                  "publishedAt",
+                  "locale"
+                ]
+              }
+            }
+          },
+          {
+            "name": "populate",
+            "in": "query",
+            "description": "Embed these relations or components, which are omitted by default. Only the names listed here are supported; `*` and nested (deep) populate are not part of the Public Data API.",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "matrix",
+                  "microorganism",
+                  "samplingStage",
+                  "matrixGroup",
+                  "superCategorySampleOrigin",
+                  "sampleOrigin"
+                ]
+              }
+            }
+          },
+          {
+            "$ref": "#/components/parameters/locale"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PrevalenceResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/resistances": {
+      "get": {
+        "tags": [
+          "Surveillance data"
+        ],
+        "operationId": "findResistances",
+        "summary": "List Resistance records",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/filters"
+          },
+          {
+            "$ref": "#/components/parameters/sort"
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "description": "Return only these attributes (`id` and `documentId` are always returned). Repeat the parameter for several.",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "anzahlGetesteterIsolate",
+                  "anzahlResistenterIsolate",
+                  "resistenzrate",
+                  "minKonfidenzintervall",
+                  "maxKonfidenzintervall",
+                  "samplingYear",
+                  "createdAt",
+                  "updatedAt",
+                  "publishedAt",
+                  "locale"
+                ]
+              }
+            }
+          },
+          {
+            "name": "populate",
+            "in": "query",
+            "description": "Embed these relations or components, which are omitted by default. Only the names listed here are supported; `*` and nested (deep) populate are not part of the Public Data API.",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "matrix",
+                  "matrixGroup",
+                  "microorganism",
+                  "sampleType",
+                  "samplingStage",
+                  "sampleOrigin",
+                  "antimicrobialSubstance",
+                  "specie",
+                  "superCategorySampleOrigin"
+                ]
+              }
+            }
+          },
+          {
+            "$ref": "#/components/parameters/locale"
+          },
+          {
+            "$ref": "#/components/parameters/paginationPage"
+          },
+          {
+            "$ref": "#/components/parameters/paginationPageSize"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResistanceListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/resistances/{documentId}": {
+      "get": {
+        "tags": [
+          "Surveillance data"
+        ],
+        "operationId": "findOneResistance",
+        "summary": "Get one Resistance record",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/documentId"
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "description": "Return only these attributes (`id` and `documentId` are always returned). Repeat the parameter for several.",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "anzahlGetesteterIsolate",
+                  "anzahlResistenterIsolate",
+                  "resistenzrate",
+                  "minKonfidenzintervall",
+                  "maxKonfidenzintervall",
+                  "samplingYear",
+                  "createdAt",
+                  "updatedAt",
+                  "publishedAt",
+                  "locale"
+                ]
+              }
+            }
+          },
+          {
+            "name": "populate",
+            "in": "query",
+            "description": "Embed these relations or components, which are omitted by default. Only the names listed here are supported; `*` and nested (deep) populate are not part of the Public Data API.",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "matrix",
+                  "matrixGroup",
+                  "microorganism",
+                  "sampleType",
+                  "samplingStage",
+                  "sampleOrigin",
+                  "antimicrobialSubstance",
+                  "specie",
+                  "superCategorySampleOrigin"
+                ]
+              }
+            }
+          },
+          {
+            "$ref": "#/components/parameters/locale"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResistanceResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/multi-resistances": {
+      "get": {
+        "tags": [
+          "Surveillance data"
+        ],
+        "operationId": "findMultiResistances",
+        "summary": "List Multi-resistance records",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/filters"
+          },
+          {
+            "$ref": "#/components/parameters/sort"
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "description": "Return only these attributes (`id` and `documentId` are always returned). Repeat the parameter for several.",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "samplingYear",
+                  "resistanceGroup",
+                  "anzahlIsolate",
+                  "anzahlGetesteterIsolate",
+                  "createdAt",
+                  "updatedAt",
+                  "publishedAt",
+                  "locale"
+                ]
+              }
+            }
+          },
+          {
+            "name": "populate",
+            "in": "query",
+            "description": "Embed these relations or components, which are omitted by default. Only the names listed here are supported; `*` and nested (deep) populate are not part of the Public Data API.",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "microorganism",
+                  "specie",
+                  "superCategorySampleOrigin",
+                  "sampleOrigin",
+                  "samplingStage",
+                  "matrixGroup",
+                  "matrix",
+                  "matrixDetail"
+                ]
+              }
+            }
+          },
+          {
+            "$ref": "#/components/parameters/locale"
+          },
+          {
+            "$ref": "#/components/parameters/paginationPage"
+          },
+          {
+            "$ref": "#/components/parameters/paginationPageSize"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MultiResistanceListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/multi-resistances/{documentId}": {
+      "get": {
+        "tags": [
+          "Surveillance data"
+        ],
+        "operationId": "findOneMultiResistance",
+        "summary": "Get one Multi-resistance record",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/documentId"
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "description": "Return only these attributes (`id` and `documentId` are always returned). Repeat the parameter for several.",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "samplingYear",
+                  "resistanceGroup",
+                  "anzahlIsolate",
+                  "anzahlGetesteterIsolate",
+                  "createdAt",
+                  "updatedAt",
+                  "publishedAt",
+                  "locale"
+                ]
+              }
+            }
+          },
+          {
+            "name": "populate",
+            "in": "query",
+            "description": "Embed these relations or components, which are omitted by default. Only the names listed here are supported; `*` and nested (deep) populate are not part of the Public Data API.",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "microorganism",
+                  "specie",
+                  "superCategorySampleOrigin",
+                  "sampleOrigin",
+                  "samplingStage",
+                  "matrixGroup",
+                  "matrix",
+                  "matrixDetail"
+                ]
+              }
+            }
+          },
+          {
+            "$ref": "#/components/parameters/locale"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MultiResistanceResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/microorganisms": {
+      "get": {
+        "tags": [
+          "Reference vocabularies"
+        ],
+        "operationId": "findMicroorganisms",
+        "summary": "List MD Microorganism records",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/filters"
+          },
+          {
+            "$ref": "#/components/parameters/sort"
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "description": "Return only these attributes (`id` and `documentId` are always returned). Repeat the parameter for several.",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "name",
+                  "iri",
+                  "createdAt",
+                  "updatedAt",
+                  "publishedAt",
+                  "locale"
+                ]
+              }
+            }
+          },
+          {
+            "$ref": "#/components/parameters/locale"
+          },
+          {
+            "$ref": "#/components/parameters/paginationPage"
+          },
+          {
+            "$ref": "#/components/parameters/paginationPageSize"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MicroorganismListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/microorganisms/{documentId}": {
+      "get": {
+        "tags": [
+          "Reference vocabularies"
+        ],
+        "operationId": "findOneMicroorganism",
+        "summary": "Get one MD Microorganism record",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/documentId"
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "description": "Return only these attributes (`id` and `documentId` are always returned). Repeat the parameter for several.",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "name",
+                  "iri",
+                  "createdAt",
+                  "updatedAt",
+                  "publishedAt",
+                  "locale"
+                ]
+              }
+            }
+          },
+          {
+            "$ref": "#/components/parameters/locale"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MicroorganismResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/matrices": {
+      "get": {
+        "tags": [
+          "Reference vocabularies"
+        ],
+        "operationId": "findMatrices",
+        "summary": "List MD Matrix records",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/filters"
+          },
+          {
+            "$ref": "#/components/parameters/sort"
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "description": "Return only these attributes (`id` and `documentId` are always returned). Repeat the parameter for several.",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "name",
+                  "iri",
+                  "createdAt",
+                  "updatedAt",
+                  "publishedAt",
+                  "locale"
+                ]
+              }
+            }
+          },
+          {
+            "$ref": "#/components/parameters/locale"
+          },
+          {
+            "$ref": "#/components/parameters/paginationPage"
+          },
+          {
+            "$ref": "#/components/parameters/paginationPageSize"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MatrixListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/matrices/{documentId}": {
+      "get": {
+        "tags": [
+          "Reference vocabularies"
+        ],
+        "operationId": "findOneMatrix",
+        "summary": "Get one MD Matrix record",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/documentId"
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "description": "Return only these attributes (`id` and `documentId` are always returned). Repeat the parameter for several.",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "name",
+                  "iri",
+                  "createdAt",
+                  "updatedAt",
+                  "publishedAt",
+                  "locale"
+                ]
+              }
+            }
+          },
+          {
+            "$ref": "#/components/parameters/locale"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MatrixResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/matrix-groups": {
+      "get": {
+        "tags": [
+          "Reference vocabularies"
+        ],
+        "operationId": "findMatrixGroups",
+        "summary": "List MD Matrix Group records",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/filters"
+          },
+          {
+            "$ref": "#/components/parameters/sort"
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "description": "Return only these attributes (`id` and `documentId` are always returned). Repeat the parameter for several.",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "name",
+                  "iri",
+                  "createdAt",
+                  "updatedAt",
+                  "publishedAt",
+                  "locale"
+                ]
+              }
+            }
+          },
+          {
+            "$ref": "#/components/parameters/locale"
+          },
+          {
+            "$ref": "#/components/parameters/paginationPage"
+          },
+          {
+            "$ref": "#/components/parameters/paginationPageSize"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MatrixGroupListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/matrix-groups/{documentId}": {
+      "get": {
+        "tags": [
+          "Reference vocabularies"
+        ],
+        "operationId": "findOneMatrixGroup",
+        "summary": "Get one MD Matrix Group record",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/documentId"
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "description": "Return only these attributes (`id` and `documentId` are always returned). Repeat the parameter for several.",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "name",
+                  "iri",
+                  "createdAt",
+                  "updatedAt",
+                  "publishedAt",
+                  "locale"
+                ]
+              }
+            }
+          },
+          {
+            "$ref": "#/components/parameters/locale"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MatrixGroupResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/matrix-details": {
+      "get": {
+        "tags": [
+          "Reference vocabularies"
+        ],
+        "operationId": "findMatrixDetails",
+        "summary": "List MD Matrix Detail records",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/filters"
+          },
+          {
+            "$ref": "#/components/parameters/sort"
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "description": "Return only these attributes (`id` and `documentId` are always returned). Repeat the parameter for several.",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "name",
+                  "iri",
+                  "createdAt",
+                  "updatedAt",
+                  "publishedAt"
+                ]
+              }
+            }
+          },
+          {
+            "$ref": "#/components/parameters/paginationPage"
+          },
+          {
+            "$ref": "#/components/parameters/paginationPageSize"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MatrixDetailListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/matrix-details/{documentId}": {
+      "get": {
+        "tags": [
+          "Reference vocabularies"
+        ],
+        "operationId": "findOneMatrixDetail",
+        "summary": "Get one MD Matrix Detail record",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/documentId"
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "description": "Return only these attributes (`id` and `documentId` are always returned). Repeat the parameter for several.",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "name",
+                  "iri",
+                  "createdAt",
+                  "updatedAt",
+                  "publishedAt"
+                ]
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MatrixDetailResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/sample-origins": {
+      "get": {
+        "tags": [
+          "Reference vocabularies"
+        ],
+        "operationId": "findSampleOrigins",
+        "summary": "List MD Sample Origin records",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/filters"
+          },
+          {
+            "$ref": "#/components/parameters/sort"
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "description": "Return only these attributes (`id` and `documentId` are always returned). Repeat the parameter for several.",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "name",
+                  "iri",
+                  "createdAt",
+                  "updatedAt",
+                  "publishedAt",
+                  "locale"
+                ]
+              }
+            }
+          },
+          {
+            "$ref": "#/components/parameters/locale"
+          },
+          {
+            "$ref": "#/components/parameters/paginationPage"
+          },
+          {
+            "$ref": "#/components/parameters/paginationPageSize"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SampleOriginListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/sample-origins/{documentId}": {
+      "get": {
+        "tags": [
+          "Reference vocabularies"
+        ],
+        "operationId": "findOneSampleOrigin",
+        "summary": "Get one MD Sample Origin record",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/documentId"
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "description": "Return only these attributes (`id` and `documentId` are always returned). Repeat the parameter for several.",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "name",
+                  "iri",
+                  "createdAt",
+                  "updatedAt",
+                  "publishedAt",
+                  "locale"
+                ]
+              }
+            }
+          },
+          {
+            "$ref": "#/components/parameters/locale"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SampleOriginResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/super-category-sample-origins": {
+      "get": {
+        "tags": [
+          "Reference vocabularies"
+        ],
+        "operationId": "findSuperCategorySampleOrigins",
+        "summary": "List MD Super Category Sample Origin records",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/filters"
+          },
+          {
+            "$ref": "#/components/parameters/sort"
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "description": "Return only these attributes (`id` and `documentId` are always returned). Repeat the parameter for several.",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "name",
+                  "iri",
+                  "createdAt",
+                  "updatedAt",
+                  "publishedAt",
+                  "locale"
+                ]
+              }
+            }
+          },
+          {
+            "$ref": "#/components/parameters/locale"
+          },
+          {
+            "$ref": "#/components/parameters/paginationPage"
+          },
+          {
+            "$ref": "#/components/parameters/paginationPageSize"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuperCategorySampleOriginListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/super-category-sample-origins/{documentId}": {
+      "get": {
+        "tags": [
+          "Reference vocabularies"
+        ],
+        "operationId": "findOneSuperCategorySampleOrigin",
+        "summary": "Get one MD Super Category Sample Origin record",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/documentId"
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "description": "Return only these attributes (`id` and `documentId` are always returned). Repeat the parameter for several.",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "name",
+                  "iri",
+                  "createdAt",
+                  "updatedAt",
+                  "publishedAt",
+                  "locale"
+                ]
+              }
+            }
+          },
+          {
+            "$ref": "#/components/parameters/locale"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuperCategorySampleOriginResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/sampling-stages": {
+      "get": {
+        "tags": [
+          "Reference vocabularies"
+        ],
+        "operationId": "findSamplingStages",
+        "summary": "List MD Sampling Stage records",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/filters"
+          },
+          {
+            "$ref": "#/components/parameters/sort"
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "description": "Return only these attributes (`id` and `documentId` are always returned). Repeat the parameter for several.",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "name",
+                  "iri",
+                  "createdAt",
+                  "updatedAt",
+                  "publishedAt",
+                  "locale"
+                ]
+              }
+            }
+          },
+          {
+            "$ref": "#/components/parameters/locale"
+          },
+          {
+            "$ref": "#/components/parameters/paginationPage"
+          },
+          {
+            "$ref": "#/components/parameters/paginationPageSize"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SamplingStageListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/sampling-stages/{documentId}": {
+      "get": {
+        "tags": [
+          "Reference vocabularies"
+        ],
+        "operationId": "findOneSamplingStage",
+        "summary": "Get one MD Sampling Stage record",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/documentId"
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "description": "Return only these attributes (`id` and `documentId` are always returned). Repeat the parameter for several.",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "name",
+                  "iri",
+                  "createdAt",
+                  "updatedAt",
+                  "publishedAt",
+                  "locale"
+                ]
+              }
+            }
+          },
+          {
+            "$ref": "#/components/parameters/locale"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SamplingStageResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/sample-types": {
+      "get": {
+        "tags": [
+          "Reference vocabularies"
+        ],
+        "operationId": "findSampleTypes",
+        "summary": "List MD Sample Type records",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/filters"
+          },
+          {
+            "$ref": "#/components/parameters/sort"
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "description": "Return only these attributes (`id` and `documentId` are always returned). Repeat the parameter for several.",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "name",
+                  "iri",
+                  "createdAt",
+                  "updatedAt",
+                  "publishedAt",
+                  "locale"
+                ]
+              }
+            }
+          },
+          {
+            "$ref": "#/components/parameters/locale"
+          },
+          {
+            "$ref": "#/components/parameters/paginationPage"
+          },
+          {
+            "$ref": "#/components/parameters/paginationPageSize"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SampleTypeListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/sample-types/{documentId}": {
+      "get": {
+        "tags": [
+          "Reference vocabularies"
+        ],
+        "operationId": "findOneSampleType",
+        "summary": "Get one MD Sample Type record",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/documentId"
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "description": "Return only these attributes (`id` and `documentId` are always returned). Repeat the parameter for several.",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "name",
+                  "iri",
+                  "createdAt",
+                  "updatedAt",
+                  "publishedAt",
+                  "locale"
+                ]
+              }
+            }
+          },
+          {
+            "$ref": "#/components/parameters/locale"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SampleTypeResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/species": {
+      "get": {
+        "tags": [
+          "Reference vocabularies"
+        ],
+        "operationId": "findSpecies",
+        "summary": "List MD Specie records",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/filters"
+          },
+          {
+            "$ref": "#/components/parameters/sort"
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "description": "Return only these attributes (`id` and `documentId` are always returned). Repeat the parameter for several.",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "name",
+                  "createdAt",
+                  "updatedAt",
+                  "publishedAt",
+                  "locale"
+                ]
+              }
+            }
+          },
+          {
+            "$ref": "#/components/parameters/locale"
+          },
+          {
+            "$ref": "#/components/parameters/paginationPage"
+          },
+          {
+            "$ref": "#/components/parameters/paginationPageSize"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SpecieListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/species/{documentId}": {
+      "get": {
+        "tags": [
+          "Reference vocabularies"
+        ],
+        "operationId": "findOneSpecie",
+        "summary": "Get one MD Specie record",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/documentId"
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "description": "Return only these attributes (`id` and `documentId` are always returned). Repeat the parameter for several.",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "name",
+                  "createdAt",
+                  "updatedAt",
+                  "publishedAt",
+                  "locale"
+                ]
+              }
+            }
+          },
+          {
+            "$ref": "#/components/parameters/locale"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SpecieResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/antimicrobial-substances": {
+      "get": {
+        "tags": [
+          "Reference vocabularies"
+        ],
+        "operationId": "findAntimicrobialSubstances",
+        "summary": "List MD Antimicrobial Substance records",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/filters"
+          },
+          {
+            "$ref": "#/components/parameters/sort"
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "description": "Return only these attributes (`id` and `documentId` are always returned). Repeat the parameter for several.",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "name",
+                  "createdAt",
+                  "updatedAt",
+                  "publishedAt",
+                  "locale"
+                ]
+              }
+            }
+          },
+          {
+            "$ref": "#/components/parameters/locale"
+          },
+          {
+            "$ref": "#/components/parameters/paginationPage"
+          },
+          {
+            "$ref": "#/components/parameters/paginationPageSize"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AntimicrobialSubstanceListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/antimicrobial-substances/{documentId}": {
+      "get": {
+        "tags": [
+          "Reference vocabularies"
+        ],
+        "operationId": "findOneAntimicrobialSubstance",
+        "summary": "Get one MD Antimicrobial Substance record",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/documentId"
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "description": "Return only these attributes (`id` and `documentId` are always returned). Repeat the parameter for several.",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "name",
+                  "createdAt",
+                  "updatedAt",
+                  "publishedAt",
+                  "locale"
+                ]
+              }
+            }
+          },
+          {
+            "$ref": "#/components/parameters/locale"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AntimicrobialSubstanceResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/antibiotics": {
+      "get": {
+        "tags": [
+          "Reference vocabularies"
+        ],
+        "operationId": "findAntibiotics",
+        "summary": "List MD Antibiotic records",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/filters"
+          },
+          {
+            "$ref": "#/components/parameters/sort"
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "description": "Return only these attributes (`id` and `documentId` are always returned). Repeat the parameter for several.",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "name",
+                  "shortName",
+                  "createdAt",
+                  "updatedAt",
+                  "publishedAt"
+                ]
+              }
+            }
+          },
+          {
+            "$ref": "#/components/parameters/paginationPage"
+          },
+          {
+            "$ref": "#/components/parameters/paginationPageSize"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AntibioticListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/antibiotics/{documentId}": {
+      "get": {
+        "tags": [
+          "Reference vocabularies"
+        ],
+        "operationId": "findOneAntibiotic",
+        "summary": "Get one MD Antibiotic record",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/documentId"
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "description": "Return only these attributes (`id` and `documentId` are always returned). Repeat the parameter for several.",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "name",
+                  "shortName",
+                  "createdAt",
+                  "updatedAt",
+                  "publishedAt"
+                ]
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AntibioticResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/resistance-tables": {
+      "get": {
+        "tags": [
+          "Reference vocabularies"
+        ],
+        "operationId": "findResistanceTables",
+        "summary": "List AMR Cutoff Table records",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/filters"
+          },
+          {
+            "$ref": "#/components/parameters/sort"
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "description": "Return only these attributes (`id` and `documentId` are always returned). Repeat the parameter for several.",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "table_id",
+                  "description",
+                  "title",
+                  "createdAt",
+                  "updatedAt",
+                  "publishedAt",
+                  "locale"
+                ]
+              }
+            }
+          },
+          {
+            "name": "populate",
+            "in": "query",
+            "description": "Embed these relations or components, which are omitted by default. Only the names listed here are supported; `*` and nested (deep) populate are not part of the Public Data API.",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "cut_offs"
+                ]
+              }
+            }
+          },
+          {
+            "$ref": "#/components/parameters/locale"
+          },
+          {
+            "$ref": "#/components/parameters/paginationPage"
+          },
+          {
+            "$ref": "#/components/parameters/paginationPageSize"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResistanceTableListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/resistance-tables/{documentId}": {
+      "get": {
+        "tags": [
+          "Reference vocabularies"
+        ],
+        "operationId": "findOneResistanceTable",
+        "summary": "Get one AMR Cutoff Table record",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/documentId"
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "description": "Return only these attributes (`id` and `documentId` are always returned). Repeat the parameter for several.",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "table_id",
+                  "description",
+                  "title",
+                  "createdAt",
+                  "updatedAt",
+                  "publishedAt",
+                  "locale"
+                ]
+              }
+            }
+          },
+          {
+            "name": "populate",
+            "in": "query",
+            "description": "Embed these relations or components, which are omitted by default. Only the names listed here are supported; `*` and nested (deep) populate are not part of the Public Data API.",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "cut_offs"
+                ]
+              }
+            }
+          },
+          {
+            "$ref": "#/components/parameters/locale"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResistanceTableResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "parameters": {
+      "documentId": {
+        "name": "documentId",
+        "in": "path",
+        "required": true,
+        "description": "The record's `documentId`, as returned by the list operation.",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "filters": {
+        "name": "filters",
+        "in": "query",
+        "description": "Narrow the results, e.g. `filters[samplingYear][$eq]=2022` or `filters[microorganism][name][$eq]=Salmonella spp.`. See [Strapi's filter operators](https://docs.strapi.io/cms/api/rest/filters). An unknown field or operator returns 400.",
+        "style": "deepObject",
+        "explode": true,
+        "schema": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      },
+      "sort": {
+        "name": "sort",
+        "in": "query",
+        "description": "Sort by one or more attributes, each optionally suffixed with `:asc` or `:desc`. Repeat the parameter for several. An unknown attribute returns 400.",
+        "style": "form",
+        "explode": true,
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "example": [
+          "samplingYear:desc"
+        ]
+      },
+      "paginationPage": {
+        "name": "pagination[page]",
+        "in": "query",
+        "description": "Page number, starting at 1.",
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1
+        }
+      },
+      "paginationPageSize": {
+        "name": "pagination[pageSize]",
+        "in": "query",
+        "description": "Records per page. Larger values are silently capped at 8000; non-numeric values are ignored.",
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 8000,
+          "default": 25
+        }
+      },
+      "locale": {
+        "name": "locale",
+        "in": "query",
+        "description": "Language of the records. One `documentId` names the same record in both locales. A locale other than these returns an empty list rather than an error.",
+        "schema": {
+          "type": "string",
+          "enum": [
+            "en",
+            "de"
+          ],
+          "default": "en"
+        }
+      }
+    },
+    "responses": {
+      "BadRequest": {
+        "description": "Invalid query parameter, e.g. an unknown field in `filters`, `sort`, `fields` or `populate`.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "examples": {
+              "ValidationError": {
+                "value": {
+                  "data": null,
+                  "error": {
+                    "status": 400,
+                    "name": "ValidationError",
+                    "message": "Invalid key foo",
+                    "details": {
+                      "key": "foo",
+                      "path": "foo",
+                      "source": "query",
+                      "param": "filters"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "NotFound": {
+        "description": "No record with this `documentId` in the requested locale.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "examples": {
+              "NotFoundError": {
+                "value": {
+                  "data": null,
+                  "error": {
+                    "status": 404,
+                    "name": "NotFoundError",
+                    "message": "Not Found",
+                    "details": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "ServerError": {
+        "description": "Server error. Retry later, and report it if it persists.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "examples": {
+              "InternalServerError": {
+                "value": {
+                  "data": null,
+                  "error": {
+                    "status": 500,
+                    "name": "InternalServerError",
+                    "message": "Internal Server Error",
+                    "details": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "required": [
+          "data",
+          "error"
+        ],
+        "properties": {
+          "data": {
+            "type": "object",
+            "nullable": true,
+            "description": "Always `null`."
+          },
+          "error": {
+            "type": "object",
+            "required": [
+              "status",
+              "name",
+              "message",
+              "details"
+            ],
+            "properties": {
+              "status": {
+                "type": "integer"
+              },
+              "name": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              },
+              "details": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      },
+      "Pagination": {
+        "type": "object",
+        "required": [
+          "page",
+          "pageSize",
+          "pageCount",
+          "total"
+        ],
+        "properties": {
+          "page": {
+            "type": "integer"
+          },
+          "pageSize": {
+            "type": "integer"
+          },
+          "pageCount": {
+            "type": "integer"
+          },
+          "total": {
+            "type": "integer"
+          }
+        }
+      },
+      "Prevalence": {
+        "type": "object",
+        "required": [
+          "id",
+          "documentId"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Locale-specific row id. Prefer `documentId`."
+          },
+          "documentId": {
+            "type": "string",
+            "description": "Stable id; the same `documentId` names this record in every locale."
+          },
+          "samplingYear": {
+            "type": "integer",
+            "nullable": true
+          },
+          "numberOfSamples": {
+            "type": "integer",
+            "nullable": true
+          },
+          "numberOfPositive": {
+            "type": "integer",
+            "nullable": true
+          },
+          "percentageOfPositive": {
+            "type": "number",
+            "nullable": true
+          },
+          "ciMin": {
+            "type": "number",
+            "nullable": true
+          },
+          "ciMax": {
+            "type": "number",
+            "nullable": true
+          },
+          "matrix": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Matrix"
+              }
+            ],
+            "nullable": true,
+            "description": "Only returned when requested with `populate=matrix`."
+          },
+          "microorganism": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Microorganism"
+              }
+            ],
+            "nullable": true,
+            "description": "Only returned when requested with `populate=microorganism`."
+          },
+          "samplingStage": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SamplingStage"
+              }
+            ],
+            "nullable": true,
+            "description": "Only returned when requested with `populate=samplingStage`."
+          },
+          "matrixGroup": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MatrixGroup"
+              }
+            ],
+            "nullable": true,
+            "description": "Only returned when requested with `populate=matrixGroup`."
+          },
+          "superCategorySampleOrigin": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SuperCategorySampleOrigin"
+              }
+            ],
+            "nullable": true,
+            "description": "Only returned when requested with `populate=superCategorySampleOrigin`."
+          },
+          "sampleOrigin": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SampleOrigin"
+              }
+            ],
+            "nullable": true,
+            "description": "Only returned when requested with `populate=sampleOrigin`."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "publishedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "locale": {
+            "type": "string",
+            "enum": [
+              "en",
+              "de"
+            ]
+          }
+        }
+      },
+      "PrevalenceListResponse": {
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Prevalence"
+            }
+          },
+          "meta": {
+            "type": "object",
+            "required": [
+              "pagination"
+            ],
+            "properties": {
+              "pagination": {
+                "$ref": "#/components/schemas/Pagination"
+              }
+            }
+          }
+        }
+      },
+      "PrevalenceResponse": {
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Prevalence"
+          },
+          "meta": {
+            "type": "object"
+          }
+        }
+      },
+      "Resistance": {
+        "type": "object",
+        "required": [
+          "id",
+          "documentId"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Locale-specific row id. Prefer `documentId`."
+          },
+          "documentId": {
+            "type": "string",
+            "description": "Stable id; the same `documentId` names this record in every locale."
+          },
+          "matrix": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Matrix"
+              }
+            ],
+            "nullable": true,
+            "description": "Only returned when requested with `populate=matrix`."
+          },
+          "matrixGroup": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MatrixGroup"
+              }
+            ],
+            "nullable": true,
+            "description": "Only returned when requested with `populate=matrixGroup`."
+          },
+          "microorganism": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Microorganism"
+              }
+            ],
+            "nullable": true,
+            "description": "Only returned when requested with `populate=microorganism`."
+          },
+          "sampleType": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SampleType"
+              }
+            ],
+            "nullable": true,
+            "description": "Only returned when requested with `populate=sampleType`."
+          },
+          "samplingStage": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SamplingStage"
+              }
+            ],
+            "nullable": true,
+            "description": "Only returned when requested with `populate=samplingStage`."
+          },
+          "sampleOrigin": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SampleOrigin"
+              }
+            ],
+            "nullable": true,
+            "description": "Only returned when requested with `populate=sampleOrigin`."
+          },
+          "antimicrobialSubstance": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AntimicrobialSubstance"
+              }
+            ],
+            "nullable": true,
+            "description": "Only returned when requested with `populate=antimicrobialSubstance`."
+          },
+          "specie": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Specie"
+              }
+            ],
+            "nullable": true,
+            "description": "Only returned when requested with `populate=specie`."
+          },
+          "anzahlGetesteterIsolate": {
+            "type": "integer"
+          },
+          "anzahlResistenterIsolate": {
+            "type": "integer"
+          },
+          "resistenzrate": {
+            "type": "number"
+          },
+          "minKonfidenzintervall": {
+            "type": "number"
+          },
+          "maxKonfidenzintervall": {
+            "type": "number"
+          },
+          "samplingYear": {
+            "type": "integer"
+          },
+          "superCategorySampleOrigin": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SuperCategorySampleOrigin"
+              }
+            ],
+            "nullable": true,
+            "description": "Only returned when requested with `populate=superCategorySampleOrigin`."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "publishedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "locale": {
+            "type": "string",
+            "enum": [
+              "en",
+              "de"
+            ]
+          }
+        }
+      },
+      "ResistanceListResponse": {
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Resistance"
+            }
+          },
+          "meta": {
+            "type": "object",
+            "required": [
+              "pagination"
+            ],
+            "properties": {
+              "pagination": {
+                "$ref": "#/components/schemas/Pagination"
+              }
+            }
+          }
+        }
+      },
+      "ResistanceResponse": {
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Resistance"
+          },
+          "meta": {
+            "type": "object"
+          }
+        }
+      },
+      "MultiResistance": {
+        "type": "object",
+        "required": [
+          "id",
+          "documentId"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Locale-specific row id. Prefer `documentId`."
+          },
+          "documentId": {
+            "type": "string",
+            "description": "Stable id; the same `documentId` names this record in every locale."
+          },
+          "microorganism": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Microorganism"
+              }
+            ],
+            "nullable": true,
+            "description": "Only returned when requested with `populate=microorganism`."
+          },
+          "specie": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Specie"
+              }
+            ],
+            "nullable": true,
+            "description": "Only returned when requested with `populate=specie`."
+          },
+          "superCategorySampleOrigin": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SuperCategorySampleOrigin"
+              }
+            ],
+            "nullable": true,
+            "description": "Only returned when requested with `populate=superCategorySampleOrigin`."
+          },
+          "sampleOrigin": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SampleOrigin"
+              }
+            ],
+            "nullable": true,
+            "description": "Only returned when requested with `populate=sampleOrigin`."
+          },
+          "samplingStage": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SamplingStage"
+              }
+            ],
+            "nullable": true,
+            "description": "Only returned when requested with `populate=samplingStage`."
+          },
+          "matrixGroup": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MatrixGroup"
+              }
+            ],
+            "nullable": true,
+            "description": "Only returned when requested with `populate=matrixGroup`."
+          },
+          "matrix": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Matrix"
+              }
+            ],
+            "nullable": true,
+            "description": "Only returned when requested with `populate=matrix`."
+          },
+          "matrixDetail": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MatrixDetail"
+              }
+            ],
+            "nullable": true,
+            "description": "Only returned when requested with `populate=matrixDetail`."
+          },
+          "samplingYear": {
+            "type": "integer"
+          },
+          "resistanceGroup": {
+            "type": "integer"
+          },
+          "anzahlIsolate": {
+            "type": "integer"
+          },
+          "anzahlGetesteterIsolate": {
+            "type": "integer"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "publishedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "locale": {
+            "type": "string",
+            "enum": [
+              "en",
+              "de"
+            ]
+          }
+        }
+      },
+      "MultiResistanceListResponse": {
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MultiResistance"
+            }
+          },
+          "meta": {
+            "type": "object",
+            "required": [
+              "pagination"
+            ],
+            "properties": {
+              "pagination": {
+                "$ref": "#/components/schemas/Pagination"
+              }
+            }
+          }
+        }
+      },
+      "MultiResistanceResponse": {
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/MultiResistance"
+          },
+          "meta": {
+            "type": "object"
+          }
+        }
+      },
+      "Microorganism": {
+        "type": "object",
+        "required": [
+          "id",
+          "documentId"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Locale-specific row id. Prefer `documentId`."
+          },
+          "documentId": {
+            "type": "string",
+            "description": "Stable id; the same `documentId` names this record in every locale."
+          },
+          "name": {
+            "type": "string"
+          },
+          "iri": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "publishedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "locale": {
+            "type": "string",
+            "enum": [
+              "en",
+              "de"
+            ]
+          }
+        }
+      },
+      "MicroorganismListResponse": {
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Microorganism"
+            }
+          },
+          "meta": {
+            "type": "object",
+            "required": [
+              "pagination"
+            ],
+            "properties": {
+              "pagination": {
+                "$ref": "#/components/schemas/Pagination"
+              }
+            }
+          }
+        }
+      },
+      "MicroorganismResponse": {
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Microorganism"
+          },
+          "meta": {
+            "type": "object"
+          }
+        }
+      },
+      "Matrix": {
+        "type": "object",
+        "required": [
+          "id",
+          "documentId"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Locale-specific row id. Prefer `documentId`."
+          },
+          "documentId": {
+            "type": "string",
+            "description": "Stable id; the same `documentId` names this record in every locale."
+          },
+          "name": {
+            "type": "string"
+          },
+          "iri": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "publishedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "locale": {
+            "type": "string",
+            "enum": [
+              "en",
+              "de"
+            ]
+          }
+        }
+      },
+      "MatrixListResponse": {
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Matrix"
+            }
+          },
+          "meta": {
+            "type": "object",
+            "required": [
+              "pagination"
+            ],
+            "properties": {
+              "pagination": {
+                "$ref": "#/components/schemas/Pagination"
+              }
+            }
+          }
+        }
+      },
+      "MatrixResponse": {
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Matrix"
+          },
+          "meta": {
+            "type": "object"
+          }
+        }
+      },
+      "MatrixGroup": {
+        "type": "object",
+        "required": [
+          "id",
+          "documentId"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Locale-specific row id. Prefer `documentId`."
+          },
+          "documentId": {
+            "type": "string",
+            "description": "Stable id; the same `documentId` names this record in every locale."
+          },
+          "name": {
+            "type": "string"
+          },
+          "iri": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "publishedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "locale": {
+            "type": "string",
+            "enum": [
+              "en",
+              "de"
+            ]
+          }
+        }
+      },
+      "MatrixGroupListResponse": {
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MatrixGroup"
+            }
+          },
+          "meta": {
+            "type": "object",
+            "required": [
+              "pagination"
+            ],
+            "properties": {
+              "pagination": {
+                "$ref": "#/components/schemas/Pagination"
+              }
+            }
+          }
+        }
+      },
+      "MatrixGroupResponse": {
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/MatrixGroup"
+          },
+          "meta": {
+            "type": "object"
+          }
+        }
+      },
+      "MatrixDetail": {
+        "type": "object",
+        "required": [
+          "id",
+          "documentId"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Locale-specific row id. Prefer `documentId`."
+          },
+          "documentId": {
+            "type": "string",
+            "description": "Stable id; the same `documentId` names this record in every locale."
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "iri": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "publishedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "MatrixDetailListResponse": {
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MatrixDetail"
+            }
+          },
+          "meta": {
+            "type": "object",
+            "required": [
+              "pagination"
+            ],
+            "properties": {
+              "pagination": {
+                "$ref": "#/components/schemas/Pagination"
+              }
+            }
+          }
+        }
+      },
+      "MatrixDetailResponse": {
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/MatrixDetail"
+          },
+          "meta": {
+            "type": "object"
+          }
+        }
+      },
+      "SampleOrigin": {
+        "type": "object",
+        "required": [
+          "id",
+          "documentId"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Locale-specific row id. Prefer `documentId`."
+          },
+          "documentId": {
+            "type": "string",
+            "description": "Stable id; the same `documentId` names this record in every locale."
+          },
+          "name": {
+            "type": "string"
+          },
+          "iri": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "publishedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "locale": {
+            "type": "string",
+            "enum": [
+              "en",
+              "de"
+            ]
+          }
+        }
+      },
+      "SampleOriginListResponse": {
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SampleOrigin"
+            }
+          },
+          "meta": {
+            "type": "object",
+            "required": [
+              "pagination"
+            ],
+            "properties": {
+              "pagination": {
+                "$ref": "#/components/schemas/Pagination"
+              }
+            }
+          }
+        }
+      },
+      "SampleOriginResponse": {
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/SampleOrigin"
+          },
+          "meta": {
+            "type": "object"
+          }
+        }
+      },
+      "SuperCategorySampleOrigin": {
+        "type": "object",
+        "required": [
+          "id",
+          "documentId"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Locale-specific row id. Prefer `documentId`."
+          },
+          "documentId": {
+            "type": "string",
+            "description": "Stable id; the same `documentId` names this record in every locale."
+          },
+          "name": {
+            "type": "string"
+          },
+          "iri": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "publishedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "locale": {
+            "type": "string",
+            "enum": [
+              "en",
+              "de"
+            ]
+          }
+        }
+      },
+      "SuperCategorySampleOriginListResponse": {
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SuperCategorySampleOrigin"
+            }
+          },
+          "meta": {
+            "type": "object",
+            "required": [
+              "pagination"
+            ],
+            "properties": {
+              "pagination": {
+                "$ref": "#/components/schemas/Pagination"
+              }
+            }
+          }
+        }
+      },
+      "SuperCategorySampleOriginResponse": {
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/SuperCategorySampleOrigin"
+          },
+          "meta": {
+            "type": "object"
+          }
+        }
+      },
+      "SamplingStage": {
+        "type": "object",
+        "required": [
+          "id",
+          "documentId"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Locale-specific row id. Prefer `documentId`."
+          },
+          "documentId": {
+            "type": "string",
+            "description": "Stable id; the same `documentId` names this record in every locale."
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "iri": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "publishedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "locale": {
+            "type": "string",
+            "enum": [
+              "en",
+              "de"
+            ]
+          }
+        }
+      },
+      "SamplingStageListResponse": {
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SamplingStage"
+            }
+          },
+          "meta": {
+            "type": "object",
+            "required": [
+              "pagination"
+            ],
+            "properties": {
+              "pagination": {
+                "$ref": "#/components/schemas/Pagination"
+              }
+            }
+          }
+        }
+      },
+      "SamplingStageResponse": {
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/SamplingStage"
+          },
+          "meta": {
+            "type": "object"
+          }
+        }
+      },
+      "SampleType": {
+        "type": "object",
+        "required": [
+          "id",
+          "documentId"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Locale-specific row id. Prefer `documentId`."
+          },
+          "documentId": {
+            "type": "string",
+            "description": "Stable id; the same `documentId` names this record in every locale."
+          },
+          "name": {
+            "type": "string"
+          },
+          "iri": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "publishedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "locale": {
+            "type": "string",
+            "enum": [
+              "en",
+              "de"
+            ]
+          }
+        }
+      },
+      "SampleTypeListResponse": {
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SampleType"
+            }
+          },
+          "meta": {
+            "type": "object",
+            "required": [
+              "pagination"
+            ],
+            "properties": {
+              "pagination": {
+                "$ref": "#/components/schemas/Pagination"
+              }
+            }
+          }
+        }
+      },
+      "SampleTypeResponse": {
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/SampleType"
+          },
+          "meta": {
+            "type": "object"
+          }
+        }
+      },
+      "Specie": {
+        "type": "object",
+        "required": [
+          "id",
+          "documentId"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Locale-specific row id. Prefer `documentId`."
+          },
+          "documentId": {
+            "type": "string",
+            "description": "Stable id; the same `documentId` names this record in every locale."
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "publishedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "locale": {
+            "type": "string",
+            "enum": [
+              "en",
+              "de"
+            ]
+          }
+        }
+      },
+      "SpecieListResponse": {
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Specie"
+            }
+          },
+          "meta": {
+            "type": "object",
+            "required": [
+              "pagination"
+            ],
+            "properties": {
+              "pagination": {
+                "$ref": "#/components/schemas/Pagination"
+              }
+            }
+          }
+        }
+      },
+      "SpecieResponse": {
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Specie"
+          },
+          "meta": {
+            "type": "object"
+          }
+        }
+      },
+      "AntimicrobialSubstance": {
+        "type": "object",
+        "required": [
+          "id",
+          "documentId"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Locale-specific row id. Prefer `documentId`."
+          },
+          "documentId": {
+            "type": "string",
+            "description": "Stable id; the same `documentId` names this record in every locale."
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "publishedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "locale": {
+            "type": "string",
+            "enum": [
+              "en",
+              "de"
+            ]
+          }
+        }
+      },
+      "AntimicrobialSubstanceListResponse": {
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AntimicrobialSubstance"
+            }
+          },
+          "meta": {
+            "type": "object",
+            "required": [
+              "pagination"
+            ],
+            "properties": {
+              "pagination": {
+                "$ref": "#/components/schemas/Pagination"
+              }
+            }
+          }
+        }
+      },
+      "AntimicrobialSubstanceResponse": {
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/AntimicrobialSubstance"
+          },
+          "meta": {
+            "type": "object"
+          }
+        }
+      },
+      "Antibiotic": {
+        "type": "object",
+        "required": [
+          "id",
+          "documentId"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Locale-specific row id. Prefer `documentId`."
+          },
+          "documentId": {
+            "type": "string",
+            "description": "Stable id; the same `documentId` names this record in every locale."
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "shortName": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "publishedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "AntibioticListResponse": {
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Antibiotic"
+            }
+          },
+          "meta": {
+            "type": "object",
+            "required": [
+              "pagination"
+            ],
+            "properties": {
+              "pagination": {
+                "$ref": "#/components/schemas/Pagination"
+              }
+            }
+          }
+        }
+      },
+      "AntibioticResponse": {
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Antibiotic"
+          },
+          "meta": {
+            "type": "object"
+          }
+        }
+      },
+      "AntibioticCutOffData": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "year": {
+            "type": "integer",
+            "nullable": true
+          },
+          "substanzklasse": {
+            "type": "string",
+            "enum": [
+              "Aminoglycoside",
+              "Amphenicole",
+              "Penicilline",
+              "Cephalosporine",
+              "Carbapeneme",
+              "(Fluor)chinolone",
+              "Polymyxine",
+              "Tetrazykline",
+              "Glycylcycline",
+              "Azalide",
+              "Folatsynthesehemmer",
+              "Sulfonamide",
+              "Makrolide",
+              "Ansamycine",
+              "Lincosamide",
+              "Glykopeptide",
+              "Oxazolidinone",
+              "Pleuromutiline",
+              "Pseudomonische Säuren",
+              "Streptogramine",
+              "Triterpensäuren",
+              "Lipopeptide",
+              null
+            ],
+            "nullable": true
+          },
+          "bacteria": {
+            "type": "string",
+            "enum": [
+              "Escherichia coli",
+              "Salmonella spp",
+              "Campylobacter jejuni",
+              "Campylobacter coli",
+              "methicillin-resistant Staphylococcus aureus",
+              "Enterococcus faecalis",
+              "Enterococcus faecium",
+              null
+            ],
+            "nullable": true
+          },
+          "min": {
+            "type": "number",
+            "nullable": true
+          },
+          "max": {
+            "type": "number",
+            "nullable": true
+          },
+          "cutOff": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "ResistanceTable": {
+        "type": "object",
+        "required": [
+          "id",
+          "documentId"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Locale-specific row id. Prefer `documentId`."
+          },
+          "documentId": {
+            "type": "string",
+            "description": "Stable id; the same `documentId` names this record in every locale."
+          },
+          "table_id": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
+            "description": "Markdown."
+          },
+          "title": {
+            "type": "string",
+            "description": "Markdown."
+          },
+          "cut_offs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AntibioticCutOffData"
+            },
+            "description": "Only returned when requested with `populate=cut_offs`."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "publishedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "locale": {
+            "type": "string",
+            "enum": [
+              "en",
+              "de"
+            ]
+          }
+        }
+      },
+      "ResistanceTableListResponse": {
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ResistanceTable"
+            }
+          },
+          "meta": {
+            "type": "object",
+            "required": [
+              "pagination"
+            ],
+            "properties": {
+              "pagination": {
+                "$ref": "#/components/schemas/Pagination"
+              }
+            }
+          }
+        }
+      },
+      "ResistanceTableResponse": {
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/ResistanceTable"
+          },
+          "meta": {
+            "type": "object"
+          }
+        }
+      }
+    }
+  }
+}

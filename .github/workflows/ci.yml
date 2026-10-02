@@ -36,6 +36,20 @@ jobs:
       - name: Test
         run: yarn test
 
+      # Fails on a content type that config.mjs leaves unclassified, and on a
+      # committed api-reference/openapi.json that no longer matches the schemas.
+      - name: Check API reference is up to date
+        run: |
+          yarn api-reference:generate
+          if [ -n "$(git status --porcelain -- api-reference)" ]; then
+            git diff -- api-reference
+            echo "::error::api-reference/openapi.json is stale. Run 'yarn api-reference:generate', bump info.version in scripts/api-reference/base.mjs if the contract changed, and commit both."
+            exit 1
+          fi
+
+      - name: Lint API reference
+        run: npx --yes @redocly/cli@2.57.0 lint api-reference/openapi.json
+
       - name: Build
         run: yarn build
 
