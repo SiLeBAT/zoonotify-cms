@@ -153,3 +153,26 @@ jobs:
             bash ./deploy.sh
 
             echo "Production deploy of '$REF' finished."
+
+  # Public-role grants live in the database, so only a live request shows the
+  # promised Public Data API is actually served. pm2 restarts the CMS without
+  # waiting for it to boot, hence --wait.
+  probe:
+    name: 'Probe the Public Data API'
+    runs-on: ubuntu-latest
+    needs: deploy
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag }}
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+      - name: Probe promised collections anonymously
+        run: |
+          if [ ! -f scripts/api-reference/probe.mjs ]; then
+            echo "::warning::Tag ${{ inputs.tag }} predates the Public Data API probe; skipping."
+            exit 0
+          fi
+          yarn api-reference:probe --wait 300

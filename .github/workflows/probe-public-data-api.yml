@@ -1,0 +1,59 @@
+name: Probe Public Data API
+
+# Daily anonymous check that every collection the Public Data API promises
+# answers 200 on prod. Grants live in the database, so drift only shows live.
+# On failure, opens one issue (or comments on the open one) listing each
+# failing collection and its status.
+
+on:
+  schedule:
+    - cron: '17 5 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: probe-public-data-api
+  cancel-in-progress: false
+
+jobs:
+  probe:
+    name: 'Probe prod'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+
+      # A short wait rides out a blip (or a deploy in progress) before alerting.
+      - name: Probe promised collections anonymously
+        id: probe
+        run: yarn api-reference:probe --wait 120 --report "$RUNNER_TEMP/probe-report.md"
+
+      - name: Open or update the failure issue
+        if: failure() && steps.probe.outcome == 'failure'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TITLE: 'Public Data API probe failing on prod'
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          body="$RUNNER_TEMP/issue-body.md"
+          if [ -f "$RUNNER_TEMP/probe-report.md" ]; then
+            cat "$RUNNER_TEMP/probe-report.md" > "$body"
+          else
+            echo "The probe did not produce a report; see the run log." > "$body"
+          fi
+          printf '\nRun: %s\n' "$RUN_URL" >> "$body"
+
+          number="$(gh issue list --state open --search "\"$TITLE\" in:title" --json number,title \
+            --jq "map(select(.title == env.TITLE)) | .[0].number // empty")"
+          if [ -n "$number" ]; then
+            gh issue comment "$number" --body-file "$body"
+          else
+            gh issue create --title "$TITLE" --body-file "$body"
+          fi

@@ -11,7 +11,8 @@
     "key-gen": "node ./generate-strapi-keys.js",
     "test": "vitest run",
     "test:watch": "vitest",
-    "api-reference:generate": "node scripts/api-reference/generate.mjs"
+    "api-reference:generate": "node scripts/api-reference/generate.mjs",
+    "api-reference:probe": "node scripts/api-reference/probe.mjs"
   },
   "dependencies": {
     "@strapi/plugin-users-permissions": "5.52.1",
