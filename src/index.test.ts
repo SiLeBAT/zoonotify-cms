@@ -9,6 +9,16 @@ vi.mock('./data_import/cut-off.import', () => ({
 
 import app from './index';
 
+describe('CMS register', () => {
+  it('only wires upload lifecycles; the API reference no longer lives in a Strapi plugin', () => {
+    vi.spyOn(console, 'log').mockImplementation(() => {});
+    const strapi = { contentTypes: { 'plugin::upload.file': {} as any } };
+
+    expect(() => app.register({ strapi } as any)).not.toThrow();
+    expect(strapi.contentTypes['plugin::upload.file'].lifecycles).toBeDefined();
+  });
+});
+
 describe('CMS bootstrap', () => {
   afterEach(() => {
     vi.restoreAllMocks();
