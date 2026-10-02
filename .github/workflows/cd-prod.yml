@@ -35,7 +35,7 @@ jobs:
     outputs:
       node_version: ${{ steps.nvmrc.outputs.version }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           ref: ${{ inputs.tag }}
       - name: Set up Node.js
