@@ -4,6 +4,11 @@ name: Probe Public Data API
 # answers 200 on prod. Grants live in the database, so drift only shows live.
 # On failure, opens one issue (or comments on the open one) listing each
 # failing collection and its status.
+#
+# The schedule stays dormant until go-live: it only probes when the repository
+# variable PUBLIC_DATA_API_LIVE is 'true' (Settings > Secrets and variables >
+# Actions > Variables). Until prod serves every promised collection it would
+# just re-report the known gap daily. Manual runs always probe.
 
 on:
   schedule:
@@ -21,6 +26,7 @@ concurrency:
 jobs:
   probe:
     name: 'Probe prod'
+    if: github.event_name != 'schedule' || vars.PUBLIC_DATA_API_LIVE == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
