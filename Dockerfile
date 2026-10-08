@@ -1,7 +1,7 @@
 # Build + run the Zoonotify CMS for the Import CLI integration test (and as a
 # reusable QA image). Single-stage: Strapi's admin build is produced at image
 # build time, then `yarn start` serves it. Secrets come from the environment.
-FROM node:20-bookworm
+FROM node:22-bookworm
 
 # Native build tools for any transitive native deps (e.g. better-sqlite3, sharp).
 RUN apt-get update \
