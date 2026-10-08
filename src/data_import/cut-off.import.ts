@@ -116,7 +116,7 @@ function prepareRecord(res, bacteria, tableId) {
                 bacteria: bacteria,
                 min: min,
                 max: max,
-                cutOff: cutOffVal ? cutOffVal.toString().replace('*', '') : "",
+                cutOff: cutOffVal ? cutOffVal.toString().replaceAll('*', '') : "",
             };
 
             newEntry.cut_offs.push(cutOff);
