@@ -19,6 +19,10 @@ RUN yarn install --frozen-lockfile --production=false --network-timeout 600000 -
 COPY . .
 RUN yarn build
 
+# The local upload provider refuses to start without this folder, and it isn't in git
+# (the servers create or mount it outside the repo).
+RUN mkdir -p public/uploads
+
 # Production only at runtime, after the build has its dev tooling.
 ENV NODE_ENV=production
 EXPOSE 1337
