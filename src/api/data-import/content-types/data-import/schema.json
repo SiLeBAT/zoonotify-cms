@@ -1,0 +1,20 @@
+{
+  "kind": "singleType",
+  "collectionName": "data_imports",
+  "info": {
+    "singularName": "data-import",
+    "pluralName": "data-imports",
+    "displayName": "Data import",
+    "description": "When the Import CLI last completed a successful import. Written by POST /import-admin/record-import; the client shows it as the data status."
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "completedAt": {
+      "type": "datetime",
+      "required": true
+    }
+  }
+}

@@ -116,3 +116,47 @@ describe('import-admin bulkCreate — idempotent replay', () => {
     expect(store.get(PREVALENCE)!.some((r) => r.documentId === 'keep-1')).toBe(true);
   });
 });
+
+describe('import-admin service — recordImport', () => {
+  /** The `data-import` single type: at most one document. */
+  function fakeSingleType(existing?: { documentId: string; completedAt: string }) {
+    let doc = existing;
+    const strapi = {
+      documents: (uid: string) => {
+        expect(uid).toBe('api::data-import.data-import');
+        return {
+          findFirst: async () => doc,
+          create: async ({ data }: { data: { completedAt: string } }) => {
+            doc = { documentId: 'new-doc', ...data };
+            return doc;
+          },
+          update: async ({ documentId, data }: { documentId: string; data: { completedAt: string } }) => {
+            expect(documentId).toBe(doc?.documentId);
+            doc = { documentId, ...data };
+            return doc;
+          },
+        };
+      },
+    };
+    return { strapi, current: () => doc };
+  }
+
+  const NOW = new Date('2026-10-19T13:04:36.464Z');
+
+  it('creates the entry on the first recorded import', async () => {
+    const { strapi, current } = fakeSingleType();
+    const svc = createService({ strapi } as never);
+
+    await expect(svc.recordImport(NOW)).resolves.toBe('2026-10-19T13:04:36.464Z');
+    expect(current()).toEqual({ documentId: 'new-doc', completedAt: '2026-10-19T13:04:36.464Z' });
+  });
+
+  it('overwrites the previous date on later imports', async () => {
+    const { strapi, current } = fakeSingleType({ documentId: 'd1', completedAt: '2026-01-31T00:00:00.000Z' });
+    const svc = createService({ strapi } as never);
+
+    await svc.recordImport(NOW);
+
+    expect(current()).toEqual({ documentId: 'd1', completedAt: '2026-10-19T13:04:36.464Z' });
+  });
+});

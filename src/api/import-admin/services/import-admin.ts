@@ -108,7 +108,28 @@ export default ({ strapi }: { strapi: any }) => ({
 
     return results;
   },
+
+  /**
+   * Record that an import just completed successfully, in the `data-import`
+   * single type the client reads as its data status. The CLI calls this last,
+   * so the date only moves when every collection was written. Stamped here
+   * rather than by the CLI so the operator's clock cannot skew it.
+   */
+  async recordImport(completedAt: Date = new Date()): Promise<string> {
+    const data = { completedAt: completedAt.toISOString() };
+    const existing = await strapi.documents(DATA_IMPORT).findFirst();
+
+    if (existing) {
+      await strapi.documents(DATA_IMPORT).update({ documentId: existing.documentId, data });
+    } else {
+      await strapi.documents(DATA_IMPORT).create({ data });
+    }
+
+    return data.completedAt;
+  },
 });
+
+const DATA_IMPORT = 'api::data-import.data-import';
 
 /**
  * The names of a content type's scalar `unique` attributes — the ones a replayed
