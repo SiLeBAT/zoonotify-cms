@@ -29,6 +29,7 @@ export default {
     // Internal or legacy data.
     'configurations',
     'prevelence-updates',
+    'data-imports',
     'salmonellas',
     'sampling-contexts',
     'animal-species-food-categories',

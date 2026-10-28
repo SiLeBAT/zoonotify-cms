@@ -38,9 +38,11 @@ The endpoints are gated by the `is-import-token` policy and require a dedicated
 1. Open the Strapi admin panel → **Settings → API Tokens → Create new API Token**.
 2. Name it `Import`, set **Token type** to **Custom**, and (optionally) an
    unlimited duration.
-3. Under **Permissions**, grant **only** `Import-admin → truncate` and
-   `Import-admin → bulkCreate`. Leave every other content type, Upload, Users,
-   and Settings permission unchecked.
+3. Under **Permissions**, grant **only** `Import-admin → truncate`,
+   `Import-admin → bulkCreate` and `Import-admin → recordImport`. Leave every
+   other content type, Upload, Users, and Settings permission unchecked. An
+   existing token needs `recordImport` added once; without it the CLI's last
+   step gets 403 and the client's *Data status* does not move.
 4. Copy the generated token (shown once) and deliver it securely to whoever runs
    the Import CLI; it goes in the CLI's `.env`.
 
@@ -68,6 +70,10 @@ curl -i -X POST "$STRAPI_URL/api/import-admin/bulk-create" \
   -H "Authorization: Bearer $IMPORT_TOKEN" \
   -H 'Content-Type: application/json' \
   -d '{"collection":"microorganism","rows":[{"en":{"name":"Salmonella"},"de":{"name":"Salmonellen"}}]}'
+
+# 200 — record a successful import; GET /api/data-import then shows it
+curl -i -X POST "$STRAPI_URL/api/import-admin/record-import" \
+  -H "Authorization: Bearer $IMPORT_TOKEN"
 ```
 
 
@@ -89,3 +95,4 @@ Types that need this grant:
 |---|---|---|
 | `multi-resistance` | collection | `GET <prefix>/multi-resistances` |
 | `multi-resistance-information` | single type | `GET <prefix>/multi-resistance-information` |
+| `data-import` | single type | `GET <prefix>/data-import` — the client's *Data status*; `404` until the first import is recorded |

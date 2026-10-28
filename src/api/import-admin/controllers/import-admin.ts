@@ -54,4 +54,11 @@ export default ({ strapi }: { strapi: any }) => ({
       throw error;
     }
   },
+
+  async recordImport(ctx: any) {
+    const completedAt = await strapi
+      .service('api::import-admin.import-admin')
+      .recordImport();
+    ctx.body = { completedAt };
+  },
 });
