@@ -60,6 +60,10 @@ jobs:
           command_timeout: 30m
           debug: true
           script: |
+            # Without errexit a failing deploy.sh (e.g. `yarn build`) fell
+            # through to "Deploy finished." and the run went green while the
+            # old process kept serving (issue 085). Same flags as cd-prod.yml.
+            set -euo pipefail
             set -x
 
             APP_DIR="${{ vars.QA_DEPLOY_DIR }}"
@@ -77,10 +81,18 @@ jobs:
             if [ -s "$NVM_DIR/nvm.sh" ]; then
               # Match the prod deploy: source with --no-use so nvm's auto-use
               # (which returns non-zero when no default alias is set) cannot
-              # abort the script, then select the pinned Node version.
+              # abort the script, then select the pinned Node version. nvm is
+              # not errexit/nounset-safe, so relax both around it and check.
+              set +eu
               . "$NVM_DIR/nvm.sh" --no-use
               nvm install "$NODE_VERSION"
               nvm use "$NODE_VERSION"
+              nvm_status=$?
+              set -eu
+              if [ "$nvm_status" -ne 0 ]; then
+                echo "ERROR: failed to select Node $NODE_VERSION via nvm" >&2
+                exit 1
+              fi
             fi
 
             # Match the prod deploy: put yarn on PATH, since the non-interactive
@@ -113,5 +125,24 @@ jobs:
             echo "Stamped .commit-hash: $(cat .commit-hash)"
 
             bash ./deploy.sh
+
+            # pm2 returns before Strapi has booted, and a process that never
+            # came up would leave the old one's port answering. Wait until the
+            # app reports the commit just stamped.
+            EXPECTED="$(cat .commit-hash)"
+            PORT="$(grep -E '^PORT=' .env | tail -n1 | cut -d= -f2 | tr -d "\"'\r" || true)"
+            PORT="${PORT:-1337}"
+            echo "==> Waiting for cms-commit: $EXPECTED on port $PORT"
+            served=""
+            for _ in $(seq 1 60); do
+              served="$(curl -s -o /dev/null -D - "http://127.0.0.1:$PORT/_health" \
+                | tr -d '\r' | awk -F': ' 'tolower($1) == "cms-commit" { print $2 }' || true)"
+              [ "$served" = "$EXPECTED" ] && break
+              sleep 5
+            done
+            if [ "$served" != "$EXPECTED" ]; then
+              echo "ERROR: cms-commit is '${served}', expected '$EXPECTED' after 5 minutes" >&2
+              exit 1
+            fi
 
             echo "Deploy finished."
