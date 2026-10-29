@@ -15,7 +15,7 @@
     "api-reference:probe": "node scripts/api-reference/probe.mjs"
   },
   "dependencies": {
-    "@strapi/plugin-users-permissions": "5.52.1",
+    "@strapi/plugin-users-permissions": "5.59.0",
     "@strapi/provider-email-nodemailer": "5.59.0",
     "@strapi/strapi": "5.59.0",
     "event-stream": "^4.0.1",
