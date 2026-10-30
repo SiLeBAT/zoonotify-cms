@@ -96,3 +96,17 @@ Types that need this grant:
 | `multi-resistance` | collection | `GET <prefix>/multi-resistances` |
 | `multi-resistance-information` | single type | `GET <prefix>/multi-resistance-information` |
 | `data-import` | single type | `GET <prefix>/data-import` — the client's *Data status*; `404` until the first import is recorded |
+
+A fresh **local** database has no Public grants. Instead of ticking them by
+hand, stop `yarn develop` and run
+
+```sh
+NODE_ENV=development yarn permissions:apply
+```
+
+It sets the Public and Authenticated roles to exactly the grants in
+`config/permissions.mjs` (adding and removing) and turns sign-ups off. It
+refuses unless `NODE_ENV` is `development` and the database is SQLite or on
+`localhost`/`127.0.0.1`. Never run it on QA or prod, and never wire it into
+bootstrap, deploy or CI: there, grants are edited by hand and the manifest is
+only checked against them.
