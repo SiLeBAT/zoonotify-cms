@@ -147,7 +147,8 @@ if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1]
     console.error(USAGE);
     process.exitCode = 2;
   } else {
-    const reportsDir = join(homedir(), 'permission-reports');
+    // $HOME first: the wrappers' ~ (homedir() ignores HOME on Windows).
+    const reportsDir = join(process.env.HOME || homedir(), 'permission-reports');
     mkdirSync(reportsDir, { recursive: true });
     serverRun(mode, baseUrl, {
       env: process.env,

@@ -46,9 +46,21 @@
 //    admin token belongs to whoever creates it, and creating one needs
 //    admin::admin-tokens.create: give the role that permission, create the
 //    token logged in as `permissions-reader`, then remove the permission again
-//    (the token keeps working; verified on 5.59). Store the token as
-//    PERMISSIONS_READER_TOKEN in the probe's env file on that server. Never pass
-//    it on the command line and never commit it.
+//    (the token keeps working; verified on 5.59). Never pass it on the command
+//    line and never commit it.
+// 4. On the server, as the deploy user, create ~/permissions-probe.env
+//    (chmod 600; never the app's .env, the running CMS holds no admin token):
+//      PERMISSIONS_READER_TOKEN=<the token>
+//      PERMISSIONS_PROBE_MAIL_TO=info@zoonotify.bfr.berlin
+//    and check that `echo test | mail -s test info@zoonotify.bfr.berlin`
+//    arrives. Both deploy workflows then run
+//    scripts/permissions-deploy-check.sh after the health wait.
+// 5. Install the daily drift check with `crontab -e` (one line; APP_DIR is
+//    the deploy dir, the URL is the host's public content API):
+//      17 5 * * * $HOME/<APP_DIR>/scripts/permissions-cron.sh <public base URL> >> $HOME/permissions-cron.log 2>&1
+//    QA: https://zoonotify-dev.bfr.berlin/cms/api
+//    prod: https://zoonotify.bfr.berlin/cms/api
+//    Deploys fail with `permission cron stale` when it has not run for 48 h.
 
 const READ_COLLECTION = ['find', 'findOne'];
 const READ_SINGLE = ['find'];
