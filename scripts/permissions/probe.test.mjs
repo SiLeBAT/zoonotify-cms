@@ -149,6 +149,19 @@ describe('permissions:probe failure categories', () => {
     expect(err[0]).toBe('FAIL error: welcomes find: expected 200, got timeout; ?populate=zzprobe: 400 ValidationError');
   });
 
+  it('names the cause when the host cannot be reached', async () => {
+    const refused = Object.assign(new TypeError('fetch failed'), { cause: { code: 'ECONNREFUSED' } });
+
+    const { code, err } = await run({
+      host: async () => {
+        throw refused;
+      },
+    });
+
+    expect(code).toBe(1);
+    expect(err[0]).toMatch(/^FAIL error: .*, got ECONNREFUSED/);
+  });
+
   it('treats PolicyError on /import-admin/* as a Public grant (drift) and ForbiddenError as a pass', async () => {
     const { code, err } = await run({ host: mutated({ grant: ['api::import-admin.import-admin.truncate'] }) });
 

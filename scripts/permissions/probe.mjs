@@ -65,6 +65,14 @@ const RETRY_INTERVAL_MS = 15_000;
  */
 const checkHalves = (options) => [{ checks: anonymousChecks(options), notProbed: anonymousNotProbed(options) }];
 
+/** `timeout`, or the network cause (`ECONNREFUSED` …) behind fetch's generic "fetch failed". */
+function whyNoAnswer(error) {
+  if (!(error instanceof Error)) return String(error);
+  if (error.name === 'TimeoutError' || error.name === 'AbortError') return 'timeout';
+  const cause = /** @type {any} */ (error).cause;
+  return cause?.code ?? cause?.message ?? error.message;
+}
+
 /**
  * Anonymous HTTP against the base URL: one request at a time, paced, with a
  * timeout. Records the running build from the response headers.
@@ -86,8 +94,7 @@ function anonymousHttp({ baseUrl, fetch, sleep }) {
           signal: AbortSignal.timeout(TIMEOUT_MS),
         });
       } catch (error) {
-        const timedOut = error instanceof Error && (error.name === 'TimeoutError' || error.name === 'AbortError');
-        return { status: null, failure: timedOut ? 'timeout' : error instanceof Error ? error.message : String(error) };
+        return { status: null, failure: whyNoAnswer(error) };
       }
       build.commit ||= res.headers.get('cms-commit') ?? '';
       build.version ||= res.headers.get('cms-version') ?? '';
