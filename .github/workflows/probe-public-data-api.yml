@@ -1,9 +1,9 @@
 name: Probe Public Data API
 
-# Daily anonymous check that every collection the Public Data API promises
-# answers 200 on prod. Grants live in the database, so drift only shows live.
-# On failure, opens one issue (or comments on the open one) listing each
-# failing collection and its status.
+# Daily anonymous permission probe of prod (yarn permissions:probe), which
+# includes the Public Data API collections. Grants live in the database, so
+# drift only shows live. On failure, opens one issue (or comments on the open
+# one); the details stay off GitHub, as the repository is public.
 #
 # The schedule stays dormant until go-live: it only probes when the repository
 # variable PUBLIC_DATA_API_LIVE is 'true' (Settings > Secrets and variables >
@@ -37,9 +37,18 @@ jobs:
           node-version-file: '.nvmrc'
 
       # A short wait rides out a blip (or a deploy in progress) before alerting.
-      - name: Probe promised collections anonymously
+      # The permission probe also checks denies, so its details could name a
+      # leak: the repository is public, so neither the log nor the issue shows
+      # them.
+      - name: Probe the permissions anonymously
         id: probe
-        run: yarn api-reference:probe --wait 120 --report "$RUNNER_TEMP/probe-report.md"
+        run: |
+          if yarn -s permissions:probe https://zoonotify.bfr.berlin/cms/api --wait 120 > /dev/null 2>&1; then
+            echo "permission probe: pass"
+          else
+            echo "permission probe: FAIL"
+            exit 1
+          fi
 
       - name: Open or update the failure issue
         if: failure() && steps.probe.outcome == 'failure'
@@ -49,11 +58,7 @@ jobs:
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           body="$RUNNER_TEMP/issue-body.md"
-          if [ -f "$RUNNER_TEMP/probe-report.md" ]; then
-            cat "$RUNNER_TEMP/probe-report.md" > "$body"
-          else
-            echo "The probe did not produce a report; see the run log." > "$body"
-          fi
+          echo "The permission probe failed on prod. Run \`yarn permissions:probe https://zoonotify.bfr.berlin/cms/api --report <file>\` on a trusted machine for the details." > "$body"
           printf '\nRun: %s\n' "$RUN_URL" >> "$body"
 
           number="$(gh issue list --state open --search "\"$TITLE\" in:title" --json number,title \
