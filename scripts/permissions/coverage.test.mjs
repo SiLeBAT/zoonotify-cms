@@ -3,7 +3,7 @@
 // Adding one without a grant decision fails CI here.
 import { describe, expect, it } from 'vitest';
 import manifest from '../../config/permissions.mjs';
-import { coverageProblems, loadSurface } from './manifest.mjs';
+import { coverageProblems, loadSurface, requiredContent } from './manifest.mjs';
 
 describe('permission manifest coverage (real CMS source)', () => {
   const surface = loadSurface();
@@ -37,5 +37,18 @@ describe('permission manifest coverage (real CMS source)', () => {
 
   it('has a manifest entry for each of them, and none for anything else', () => {
     expect(coverageProblems(manifest, surface)).toEqual([]);
+  });
+
+  it('requires the client single types, data-import and prevelence-update included', () => {
+    const required = requiredContent(manifest, surface);
+
+    expect(required).toHaveLength(12 * 2 - 3); // 12 client single types, 3 of them not localized
+    expect(required).toContainEqual({ pluralName: 'data-imports', route: '/data-import', locale: null });
+    expect(required).toContainEqual({ pluralName: 'prevelence-updates', route: '/prevelence-update', locale: null });
+    expect(required).toContainEqual({
+      pluralName: 'multi-resistance-informations',
+      route: '/multi-resistance-information',
+      locale: 'en',
+    });
   });
 });

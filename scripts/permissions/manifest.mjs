@@ -153,3 +153,49 @@ export const CORE_ACTIONS = {
 
 /** `api::isolate.isolate.import` → `import` */
 const actionName = (handler) => handler.slice(handler.lastIndexOf('.') + 1);
+
+/**
+ * The content the client needs published: every single type with `client`
+ * among its consumers, once per manifest locale if localized, else once
+ * (`locale: null`). Collections may be empty, so none are listed.
+ *
+ * @param {any} manifest
+ * @param {Surface} surface
+ * @returns {{ pluralName: string, route: string, locale: string | null }[]}
+ */
+export function requiredContent(manifest, surface) {
+  const required = [];
+  for (const ct of surface.contentTypes) {
+    const entry = manifest.public.contentTypes[ct.pluralName];
+    if (ct.kind !== 'singleType' || !entry?.consumers.includes('client')) continue;
+    const route = `/${ct.singularName}`;
+    for (const locale of ct.localized ? manifest.locales : [null]) {
+      required.push({ pluralName: ct.pluralName, route, locale });
+    }
+  }
+  return required;
+}
+
+/**
+ * The full action uids the manifest grants the Public role, sorted: the set a
+ * host's Public role must equal.
+ *
+ * @param {any} manifest
+ * @param {Surface} surface
+ * @returns {string[]}
+ */
+export function publicActionUids(manifest, surface) {
+  const uids = [];
+  for (const ct of surface.contentTypes) {
+    for (const action of manifest.public.contentTypes[ct.pluralName]?.actions ?? []) {
+      uids.push(`${ct.uid}.${action}`);
+    }
+  }
+  for (const [handler, { actions }] of Object.entries(manifest.public.customRoutes)) {
+    if (actions.length) uids.push(handler);
+  }
+  for (const [plugin, { actions }] of Object.entries(manifest.public.plugins)) {
+    for (const action of actions) uids.push(`plugin::${plugin}.${action}`);
+  }
+  return uids.sort();
+}

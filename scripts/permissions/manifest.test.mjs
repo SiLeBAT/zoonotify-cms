@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { coverageProblems } from './manifest.mjs';
+import { coverageProblems, publicActionUids, requiredContent } from './manifest.mjs';
 
 const surface = {
   contentTypes: [
@@ -96,6 +96,44 @@ describe('coverageProblems', () => {
       'prevalences grants unknown action fnd (a collectionType has find, findOne, create, update, delete)',
       'welcomes grants unknown action findOne (a singleType has find, update, delete)',
       'api::isolate.isolate.import grants unknown action truncate (a custom route has import)',
+    ]);
+  });
+});
+
+describe('requiredContent', () => {
+  it('expects each client single type published per locale if localized, once otherwise', () => {
+    const withMore = {
+      ...surface,
+      contentTypes: [
+        ...surface.contentTypes,
+        { uid: 'api::data-import.data-import', pluralName: 'data-imports', singularName: 'data-import', kind: 'singleType', localized: false },
+        { uid: 'api::configuration.configuration', pluralName: 'configurations', singularName: 'configuration', kind: 'singleType', localized: false },
+      ],
+    };
+    const m = manifest();
+    m.public.contentTypes['data-imports'] = entry(['find'], { consumers: ['client'] });
+    m.public.contentTypes.configurations = entry([], { consumers: [] });
+
+    expect(requiredContent(m, withMore)).toEqual([
+      { pluralName: 'welcomes', route: '/welcome', locale: 'de' },
+      { pluralName: 'welcomes', route: '/welcome', locale: 'en' },
+      { pluralName: 'data-imports', route: '/data-import', locale: null },
+    ]);
+  });
+});
+
+describe('publicActionUids', () => {
+  it('lists the full action uids granted to Public, plugins included', () => {
+    const m = manifest();
+    m.public.customRoutes['api::isolate.isolate.import'].actions = ['import'];
+    m.public.plugins['users-permissions'].actions = ['auth.callback'];
+
+    expect(publicActionUids(m, surface)).toEqual([
+      'api::isolate.isolate.import',
+      'api::prevalence.prevalence.find',
+      'api::prevalence.prevalence.findOne',
+      'api::welcome.welcome.find',
+      'plugin::users-permissions.auth.callback',
     ]);
   });
 });
