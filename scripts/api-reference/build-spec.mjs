@@ -41,12 +41,12 @@ const isLocalized = (schema) => schema.pluginOptions?.i18n?.localized === true;
  * @param {{
  *   contentTypes: { uid: string, schema: any }[],
  *   components: Record<string, any>,
- *   config: { include: Record<string, string[]>, exclude: string[] },
+ *   manifest: { public: { contentTypes: Record<string, { actions: string[], publicDataApi?: string }> } },
  *   base: any,
- * }} input
+ * }} input  manifest: the permission manifest (config/permissions.mjs)
  */
-export function buildSpec({ contentTypes, components, config, base }) {
-  const included = classify(contentTypes, config, base);
+export function buildSpec({ contentTypes, components, manifest, base }) {
+  const { groups, included } = classify(contentTypes, manifest, base);
   const byUid = new Map(contentTypes.map((ct) => [ct.uid, ct]));
   const schemaName = (ct) => pascal(ct.schema.info.singularName);
   const locales = base.components.parameters.locale.schema.enum;
@@ -77,7 +77,7 @@ export function buildSpec({ contentTypes, components, config, base }) {
     return emittedComponents.get(uid);
   };
 
-  for (const [tag, plurals] of Object.entries(config.include)) {
+  for (const [tag, plurals] of groups) {
     for (const plural of plurals) {
       const ct = included.get(plural);
       const name = schemaName(ct);
@@ -160,41 +160,36 @@ export function buildSpec({ contentTypes, components, config, base }) {
   return spec;
 }
 
-function classify(contentTypes, config, base) {
+/**
+ * Picks the manifest's `publicDataApi` entries, grouped by tag in the base's
+ * tag order and in manifest order within a group. Whether every content type
+ * has an entry at all is the permission manifest's coverage test's job.
+ */
+function classify(contentTypes, manifest, base) {
   const byPlural = new Map(contentTypes.map((ct) => [ct.schema.info.pluralName, ct]));
-  const tags = new Set((base.tags ?? []).map((t) => t.name));
+  const groups = new Map((base.tags ?? []).map((t) => [t.name, []]));
   const included = new Map();
-  const seen = new Map();
   const problems = [];
 
-  const mark = (plural, as) => {
-    if (seen.has(plural)) problems.push(`${plural} is classified twice (${seen.get(plural)}, ${as})`);
-    seen.set(plural, as);
-    if (!byPlural.has(plural)) problems.push(`${plural} names no content type`);
-  };
-  for (const [tag, plurals] of Object.entries(config.include)) {
-    if (!tags.has(tag)) problems.push(`include group "${tag}" is not a tag in the base`);
-    for (const plural of plurals) {
-      mark(plural, 'include');
-      if (byPlural.has(plural)) included.set(plural, byPlural.get(plural));
+  for (const [plural, entry] of Object.entries(manifest.public.contentTypes)) {
+    const tag = entry.publicDataApi;
+    if (tag === undefined) continue;
+    const ct = byPlural.get(plural);
+    if (!ct) problems.push(`${plural} names no content type`);
+    if (!groups.has(tag)) problems.push(`${plural}: publicDataApi "${tag}" is not a tag in the base`);
+    const missing = ['find', 'findOne'].filter((a) => !entry.actions.includes(a));
+    if (missing.length) {
+      problems.push(`${plural} is in the Public Data API but not granted ${missing.join(' and ')} (needs find and findOne)`);
     }
-  }
-  for (const plural of config.exclude) mark(plural, 'exclude');
-
-  const unclassified = [...byPlural.keys()].filter((p) => !seen.has(p)).sort();
-  if (unclassified.length) {
-    problems.push(
-      `unclassified content types (add each to include or exclude): ${unclassified.join(', ')}`,
-    );
-  }
-  if (problems.length) throw new Error(`Invalid API reference config:\n- ${problems.join('\n- ')}`);
-
-  for (const [plural, ct] of included) {
-    if (ct.schema.kind !== 'collectionType') {
-      throw new Error(`${plural} is a ${ct.schema.kind}; only collection types can be included`);
+    if (ct && ct.schema.kind !== 'collectionType') {
+      problems.push(`${plural} is a ${ct.schema.kind}; only collection types can be in the Public Data API`);
     }
+    if (!ct || !groups.has(tag)) continue;
+    groups.get(tag).push(plural);
+    included.set(plural, ct);
   }
-  return included;
+  if (problems.length) throw new Error(`Invalid Public Data API in the permission manifest:\n- ${problems.join('\n- ')}`);
+  return { groups, included };
 }
 
 function recordProperties(ct, linkFor, locales) {

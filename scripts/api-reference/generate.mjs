@@ -10,7 +10,7 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import base from './base.mjs';
 import { buildSpec } from './build-spec.mjs';
-import config from './config.mjs';
+import manifest from '../../config/permissions.mjs';
 
 const CMS_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 export const OUTPUT_PATH = join(CMS_ROOT, 'api-reference', 'openapi.json');
@@ -49,7 +49,7 @@ export function loadSchemas() {
 }
 
 export function generate() {
-  return `${JSON.stringify(buildSpec({ ...loadSchemas(), config, base }), null, 2)}\n`;
+  return `${JSON.stringify(buildSpec({ ...loadSchemas(), manifest, base }), null, 2)}\n`;
 }
 
 function main(extraOutput) {

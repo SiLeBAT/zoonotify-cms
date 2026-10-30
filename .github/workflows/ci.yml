@@ -39,8 +39,9 @@ jobs:
       - name: Test
         run: yarn test
 
-      # Fails on a content type that config.mjs leaves unclassified, and on a
-      # committed api-reference/openapi.json that no longer matches the schemas.
+      # Fails on a Public Data API type in config/permissions.mjs that is not
+      # granted find + findOne, and on a committed api-reference/openapi.json
+      # that no longer matches the schemas.
       - name: Check API reference is up to date
         run: |
           yarn api-reference:generate
