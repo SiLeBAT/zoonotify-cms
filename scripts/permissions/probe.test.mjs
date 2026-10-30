@@ -12,11 +12,16 @@ const realSurface = loadSurface();
 const allContent = (manifest, surface) =>
   requiredContent(manifest, surface).map((c) => `${c.pluralName}:${c.locale ?? ''}`);
 
-/** A host whose grants and content match the manifest exactly. */
+/** The `permissions-reader` admin token the fake hosts accept. */
+const TOKEN = 'reader-token-0123456789abcdef';
+
+/** A host whose grants, content and admin-side state match the manifest exactly. */
 const matchingHost = (manifest, surface, extra = {}) => ({
   surface,
   grants: publicActionUids(manifest, surface),
   published: allContent(manifest, surface),
+  readerToken: TOKEN,
+  apiTokens: [{ name: manifest.importToken.name, type: manifest.importToken.type, permissions: manifest.importToken.actions }],
   ...extra,
 });
 
@@ -240,6 +245,15 @@ describe('permissions:probe single-type DELETE', () => {
     expect(singles.length).toBeGreaterThan(0);
     for (const ct of singles) expect(notProbed).toContain(`| \`${ct.pluralName}\` | delete |`);
   });
+
+  it("says whether the admin read of Public's exact set covered it", async () => {
+    const without = await run();
+    const withToken = await run({ env: { PERMISSIONS_READER_TOKEN: TOKEN } });
+
+    const welcome = (report) => report.split('\n').find((l) => l.startsWith('| `welcomes` | delete |'));
+    expect(welcome(without.report)).toMatch(/Not covered: the admin checks did not run\. \|$/);
+    expect(welcome(withToken.report)).toMatch(/Covered by the admin read of Public's exact grant set\. \|$/);
+  });
 });
 
 /** A host that changes from `before` to `after` once `heals(url)` has seen a request. */
@@ -369,5 +383,143 @@ describe('permissions:probe admin checks without a reader token', () => {
     expect(code).toBe(2);
     expect(err.join(' ')).not.toContain('sekrit-token');
     expect(fetch).not.toHaveBeenCalled();
+  });
+});
+
+const WITH_TOKEN = { PERMISSIONS_READER_TOKEN: TOKEN };
+const adminRun = (options) => run({ env: WITH_TOKEN, ...options });
+
+describe('permissions:probe admin checks with a reader token', () => {
+  it('pass on a host matching the manifest, reading through the admin API at the server root', async () => {
+    const { code, out, report, fetch } = await adminRun({ argv: [BASE, '--report', 'report.md', '--require-admin'] });
+
+    expect(code).toBe(0);
+    expect(out[0]).toMatch(/^permission probe: pass/);
+    expect(report).toContain('- Admin checks: checked\n');
+    const adminPaths = fetch.mock.calls.map(([url]) => new URL(url).pathname).filter((p) => !p.startsWith('/api/'));
+    expect(new Set(adminPaths)).toEqual(
+      new Set([
+        '/users-permissions/roles',
+        '/users-permissions/roles/1',
+        '/users-permissions/roles/2',
+        '/users-permissions/advanced',
+        '/admin/api-tokens',
+      ]),
+    );
+  });
+
+  it('send the token only to the admin API, as a bearer header, and never print it', async () => {
+    const { fetch, out, err, report } = await adminRun({ host: mutated({ grant: ['api::isolate.isolate.find'], signUps: true }) });
+
+    for (const [url, init] of fetch.mock.calls) {
+      expect(url).not.toContain(TOKEN);
+      const auth = init.headers.authorization;
+      if (new URL(url).pathname.startsWith('/api/')) expect(auth).toBeUndefined();
+      else expect(auth).toBe(`Bearer ${TOKEN}`);
+    }
+    expect([...out, ...err, report].join('\n')).not.toContain(TOKEN);
+  });
+
+  it('report a role beyond Public and Authenticated as a leak, a missing one as drift', async () => {
+    const extra = await adminRun({
+      host: mutated({
+        roles: [
+          { name: 'Authenticated', type: 'authenticated' },
+          { name: 'Public', type: 'public' },
+          { name: 'Editor', type: 'editor' },
+        ],
+      }),
+    });
+    const missing = await adminRun({ host: mutated({ roles: [{ name: 'Public', type: 'public' }] }) });
+
+    expect(extra.code).toBe(1);
+    expect(extra.err[0]).toBe('FAIL leak: users-permissions roles Editor: expected no such role, got role (type editor)');
+    expect(missing.err).toContain('FAIL drift: users-permissions roles Authenticated: expected role, got no such role');
+  });
+
+  it('report any Authenticated grant as a leak', async () => {
+    const { code, err } = await adminRun({ host: mutated({ authenticatedGrants: ['plugin::users-permissions.user.me'] }) });
+
+    expect(code).toBe(1);
+    expect(err.filter((l) => l.startsWith('FAIL'))).toEqual([
+      'FAIL leak: Authenticated role plugin::users-permissions.user.me: expected not granted, got granted',
+    ]);
+  });
+
+  it("compare Public's exact set: an extra grant is a leak, a missing one drift, with the entry's consumers", async () => {
+    const { report } = await adminRun({
+      host: mutated({ grant: ['api::welcome.welcome.delete'], revoke: ['api::matrix.matrix.findOne'] }),
+    });
+
+    expect(failureRows(report).sort()).toEqual([
+      '| drift | `Public role` | api::matrix.matrix.findOne | – | granted | not granted | client, publicDataApi |',
+      '| drift | `matrices` | findOne | – | 404 (fake id) | 403 ForbiddenError; ?populate=zzprobe: 403 ForbiddenError | client, publicDataApi |',
+      '| leak | `Public role` | api::welcome.welcome.delete | – | not granted | granted | client |',
+    ]);
+  });
+
+  it('report sign-ups on as a leak', async () => {
+    const { code, err } = await adminRun({ host: mutated({ signUps: true }) });
+
+    expect(code).toBe(1);
+    expect(err).toContain('FAIL leak: users-permissions advanced settings allow_register: expected off, got on');
+  });
+
+  const IMPORT = realManifest.importToken.actions;
+
+  it('report a second content-API token as a leak, whatever its type', async () => {
+    const { code, err } = await adminRun({
+      host: mutated({
+        apiTokens: [
+          { name: 'Import', type: 'custom', permissions: IMPORT },
+          { name: 'Full', type: 'full-access', permissions: [] },
+          { name: 'Reader', type: 'read-only', permissions: [] },
+        ],
+      }),
+    });
+
+    expect(code).toBe(1);
+    expect(err.filter((l) => l.startsWith('FAIL'))).toEqual([
+      'FAIL leak: API token Full: expected no such token, got full-access token',
+      'FAIL leak: API token Reader: expected no such token, got read-only token',
+    ]);
+  });
+
+  it("report an extra Import action as a leak and a missing one as drift", async () => {
+    const { err } = await adminRun({
+      host: mutated({
+        apiTokens: [{ name: 'Import', type: 'custom', permissions: [...IMPORT.slice(1), 'api::isolate.isolate.import'] }],
+      }),
+    });
+
+    expect(err.filter((l) => l.startsWith('FAIL'))).toEqual([
+      'FAIL leak: API token Import api::isolate.isolate.import: expected not granted, got granted',
+      `FAIL drift: API token Import ${IMPORT[0]}: expected granted, got not granted`,
+    ]);
+  });
+
+  it('report an Import token of another type as a leak, and no Import token as drift', async () => {
+    const wrongType = await adminRun({ host: mutated({ apiTokens: [{ name: 'Import', type: 'full-access', permissions: [] }] }) });
+    const none = await adminRun({ host: mutated({ apiTokens: [] }) });
+
+    expect(wrongType.err.filter((l) => l.startsWith('FAIL'))).toEqual([
+      'FAIL leak: API token Import type: expected custom, got full-access',
+    ]);
+    expect(none.err.filter((l) => l.startsWith('FAIL'))).toEqual([
+      'FAIL drift: API token Import: expected custom token, got no such token',
+    ]);
+  });
+
+  it('fail as error when the admin API refuses the token, and retry it with --wait', async () => {
+    const { code, err, sleep } = await adminRun({
+      argv: [BASE, '--wait', '30'],
+      host: mutated({ readerToken: 'another-token' }),
+    });
+
+    expect(code).toBe(1);
+    expect(err).toContain(
+      'FAIL error: users-permissions roles GET /users-permissions/roles: expected 200 (read with the permissions-reader token), got 401 UnauthorizedError',
+    );
+    expect(sleep.mock.calls.filter(([ms]) => ms === 15_000).length).toBeGreaterThan(0);
   });
 });

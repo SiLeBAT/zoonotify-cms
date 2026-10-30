@@ -294,18 +294,23 @@ async function probeType(http, { ct, entry, locales }) {
 
 /**
  * What the anonymous half deliberately does not probe, listed in every report.
+ * Single-type DELETE stays listed when the admin half ran, since it is still
+ * never sent; the reason then says the exact-set read covers the grant.
  *
- * @param {{ manifest: any, surface: import('./manifest.mjs').Surface }} options
+ * @param {{ manifest: any, surface: import('./manifest.mjs').Surface, adminChecked?: boolean }} options
  * @returns {{ target: string, action: string, reason: string }[]}
  */
-export function anonymousNotProbed({ manifest, surface }) {
+export function anonymousNotProbed({ manifest, surface, adminChecked = false }) {
   const list = [];
+  const coverage = adminChecked
+    ? "Covered by the admin read of Public's exact grant set."
+    : 'Not covered: the admin checks did not run.';
   for (const ct of surface.contentTypes) {
     if (ct.kind !== 'singleType' || !(ct.pluralName in manifest.public.contentTypes)) continue;
     list.push({
       target: ct.pluralName,
       action: 'delete',
-      reason: 'Single types have no id to fake: a granted DELETE would delete the live entry.',
+      reason: `Single types have no id to fake: a granted DELETE would delete the live entry. ${coverage}`,
     });
   }
   for (const [handler, entry] of Object.entries(manifest.public.customRoutes)) {
