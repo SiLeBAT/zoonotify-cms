@@ -145,4 +145,17 @@ jobs:
               exit 1
             fi
 
+            # Grants live in the database, so only a live probe shows the host
+            # matches config/permissions.mjs. It runs here, on the server: this
+            # repository is public, so the log gets one pass/FAIL line and the
+            # report stays in ~/permission-reports (mailed on failure). The
+            # reader token is read from ~/permissions-probe.env inside the
+            # script, which never traces. A failure fails the deploy.
+            if [ -f scripts/permissions-deploy-check.sh ]; then
+              echo "==> Permission probe"
+              bash ./scripts/permissions-deploy-check.sh https://zoonotify-dev.bfr.berlin/cms/api
+            else
+              echo "==> Permission probe: not in this checkout, skipped"
+            fi
+
             echo "Deploy finished."
