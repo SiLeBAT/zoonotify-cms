@@ -63,9 +63,13 @@ const PLUGIN_PROBES = {
 /** Strapi answers this when register is granted but sign-ups are off. */
 const REGISTER_DISABLED = 'Register action is currently disabled';
 
-/** `403 ForbiddenError`, `500 InternalServerError`, `timeout` … */
+/**
+ * `403 ForbiddenError`, `500 InternalServerError`, `no answer (timeout)` …
+ * The free-text cause stays in the parentheses, which the cron's change
+ * detection ignores (server-run.mjs).
+ */
 export const describeAnswer = (/** @type {Answer} */ a) =>
-  a.status === null ? a.failure ?? 'no answer' : [a.status, a.name].filter(Boolean).join(' ');
+  a.status === null ? `no answer (${a.failure ?? 'unknown'})` : [a.status, a.name].filter(Boolean).join(' ');
 
 /**
  * Judges a denied action's answer: undefined = passed (refused), else the

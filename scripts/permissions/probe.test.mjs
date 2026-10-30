@@ -29,7 +29,7 @@ const matchingHost = (manifest, surface, extra = {}) => ({
  * Runs the command against a fake host and captures everything it emits.
  * `fetch` may be a fake-cms host description or a fetch function.
  */
-async function run({ argv = [BASE, '--report', 'report.md'], host, env = {}, manifest = realManifest, surface = realSurface } = {}) {
+async function run({ argv = [BASE, '--report', 'report.md'], host, env = {}, manifest = realManifest, surface = realSurface, onFailures } = {}) {
   const fetch = vi.fn(typeof host === 'function' ? host : fakeCms(host ?? matchingHost(manifest, surface)));
   let t = Date.parse('2026-10-30T05:17:00Z');
   const sleep = vi.fn(async (ms) => void (t += ms));
@@ -46,6 +46,7 @@ async function run({ argv = [BASE, '--report', 'report.md'], host, env = {}, man
     writeFile: (path, text) => void (files[path] = text),
     stdout: (line) => out.push(line),
     stderr: (line) => err.push(line),
+    onFailures,
   });
   return { code, report: files['report.md'], files, out, err, fetch, sleep };
 }
@@ -165,7 +166,7 @@ describe('permissions:probe failure categories', () => {
 
     const { err } = await run({ host });
 
-    expect(err[0]).toBe('FAIL error: welcomes find: expected 200, got timeout; ?populate=zzprobe: 400 ValidationError');
+    expect(err[0]).toBe('FAIL error: welcomes find: expected 200, got no answer (timeout); ?populate=zzprobe: 400 ValidationError');
   });
 
   it('names the cause when the host cannot be reached', async () => {
@@ -178,7 +179,7 @@ describe('permissions:probe failure categories', () => {
     });
 
     expect(code).toBe(1);
-    expect(err[0]).toMatch(/^FAIL error: .*, got ECONNREFUSED/);
+    expect(err[0]).toMatch(/^FAIL error: .*, got no answer \(ECONNREFUSED\)/);
   });
 
   it('treats PolicyError on /import-admin/* as a Public grant (drift) and ForbiddenError as a pass', async () => {
@@ -367,6 +368,23 @@ describe('permissions:probe report', () => {
     const { files } = await run({ argv: [BASE] });
 
     expect(files).toEqual({});
+  });
+
+  it('hands its failures, structured, to onFailures', async () => {
+    const onFailures = vi.fn();
+    await run({ host: mutated({ revoke: ['api::matrix.matrix.find'] }), onFailures });
+
+    expect(onFailures).toHaveBeenCalledWith([
+      {
+        category: 'drift',
+        target: 'matrices',
+        action: 'find',
+        locale: null,
+        expected: '200',
+        got: '403 ForbiddenError; ?populate=zzprobe: 403 ForbiddenError',
+        consumers: ['client', 'publicDataApi'],
+      },
+    ]);
   });
 });
 
