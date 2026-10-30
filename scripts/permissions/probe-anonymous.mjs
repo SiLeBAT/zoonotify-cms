@@ -113,9 +113,10 @@ async function classifyRead(http, path) {
 /**
  * Probes one granted read. Expected status, then classification on anything
  * else; `granted` from the classification means the route is fine but has no
- * content, which only fails for required content.
+ * content. That fails for required content, and is fine only for a single
+ * type with none (`emptyOk`): a collection's find answers 200 even when empty.
  */
-async function grantedRead(http, { path, query = '', expected, contentRequired }) {
+async function grantedRead(http, { path, query = '', expected, contentRequired, emptyOk = false }) {
   const a = await http.request('GET', path + query);
   if (a.status === expected) return { ok: true };
   const c = await classifyRead(http, path);
@@ -124,7 +125,7 @@ async function grantedRead(http, { path, query = '', expected, contentRequired }
   // Granted but the expected answer didn't come: missing content where content
   // is required, otherwise something unexpected (a 500, a proxy error …).
   if (contentRequired && a.status === 404) return { ok: false, category: 'missing content', got };
-  if (!contentRequired && expected === 200 && a.status === 404) return { ok: true };
+  if (emptyOk && a.status === 404) return { ok: true };
   return { ok: false, category: 'error', got };
 }
 
@@ -278,7 +279,13 @@ async function probeType(http, { ct, entry, locales }) {
       // Grants once; content per locale (or once when not localized / not required).
       const contentRequired = locales.length > 0;
       for (const locale of contentRequired ? locales : [null]) {
-        const r = await grantedRead(http, { path, query: locale ? `?locale=${locale}` : '', expected: 200, contentRequired });
+        const r = await grantedRead(http, {
+          path,
+          query: locale ? `?locale=${locale}` : '',
+          expected: 200,
+          contentRequired,
+          emptyOk: !contentRequired,
+        });
         if (r.ok) continue;
         if (r.category !== 'missing content') {
           rows.push(row('find', null, '200', r.category, r.got));

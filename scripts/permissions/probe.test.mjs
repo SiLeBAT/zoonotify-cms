@@ -130,6 +130,19 @@ describe('permissions:probe failure categories', () => {
     ]);
   });
 
+  it('fails a granted collection find answering 404 as error, unlike an empty single type', async () => {
+    const host = mutated({});
+    host.answer = (method, path) =>
+      method === 'GET' && path.startsWith('/matrices?pagination') ? { status: 404, body: { error: { status: 404, name: 'NotFoundError' } } } : undefined;
+
+    const { code, report } = await run({ host });
+
+    expect(code).toBe(1);
+    expect(failureRows(report)).toEqual([
+      '| error | `matrices` | find | – | 200 | 404 NotFoundError; ?populate=zzprobe: 400 ValidationError | client, publicDataApi |',
+    ]);
+  });
+
   it('fails a 500 on a denied action as error, never as a deny', async () => {
     const host = mutated({});
     host.answer = (method, path) =>
