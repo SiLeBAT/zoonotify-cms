@@ -42,7 +42,11 @@
 //      plugin::users-permissions.roles.read
 //      plugin::users-permissions.advanced-settings.read
 // 2. Create an admin user `permissions-reader` with only that role.
-// 3. Create one admin token for it per host, and store it as
+// 3. Create one admin token per host holding the same three permissions. An
+//    admin token belongs to whoever creates it, and creating one needs
+//    admin::admin-tokens.create: give the role that permission, create the
+//    token logged in as `permissions-reader`, then remove the permission again
+//    (the token keeps working; verified on 5.59). Store the token as
 //    PERMISSIONS_READER_TOKEN in the probe's env file on that server. Never pass
 //    it on the command line and never commit it.
 
