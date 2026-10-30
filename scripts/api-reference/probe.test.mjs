@@ -24,10 +24,20 @@ const run = (fetch, extra = {}) =>
   });
 
 describe('promisedCollections', () => {
-  it('flattens every include group, in order, and ignores excludes', () => {
-    expect(
-      promisedCollections({ include: { A: ['x', 'y'], B: ['z'] }, exclude: ['nope'] }),
-    ).toEqual(['x', 'y', 'z']);
+  it("lists the manifest's Public Data API types, in manifest order", () => {
+    const read = { actions: ['find', 'findOne'], consumers: [] };
+    const manifest = {
+      public: {
+        contentTypes: {
+          x: { ...read, publicDataApi: 'B' },
+          page: { ...read, consumers: ['client'] },
+          y: { ...read, publicDataApi: 'A' },
+          nope: { actions: [], consumers: [] },
+        },
+      },
+    };
+
+    expect(promisedCollections(manifest)).toEqual(['x', 'y']);
   });
 });
 

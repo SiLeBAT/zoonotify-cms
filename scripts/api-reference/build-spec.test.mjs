@@ -53,14 +53,23 @@ const cutOff = {
   },
 };
 
+const inApi = (tag, actions = ['find', 'findOne']) => ({
+  actions,
+  consumers: ['publicDataApi'],
+  publicDataApi: tag,
+});
+const manifestWith = (contentTypes) => ({ public: { contentTypes, customRoutes: {}, plugins: {} } });
+
 const build = (overrides = {}) =>
   buildSpec({
     contentTypes: [prevalence, matrix, isolate, table],
     components: { 'data.cut-off': cutOff },
-    config: {
-      include: { Data: ['prevalences', 'matrices', 'resistance-tables'] },
-      exclude: ['isolates'],
-    },
+    manifest: manifestWith({
+      prevalences: inApi('Data'),
+      matrices: inApi('Data'),
+      isolates: { actions: [], consumers: [] },
+      'resistance-tables': inApi('Data'),
+    }),
     base,
     ...overrides,
   });
@@ -152,29 +161,34 @@ describe('buildSpec', () => {
     ]);
   });
 
-  it('fails on content types that are neither included nor excluded', () => {
-    expect(() =>
-      build({ config: { include: { Data: ['prevalences', 'matrices'] }, exclude: [] } }),
-    ).toThrow(/unclassified.*isolates.*resistance-tables/s);
+  it("keeps manifest order within a group and the base's tag order across groups", () => {
+    const twoTags = { ...base, tags: [{ name: 'Data' }, { name: 'Vocab' }] };
+    const spec = build({
+      base: twoTags,
+      manifest: manifestWith({
+        matrices: inApi('Vocab'),
+        'resistance-tables': inApi('Data'),
+        prevalences: inApi('Data'),
+      }),
+    });
+
+    expect(Object.keys(spec.paths).filter((p) => !p.endsWith('}'))).toEqual([
+      '/resistance-tables',
+      '/prevalences',
+      '/matrices',
+    ]);
+    expect(spec.paths['/matrices'].get.tags).toEqual(['Vocab']);
   });
 
-  it('fails on config entries that name no content type, or are classified twice', () => {
+  it('fails when a Public Data API type is not granted find and findOne', () => {
     expect(() =>
-      build({
-        config: {
-          include: { Data: ['prevalences', 'matrices', 'resistance-tables', 'ghosts'] },
-          exclude: ['isolates'],
-        },
-      }),
-    ).toThrow(/ghosts/);
-    expect(() =>
-      build({
-        config: {
-          include: { Data: ['prevalences', 'matrices', 'resistance-tables'] },
-          exclude: ['isolates', 'matrices'],
-        },
-      }),
-    ).toThrow(/matrices/);
+      build({ manifest: manifestWith({ prevalences: inApi('Data', ['find']), matrices: inApi('Data') }) }),
+    ).toThrow(/prevalences.*find.*findOne/);
+  });
+
+  it('fails on Public Data API entries that name no content type or no tag', () => {
+    expect(() => build({ manifest: manifestWith({ ghosts: inApi('Data') }) })).toThrow(/ghosts/);
+    expect(() => build({ manifest: manifestWith({ prevalences: inApi('Nope') }) })).toThrow(/Nope/);
   });
 
   it('fails on attribute types it has no mapping for', () => {

@@ -13,12 +13,18 @@ import { writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import base from './base.mjs';
-import config from './config.mjs';
+import manifest from '../../config/permissions.mjs';
 
 const REQUEST_TIMEOUT_MS = 30_000;
 
-/** @param {{ include: Record<string, string[]> }} cfg */
-export const promisedCollections = (cfg) => Object.values(cfg.include).flat();
+/**
+ * The Public Data API collections of the permission manifest, in its order.
+ * @param {{ public: { contentTypes: Record<string, { publicDataApi?: string }> } }} m
+ */
+export const promisedCollections = (m) =>
+  Object.entries(m.public.contentTypes)
+    .filter(([, entry]) => entry.publicDataApi !== undefined)
+    .map(([plural]) => plural);
 
 /**
  * @param {{
@@ -102,7 +108,7 @@ function parseArgs(argv) {
 
 async function main(argv) {
   const { baseUrl, waitMs, report } = parseArgs(argv);
-  const collections = promisedCollections(config);
+  const collections = promisedCollections(manifest);
   console.log(`Probing ${collections.length} collections at ${baseUrl}`);
 
   const failures = await probe({ baseUrl, collections, waitMs });
