@@ -13,7 +13,8 @@
     "test:watch": "vitest",
     "api-reference:generate": "node scripts/api-reference/generate.mjs",
     "api-reference:probe": "node scripts/api-reference/probe.mjs",
-    "check:strapi-versions": "node scripts/strapi-versions/cli.mjs"
+    "check:strapi-versions": "node scripts/strapi-versions/cli.mjs",
+    "permissions:apply": "node scripts/permissions/apply-cli.mjs"
   },
   "dependencies": {
     "@strapi/plugin-users-permissions": "5.59.0",
