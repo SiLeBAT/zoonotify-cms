@@ -1,8 +1,9 @@
 // @ts-check
-// Test support for probe.test.mjs: an in-memory stand-in for a Strapi 5 host's
-// content API, answering anonymous requests the way Strapi 5.59 does (route
-// lookup → permission check → query validation → handler). Not used at
-// runtime.
+// Test support for probe.test.mjs: an in-memory stand-in for a Strapi 5 host.
+// Its content API answers anonymous requests the way Strapi 5.59 does (route
+// lookup → permission check → query validation → handler); its admin API
+// answers the reads the probe's admin half makes with the reader token. Not
+// used at runtime.
 
 const err = (status, name, message) => ({ status, body: { data: null, error: { status, name, message } } });
 const NOT_FOUND = err(404, 'NotFoundError', 'Not Found');
@@ -43,6 +44,60 @@ const PLUGIN_ROUTES = [
 ];
 
 /**
+ * A role's grants the way `GET /users-permissions/roles/:id` returns them:
+ * every known action grouped by type and controller, `enabled` on the granted
+ * ones (plugin-users-permissions 5.59, services/role.js findOne).
+ */
+function permissionMap(surface, uids) {
+  const map = {};
+  const set = (uid, enabled) => {
+    const [type, controller, action] = uid.split('.');
+    ((map[type] ??= { controllers: {} }).controllers[controller] ??= {})[action] = { enabled, policy: '' };
+  };
+  for (const ct of surface.contentTypes) {
+    const actions = ct.kind === 'collectionType' ? ['find', 'findOne', 'create', 'update', 'delete'] : ['find', 'update', 'delete'];
+    for (const action of actions) set(`${ct.uid}.${action}`, false);
+  }
+  for (const [, , uid] of PLUGIN_ROUTES) set(uid, false);
+  for (const uid of uids) set(uid, true);
+  return map;
+}
+
+/**
+ * The admin API the probe reads with the `permissions-reader` token, answering
+ * as Strapi 5.59 does. Paths are relative to the server root (no `/api`).
+ */
+function adminApi({ surface, grants, authenticatedGrants, roles, signUps, apiTokens, readerToken }) {
+  const allRoles = roles.map((r, i) => ({ id: i + 1, documentId: `role${i + 1}`, description: '', nb_users: 0, ...r }));
+  const grantsOf = (role) => (role.type === 'public' ? grants : role.type === 'authenticated' ? authenticatedGrants : []);
+  return (method, path, authorization) => {
+    if (!/^\/(admin|users-permissions)\//.test(path)) return undefined;
+    if (!readerToken || authorization !== `Bearer ${readerToken}`) return err(401, 'UnauthorizedError', 'Missing or invalid credentials');
+    if (method !== 'GET') return FORBIDDEN;
+    if (path === '/users-permissions/roles') return { status: 200, body: { roles: [...allRoles].sort((a, b) => a.name.localeCompare(b.name)) } };
+    const one = path.match(/^\/users-permissions\/roles\/(\d+)$/);
+    if (one) {
+      const role = allRoles.find((r) => String(r.id) === one[1]);
+      return role ? { status: 200, body: { role: { ...role, permissions: permissionMap(surface, grantsOf(role)) } } } : NOT_FOUND;
+    }
+    if (path === '/users-permissions/advanced') {
+      return {
+        status: 200,
+        body: { settings: { unique_email: true, allow_register: signUps, email_confirmation: false, default_role: 'authenticated' }, roles: allRoles },
+      };
+    }
+    // GET /admin/api-tokens lists content-API tokens only (kind 'content-api').
+    if (path === '/admin/api-tokens') {
+      return {
+        status: 200,
+        body: { data: apiTokens.map((t, i) => ({ id: i + 1, kind: 'content-api', description: '', lifespan: null, ...t })) },
+      };
+    }
+    return NOT_FOUND;
+  };
+}
+
+/**
  * @param {{
  *   surface: import('./manifest.mjs').Surface,
  *   grants: Iterable<string>,
@@ -50,14 +105,37 @@ const PLUGIN_ROUTES = [
  *   notDeployed?: string[],
  *   signUps?: boolean,
  *   headers?: Record<string, string>,
- *   answer?: (method: string, path: string) => { status: number, body?: any } | Error | undefined,
+ *   answer?: (method: string, path: string, admin: boolean) => { status: number, body?: any } | Error | undefined,
+ *   readerToken?: string,
+ *   authenticatedGrants?: string[],
+ *   roles?: { name: string, type: string }[],
+ *   apiTokens?: { name: string, type: string, permissions: string[] }[],
  * }} host
  *   `grants`: Public's action uids. `published`: `<pluralName>:<locale>` per
  *   published single-type entry (`<pluralName>:` when not localized).
- *   `notDeployed`: pluralNames whose routes don't exist. `answer`: overrides.
+ *   `notDeployed`: pluralNames whose routes don't exist. `answer`: overrides
+ *   (`admin`: the request went to the admin API, `path` is then from the
+ *   server root). `readerToken`: the admin token the admin API accepts.
+ *   `authenticatedGrants`, `roles`, `apiTokens`: the admin API's state.
  */
-export function fakeCms({ surface, grants, published = [], notDeployed = [], signUps = false, headers = {}, answer }) {
+export function fakeCms({
+  surface,
+  grants,
+  published = [],
+  notDeployed = [],
+  signUps = false,
+  headers = {},
+  answer,
+  readerToken,
+  authenticatedGrants = [],
+  roles = [
+    { name: 'Authenticated', type: 'authenticated' },
+    { name: 'Public', type: 'public' },
+  ],
+  apiTokens = [],
+}) {
   const granted = new Set(grants);
+  const admin = adminApi({ surface, grants: [...granted], authenticatedGrants, roles, signUps, apiTokens, readerToken });
   const content = new Set(published);
   /** @type {{ method: string, pattern: RegExp, uid: string, handle: (req: any) => { status: number, body?: any } }[]} */
   const routes = [];
@@ -93,12 +171,14 @@ export function fakeCms({ surface, grants, published = [], notDeployed = [], sig
     });
   }
 
-  const respond = (method, url) => {
+  const respond = (method, url, authorization) => {
     const { pathname, searchParams: query } = new URL(url);
-    const path = pathname.replace(/^\/api/, '');
-    const override = answer?.(method, path + (query.size ? `?${query}` : ''));
+    const contentApi = pathname.startsWith('/api/');
+    const path = contentApi ? pathname.replace(/^\/api/, '') : pathname;
+    const override = answer?.(method, path + (query.size ? `?${query}` : ''), !contentApi);
     if (override instanceof Error) throw override;
     if (override) return override;
+    if (!contentApi) return admin(method, path, authorization) ?? NOT_FOUND;
 
     const route = routes.find((r) => r.method === method && r.pattern.test(path));
     if (!route) return method === 'GET' ? NOT_FOUND : err(405, 'MethodNotAllowedError', 'Method Not Allowed');
@@ -111,7 +191,7 @@ export function fakeCms({ surface, grants, published = [], notDeployed = [], sig
 
   /** @type {(url: string, init?: any) => Promise<Response>} */
   const fetch = async (url, init = {}) => {
-    const { status, body } = respond(init.method ?? 'GET', url);
+    const { status, body } = respond(init.method ?? 'GET', url, init.headers?.authorization);
     return new Response(body === undefined ? null : JSON.stringify(body), {
       status,
       headers: { 'content-type': 'application/json', ...headers },
