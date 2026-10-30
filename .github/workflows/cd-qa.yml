@@ -151,9 +151,9 @@ jobs:
             # report stays in ~/permission-reports (mailed on failure). The
             # reader token is read from ~/permissions-probe.env inside the
             # script, which never traces. A failure fails the deploy.
-            if [ -f scripts/permissions-deploy-check.sh ]; then
+            if [ -f scripts/permissions-check.sh ]; then
               echo "==> Permission probe"
-              bash ./scripts/permissions-deploy-check.sh https://zoonotify-dev.bfr.berlin/cms/api
+              bash ./scripts/permissions-check.sh deploy https://zoonotify-dev.bfr.berlin/cms/api
             else
               echo "==> Permission probe: not in this checkout, skipped"
             fi

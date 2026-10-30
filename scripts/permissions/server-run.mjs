@@ -1,15 +1,16 @@
 // @ts-check
 // Runs the permission probe on a server, from the deployed checkout. Called by
-// the two thin shell wrappers, which source ~/permissions-probe.env first:
+// the thin shell wrapper, which selects the .nvmrc Node and sources
+// ~/permissions-probe.env first:
 //
-//   scripts/permissions-deploy-check.sh <baseUrl>   (both deploy workflows)
-//   scripts/permissions-cron.sh <baseUrl>           (daily crontab line)
+//   scripts/permissions-check.sh deploy <baseUrl>   (both deploy workflows)
+//   scripts/permissions-check.sh cron <baseUrl>     (daily crontab line)
 //
 // Both modes probe with --require-admin, save the full report as
 // ~/permission-reports/<UTC timestamp>-<mode>.md, its failures as the sibling
-// .json, and print only fixed lines:
-// the repository is public, so the deploy log must never name a failure, and
-// the token reaches the probe through the environment only (never argv).
+// .json, and print only fixed lines: the repository is public, so the deploy
+// log must never name a failure, and the token reaches the probe through the
+// environment only (never argv).
 //
 // - deploy: mails every failing report, fails on any failure, and also fails
 //   with `permission cron stale` when the newest cron report is older than

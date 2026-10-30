@@ -181,9 +181,9 @@ jobs:
             # reader token is read from ~/permissions-probe.env inside the
             # script, which never traces. A failure fails the deploy. Tags
             # older than the probe don't carry the script (e.g. a rollback).
-            if [ -f scripts/permissions-deploy-check.sh ]; then
+            if [ -f scripts/permissions-check.sh ]; then
               echo "==> Permission probe"
-              bash ./scripts/permissions-deploy-check.sh https://zoonotify.bfr.berlin/cms/api
+              bash ./scripts/permissions-check.sh deploy https://zoonotify.bfr.berlin/cms/api
             else
               echo "==> Permission probe: not in tag $REF, skipped"
             fi
