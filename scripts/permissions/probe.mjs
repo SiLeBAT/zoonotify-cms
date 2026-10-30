@@ -51,7 +51,9 @@ import { loadSurface } from './manifest.mjs';
  *   manifest?: any,
  *   surface?: import('./manifest.mjs').Surface,
  *   env?: Record<string, string | undefined>,
+ *   onFailures?: (failures: Failure[]) => void,
  * }} Deps
+ *   `onFailures` receives the run's failures, structured (server-run.mjs keeps them).
  */
 
 /** Severity order: the report and the FAIL lines are sorted by it. */
@@ -160,7 +162,10 @@ const cell = (text) => String(text).replace(/\|/g, '\\|');
 const countsOf = (failures) => CATEGORIES.map((c) => `${c} ${failures.filter((f) => f.category === c).length}`).join(' · ');
 
 /**
- * @param {{ baseUrl: string, build: string, time: string, adminChecked: boolean, checkCount: number, failures: Failure[], notProbed: NotProbed[] }} run
+ * The Markdown report. `adminChecked` null = unknown (server-run.mjs's report
+ * for a probe that produced none).
+ *
+ * @param {{ baseUrl: string, build: string, time: string, adminChecked: boolean | null, checkCount: number, failures: Failure[], notProbed: NotProbed[] }} run
  * @returns {string}
  */
 export function formatReport({ baseUrl, build, time, adminChecked, checkCount, failures, notProbed }) {
@@ -171,7 +176,7 @@ export function formatReport({ baseUrl, build, time, adminChecked, checkCount, f
     `- Base URL: ${baseUrl}`,
     `- Build: ${build}`,
     `- Time: ${time}`,
-    `- Admin checks: ${adminChecked ? 'checked' : `not checked (${TOKEN_VAR} is not set)`}`,
+    `- Admin checks: ${adminChecked === null ? 'unknown' : adminChecked ? 'checked' : `not checked (${TOKEN_VAR} is not set)`}`,
     `- Result: ${failures.length ? 'FAIL' : 'pass'}, ${checkCount} checks, ${failures.length} failures`,
     `- Failures by category: ${countsOf(failures)}`,
     '',
@@ -240,6 +245,7 @@ export async function probeCommand(argv, deps = {}) {
     manifest = defaultManifest,
     surface = loadSurface(),
     env = process.env,
+    onFailures = () => {},
   } = deps;
 
   let args;
@@ -270,6 +276,7 @@ export async function probeCommand(argv, deps = {}) {
     });
   }
   failures.sort(bySeverity);
+  onFailures(failures);
 
   const report = formatReport({
     baseUrl: args.baseUrl,
