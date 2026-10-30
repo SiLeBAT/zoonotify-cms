@@ -155,34 +155,37 @@ jobs:
 
             bash ./deploy.sh
 
-            echo "Production deploy of '$REF' finished."
+            # pm2 returns before Strapi has booted, and a process that never
+            # came up would leave the old one's port answering. Production
+            # reports only the package version, so wait until it is the tag's.
+            EXPECTED="${REF#v}"
+            PORT="$(grep -E '^PORT=' .env | tail -n1 | cut -d= -f2 | tr -d "\"'\r" || true)"
+            PORT="${PORT:-1337}"
+            echo "==> Waiting for cms-version: $EXPECTED on port $PORT"
+            served=""
+            for _ in $(seq 1 60); do
+              served="$(curl -s -o /dev/null -D - "http://127.0.0.1:$PORT/_health" \
+                | tr -d '\r' | awk -F': ' 'tolower($1) == "cms-version" { print $2 }' || true)"
+              [ "$served" = "$EXPECTED" ] && break
+              sleep 5
+            done
+            if [ "$served" != "$EXPECTED" ]; then
+              echo "ERROR: cms-version is '${served}', expected '$EXPECTED' after 5 minutes" >&2
+              exit 1
+            fi
 
-  # Public-role grants live in the database, so only a live request shows the
-  # host matches the permission manifest. pm2 restarts the CMS without waiting
-  # for it to boot, hence --wait. The repository is public, so the log shows
-  # only pass/FAIL: run `yarn permissions:probe <baseUrl> --report <file>` on a
-  # trusted machine for the details.
-  probe:
-    name: 'Permission probe'
-    runs-on: ubuntu-latest
-    needs: deploy
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ inputs.tag }}
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: '.nvmrc'
-      - name: Probe the permissions anonymously
-        run: |
-          if [ ! -f scripts/permissions/probe.mjs ]; then
-            echo "::warning::Tag ${{ inputs.tag }} predates the permission probe; skipping."
-            exit 0
-          fi
-          if yarn -s permissions:probe https://zoonotify.bfr.berlin/cms/api --wait 300 > /dev/null 2>&1; then
-            echo "permission probe: pass"
-          else
-            echo "permission probe: FAIL"
-            exit 1
-          fi
+            # Grants live in the database, so only a live probe shows the host
+            # matches config/permissions.mjs. It runs here, on the server: this
+            # repository is public, so the log gets one pass/FAIL line and the
+            # report stays in ~/permission-reports (mailed on failure). The
+            # reader token is read from ~/permissions-probe.env inside the
+            # script, which never traces. A failure fails the deploy. Tags
+            # older than the probe don't carry the script (e.g. a rollback).
+            if [ -f scripts/permissions-deploy-check.sh ]; then
+              echo "==> Permission probe"
+              bash ./scripts/permissions-deploy-check.sh https://zoonotify.bfr.berlin/cms/api
+            else
+              echo "==> Permission probe: not in tag $REF, skipped"
+            fi
+
+            echo "Production deploy of '$REF' finished."
