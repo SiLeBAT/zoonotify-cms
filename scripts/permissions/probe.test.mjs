@@ -24,7 +24,7 @@ const matchingHost = (manifest, surface, extra = {}) => ({
  * Runs the command against a fake host and captures everything it emits.
  * `fetch` may be a fake-cms host description or a fetch function.
  */
-async function run({ argv = [BASE, '--report', 'report.md'], host, manifest = realManifest, surface = realSurface } = {}) {
+async function run({ argv = [BASE, '--report', 'report.md'], host, env = {}, manifest = realManifest, surface = realSurface } = {}) {
   const fetch = vi.fn(typeof host === 'function' ? host : fakeCms(host ?? matchingHost(manifest, surface)));
   let t = Date.parse('2026-10-30T05:17:00Z');
   const sleep = vi.fn(async (ms) => void (t += ms));
@@ -34,6 +34,7 @@ async function run({ argv = [BASE, '--report', 'report.md'], host, manifest = re
   const code = await probeCommand(argv, {
     manifest,
     surface,
+    env,
     fetch,
     now: () => t,
     sleep,
@@ -339,5 +340,34 @@ describe('permissions:probe report', () => {
     const { files } = await run({ argv: [BASE] });
 
     expect(files).toEqual({});
+  });
+});
+
+const NOT_CHECKED = '- Admin checks: not checked (PERMISSIONS_READER_TOKEN is not set)\n';
+
+describe('permissions:probe admin checks without a reader token', () => {
+  it('says "not checked" in the report and does not fail', async () => {
+    const { code, report } = await run();
+
+    expect(code).toBe(0);
+    expect(report).toContain(NOT_CHECKED);
+  });
+
+  it('fails with --require-admin, naming the missing variable', async () => {
+    const { code, err, report } = await run({ argv: [BASE, '--report', 'report.md', '--require-admin'] });
+
+    expect(code).toBe(1);
+    expect(err[0]).toBe(
+      'FAIL error: admin API: expected PERMISSIONS_READER_TOKEN in the environment (--require-admin), got not set',
+    );
+    expect(report).toContain(NOT_CHECKED);
+  });
+
+  it('never takes the token as an argument', async () => {
+    const { code, err, fetch } = await run({ argv: [BASE, '--admin-token', 'sekrit-token'] });
+
+    expect(code).toBe(2);
+    expect(err.join(' ')).not.toContain('sekrit-token');
+    expect(fetch).not.toHaveBeenCalled();
   });
 });

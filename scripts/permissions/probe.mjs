@@ -1,7 +1,7 @@
 // @ts-check
 // Checks a live host against the permission manifest (config/permissions.mjs).
 //
-//   yarn permissions:probe <baseUrl> [--report <file>] [--wait <seconds>]
+//   PERMISSIONS_READER_TOKEN=… yarn permissions:probe <baseUrl> [--report <file>] [--wait <seconds>] [--require-admin]
 //
 // baseUrl is required (e.g. http://127.0.0.1:1337/api; use 127.0.0.1, not
 // localhost, on Windows), so a local run never hits prod by accident.
@@ -10,23 +10,29 @@
 // for that long; every other failure is reported at once.
 //
 // Prints one counts line when everything passes. Otherwise one FAIL line per
-// failure on stderr and exit code 1. Requests are anonymous, sequential, about
-// 250 ms apart, with a 30 s timeout.
+// failure on stderr and exit code 1. Requests are sequential, about 250 ms
+// apart, with a 30 s timeout.
 //
-// The checks come from halves that each turn the manifest into `Check`s
-// yielding `Failure` rows of the same shape: probe-anonymous.mjs now; an admin
-// half reading exact grant sets plugs into `checkHalves` below the same way.
+// The checks come from two halves that each turn the manifest into `Check`s
+// yielding `Failure` rows of the same shape: probe-anonymous.mjs (anonymous
+// requests to the content API) and probe-admin.mjs (exact sets read through
+// the admin API, which hangs off the base URL without its `/api`). The admin
+// half runs only when PERMISSIONS_READER_TOKEN is in the environment; the
+// token is never taken from argv and never printed. Without it the report says
+// "not checked", which fails only with --require-admin.
 
 import { writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import defaultManifest from '../../config/permissions.mjs';
+import { adminChecks } from './probe-admin.mjs';
 import { anonymousChecks, anonymousNotProbed } from './probe-anonymous.mjs';
 import { loadSurface } from './manifest.mjs';
 
 /**
- * @typedef {{ status: number | null, name?: string, message?: string, failure?: string }} Answer
+ * @typedef {{ status: number | null, name?: string, message?: string, failure?: string, body?: any }} Answer
  *   status null = no HTTP answer (`failure` says why: timeout, connection refused …).
+ *   `body` is the parsed JSON body, if any.
  * @typedef {{ request: (method: string, path: string, body?: unknown) => Promise<Answer> }} Http
  * @typedef {{
  *   category: 'leak' | 'drift' | 'not deployed' | 'missing content' | 'error',
@@ -44,6 +50,7 @@ import { loadSurface } from './manifest.mjs';
  *   stderr?: (line: string) => void,
  *   manifest?: any,
  *   surface?: import('./manifest.mjs').Surface,
+ *   env?: Record<string, string | undefined>,
  * }} Deps
  */
 
@@ -52,18 +59,24 @@ export const CATEGORIES = /** @type {const} */ (['leak', 'drift', 'not deployed'
 /** Only these can heal by waiting (a booting host, an old process still answering). */
 const RETRIED = new Set(['error', 'not deployed']);
 
+/** The environment variable holding the `permissions-reader` admin token. */
+const TOKEN_VAR = 'PERMISSIONS_READER_TOKEN';
+
 const PACING_MS = 250;
 const TIMEOUT_MS = 30_000;
 const RETRY_INTERVAL_MS = 15_000;
 
 /**
- * The checks and the "not probed" list of each half. The admin half (exact
- * grant sets through PERMISSIONS_READER_TOKEN) belongs here.
+ * The checks and the "not probed" list of each half. `admin` is the
+ * token-holding client for the admin half, or null when there is no token.
  *
- * @param {{ manifest: any, surface: import('./manifest.mjs').Surface }} options
+ * @param {{ manifest: any, surface: import('./manifest.mjs').Surface, admin: Http | null }} options
  * @returns {{ checks: Check[], notProbed: NotProbed[] }[]}
  */
-const checkHalves = (options) => [{ checks: anonymousChecks(options), notProbed: anonymousNotProbed(options) }];
+const checkHalves = ({ admin, ...options }) => [
+  { checks: anonymousChecks(options), notProbed: anonymousNotProbed({ ...options, adminChecked: admin !== null }) },
+  { checks: admin ? adminChecks({ ...options, admin }) : [], notProbed: [] },
+];
 
 /** `timeout`, or the network cause (`ECONNREFUSED` …) behind fetch's generic "fetch failed". */
 function whyNoAnswer(error) {
@@ -74,22 +87,29 @@ function whyNoAnswer(error) {
 }
 
 /**
- * Anonymous HTTP against the base URL: one request at a time, paced, with a
- * timeout. Records the running build from the response headers.
+ * HTTP clients sharing one pacer: one request at a time across all of them,
+ * paced, with a timeout. Records the running build from the response headers.
  */
-function anonymousHttp({ baseUrl, fetch, sleep }) {
-  const root = baseUrl.replace(/\/+$/, '');
+function pacedHttp({ fetch, sleep }) {
   let sent = 0;
   const build = { commit: '', version: '' };
-  /** @type {Http} */
-  const http = {
+  /**
+   * @param {string} root
+   * @param {Record<string, string>} [headers]
+   * @returns {Http}
+   */
+  const client = (root, headers = {}) => ({
     request: async (method, path, body) => {
       if (sent++ > 0) await sleep(PACING_MS);
       let res;
       try {
         res = await fetch(root + path, {
           method,
-          headers: { accept: 'application/json', ...(body === undefined ? {} : { 'content-type': 'application/json' }) },
+          headers: {
+            accept: 'application/json',
+            ...headers,
+            ...(body === undefined ? {} : { 'content-type': 'application/json' }),
+          },
           body: body === undefined ? undefined : JSON.stringify(body),
           signal: AbortSignal.timeout(TIMEOUT_MS),
         });
@@ -98,16 +118,17 @@ function anonymousHttp({ baseUrl, fetch, sleep }) {
       }
       build.commit ||= res.headers.get('cms-commit') ?? '';
       build.version ||= res.headers.get('cms-version') ?? '';
-      let error;
+      let json;
       try {
-        error = (await res.json())?.error;
+        json = await res.json();
       } catch {
-        error = undefined;
+        json = undefined;
       }
-      return { status: res.status, name: error?.name, message: error?.message };
+      const error = json?.error;
+      return { status: res.status, name: error?.name, message: error?.message, body: json };
     },
-  };
-  return { http, build };
+  });
+  return { client, build };
 }
 
 /**
@@ -139,10 +160,10 @@ const cell = (text) => String(text).replace(/\|/g, '\\|');
 const countsOf = (failures) => CATEGORIES.map((c) => `${c} ${failures.filter((f) => f.category === c).length}`).join(' · ');
 
 /**
- * @param {{ baseUrl: string, build: string, time: string, checkCount: number, failures: Failure[], notProbed: NotProbed[] }} run
+ * @param {{ baseUrl: string, build: string, time: string, adminChecked: boolean, checkCount: number, failures: Failure[], notProbed: NotProbed[] }} run
  * @returns {string}
  */
-export function formatReport({ baseUrl, build, time, checkCount, failures, notProbed }) {
+export function formatReport({ baseUrl, build, time, adminChecked, checkCount, failures, notProbed }) {
   const sorted = [...failures].sort(bySeverity);
   const lines = [
     '# Permission probe',
@@ -150,6 +171,7 @@ export function formatReport({ baseUrl, build, time, checkCount, failures, notPr
     `- Base URL: ${baseUrl}`,
     `- Build: ${build}`,
     `- Time: ${time}`,
+    `- Admin checks: ${adminChecked ? 'checked' : `not checked (${TOKEN_VAR} is not set)`}`,
     `- Result: ${failures.length ? 'FAIL' : 'pass'}, ${checkCount} checks, ${failures.length} failures`,
     `- Failures by category: ${countsOf(failures)}`,
     '',
@@ -161,7 +183,7 @@ export function formatReport({ baseUrl, build, time, checkCount, failures, notPr
     lines.push('| Category | Type or route | Action | Locale | Expected | Got | Consumers |', '|---|---|---|---|---|---|---|');
     for (const f of sorted) {
       lines.push(
-        `| ${[f.category, `\`${f.target}\``, f.action, f.locale ?? '–', f.expected, f.got, f.consumers.join(', ') || '–']
+        `| ${[f.category, `\`${f.target}\``, f.action || '–', f.locale ?? '–', f.expected, f.got, f.consumers.join(', ') || '–']
           .map(cell)
           .join(' | ')} |`,
       );
@@ -172,16 +194,18 @@ export function formatReport({ baseUrl, build, time, checkCount, failures, notPr
   return `${lines.join('\n')}\n`;
 }
 
-const USAGE = 'usage: permissions:probe <baseUrl> [--report <file>] [--wait <seconds>]';
+const USAGE = `usage: ${TOKEN_VAR}=… permissions:probe <baseUrl> [--report <file>] [--wait <seconds>] [--require-admin]`;
 
 function parseArgs(argv) {
-  const args = { baseUrl: '', report: '', waitMs: 0 };
+  const args = { baseUrl: '', report: '', waitMs: 0, requireAdmin: false };
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i];
     if (arg === '--report') args.report = argv[++i] ?? '';
     else if (arg === '--wait') args.waitMs = Number(argv[++i]) * 1000;
-    else if (arg.startsWith('--')) throw new Error(`unknown option ${arg}`);
-    else if (args.baseUrl) throw new Error(`unexpected argument ${arg}`);
+    else if (arg === '--require-admin') args.requireAdmin = true;
+    else if (arg.startsWith('--')) throw new Error(`unknown option ${arg.split('=')[0]}`);
+    // Not echoed: a stray argument may be a token pasted in the wrong place.
+    else if (args.baseUrl) throw new Error('unexpected argument after the base URL');
     else args.baseUrl = arg;
   }
   if (!/^https?:\/\//.test(args.baseUrl)) throw new Error('the base URL is required, e.g. http://127.0.0.1:1337/api');
@@ -189,6 +213,14 @@ function parseArgs(argv) {
   if (argv.includes('--report') && !args.report) throw new Error('--report needs a file');
   return args;
 }
+
+/**
+ * The server root the admin API hangs off: the content API's base URL without
+ * its `/api` prefix (admin routes live at `/admin/…` and `/<plugin>/…`).
+ *
+ * @param {string} root the base URL without a trailing slash
+ */
+const adminRoot = (root) => root.replace(/\/api$/, '');
 
 /**
  * The command. Returns the exit code: 0 pass, 1 any failure, 2 bad usage.
@@ -207,6 +239,7 @@ export async function probeCommand(argv, deps = {}) {
     stderr = (line) => console.error(line),
     manifest = defaultManifest,
     surface = loadSurface(),
+    env = process.env,
   } = deps;
 
   let args;
@@ -218,15 +251,31 @@ export async function probeCommand(argv, deps = {}) {
   }
 
   const time = new Date(now()).toISOString();
-  const halves = checkHalves({ manifest, surface });
+  const token = env[TOKEN_VAR] ?? '';
+  const root = args.baseUrl.replace(/\/+$/, '');
+  const { client, build } = pacedHttp({ fetch, sleep });
+  const admin = token ? client(adminRoot(root), { authorization: `Bearer ${token}` }) : null;
+  const halves = checkHalves({ manifest, surface, admin });
   const checks = halves.flatMap((h) => h.checks);
-  const { http, build } = anonymousHttp({ baseUrl: args.baseUrl, fetch, sleep });
-  const failures = (await runChecks({ checks, http, waitMs: args.waitMs, now, sleep })).sort(bySeverity);
+  const failures = await runChecks({ checks, http: client(root), waitMs: args.waitMs, now, sleep });
+  if (!admin && args.requireAdmin) {
+    failures.push({
+      category: 'error',
+      target: 'admin API',
+      action: '',
+      locale: null,
+      expected: `${TOKEN_VAR} in the environment (--require-admin)`,
+      got: 'not set',
+      consumers: [],
+    });
+  }
+  failures.sort(bySeverity);
 
   const report = formatReport({
     baseUrl: args.baseUrl,
     build: build.commit ? `cms-commit ${build.commit}` : build.version ? `cms-version ${build.version}` : 'unknown',
     time,
+    adminChecked: admin !== null,
     checkCount: checks.length,
     failures,
     notProbed: halves.flatMap((h) => h.notProbed),
