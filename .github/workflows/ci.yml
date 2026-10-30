@@ -33,6 +33,10 @@ jobs:
           node-version-file: '.nvmrc'
           cache: 'yarn'
 
+      # Mismatched @strapi/* versions once pulled in two @strapi/utils copies and turned 403s into 500s.
+      - name: Check @strapi/* versions
+        run: yarn check:strapi-versions
+
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
