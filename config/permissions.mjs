@@ -54,10 +54,10 @@
 //      PERMISSIONS_PROBE_MAIL_TO=info@zoonotify.bfr.berlin
 //    and check that `echo test | mail -s test info@zoonotify.bfr.berlin`
 //    arrives. Both deploy workflows then run
-//    scripts/permissions-deploy-check.sh after the health wait.
+//    `scripts/permissions-check.sh deploy` after the health wait.
 // 5. Install the daily drift check with `crontab -e` (one line; APP_DIR is
 //    the deploy dir, the URL is the host's public content API):
-//      17 5 * * * $HOME/<APP_DIR>/scripts/permissions-cron.sh <public base URL> >> $HOME/permissions-cron.log 2>&1
+//      17 5 * * * $HOME/<APP_DIR>/scripts/permissions-check.sh cron <public base URL> >> $HOME/permissions-cron.log 2>&1
 //    QA: https://zoonotify-dev.bfr.berlin/cms/api
 //    prod: https://zoonotify.bfr.berlin/cms/api
 //    Deploys fail with `permission cron stale` when it has not run for 48 h.
