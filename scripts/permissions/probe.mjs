@@ -156,7 +156,7 @@ async function runChecks({ checks, http, waitMs, now, sleep }) {
 }
 
 const bySeverity = (a, b) => CATEGORIES.indexOf(a.category) - CATEGORIES.indexOf(b.category);
-const cell = (text) => String(text).replace(/\|/g, '\\|');
+const cell = (text) => String(text).replace(/\\/g, '\\\\').replace(/\|/g, '\\|');
 
 /** `leak 1 · drift 0 · …` */
 const countsOf = (failures) => CATEGORIES.map((c) => `${c} ${failures.filter((f) => f.category === c).length}`).join(' · ');
