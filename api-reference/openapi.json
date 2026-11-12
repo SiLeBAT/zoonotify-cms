@@ -57,6 +57,7 @@
                   "percentageOfPositive",
                   "ciMin",
                   "ciMax",
+                  "dataExtractionDate",
                   "createdAt",
                   "updatedAt",
                   "publishedAt",
@@ -144,6 +145,7 @@
                   "percentageOfPositive",
                   "ciMin",
                   "ciMax",
+                  "dataExtractionDate",
                   "createdAt",
                   "updatedAt",
                   "publishedAt",
@@ -231,6 +233,7 @@
                   "minKonfidenzintervall",
                   "maxKonfidenzintervall",
                   "samplingYear",
+                  "dataExtractionDate",
                   "createdAt",
                   "updatedAt",
                   "publishedAt",
@@ -321,6 +324,7 @@
                   "minKonfidenzintervall",
                   "maxKonfidenzintervall",
                   "samplingYear",
+                  "dataExtractionDate",
                   "createdAt",
                   "updatedAt",
                   "publishedAt",
@@ -409,6 +413,7 @@
                   "resistanceGroup",
                   "anzahlIsolate",
                   "anzahlGetesteterIsolate",
+                  "dataExtractionDate",
                   "createdAt",
                   "updatedAt",
                   "publishedAt",
@@ -496,6 +501,7 @@
                   "resistanceGroup",
                   "anzahlIsolate",
                   "anzahlGetesteterIsolate",
+                  "dataExtractionDate",
                   "createdAt",
                   "updatedAt",
                   "publishedAt",
@@ -538,6 +544,382 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/MultiResistanceResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/esbl-ampc-gene-results": {
+      "get": {
+        "tags": [
+          "Surveillance data"
+        ],
+        "operationId": "findEsblAmpcGeneResults",
+        "summary": "List ESBL/AmpC Gene Result records",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/filters"
+          },
+          {
+            "$ref": "#/components/parameters/sort"
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "description": "Return only these attributes (`id` and `documentId` are always returned). Repeat the parameter for several.",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "samplingYear",
+                  "numberOfIsolates",
+                  "numberOfGenes",
+                  "numberOfIsolatesWithGene",
+                  "relativeGeneAbundance",
+                  "relativeGeneAbundanceCiMin",
+                  "relativeGeneAbundanceCiMax",
+                  "genePrevalence",
+                  "genePrevalenceCiMin",
+                  "genePrevalenceCiMax",
+                  "dataExtractionDate",
+                  "createdAt",
+                  "updatedAt",
+                  "publishedAt",
+                  "locale"
+                ]
+              }
+            }
+          },
+          {
+            "name": "populate",
+            "in": "query",
+            "description": "Embed these relations or components, which are omitted by default. Only the names listed here are supported; `*` and nested (deep) populate are not part of the Public Data API.",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "microorganism",
+                  "sampleType",
+                  "superCategorySampleOrigin",
+                  "sampleOrigin",
+                  "samplingStage",
+                  "matrixGroup",
+                  "matrix",
+                  "matrixDetail",
+                  "monitoring",
+                  "esblAmpcGene"
+                ]
+              }
+            }
+          },
+          {
+            "$ref": "#/components/parameters/locale"
+          },
+          {
+            "$ref": "#/components/parameters/paginationPage"
+          },
+          {
+            "$ref": "#/components/parameters/paginationPageSize"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EsblAmpcGeneResultListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/esbl-ampc-gene-results/{documentId}": {
+      "get": {
+        "tags": [
+          "Surveillance data"
+        ],
+        "operationId": "findOneEsblAmpcGeneResult",
+        "summary": "Get one ESBL/AmpC Gene Result record",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/documentId"
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "description": "Return only these attributes (`id` and `documentId` are always returned). Repeat the parameter for several.",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "samplingYear",
+                  "numberOfIsolates",
+                  "numberOfGenes",
+                  "numberOfIsolatesWithGene",
+                  "relativeGeneAbundance",
+                  "relativeGeneAbundanceCiMin",
+                  "relativeGeneAbundanceCiMax",
+                  "genePrevalence",
+                  "genePrevalenceCiMin",
+                  "genePrevalenceCiMax",
+                  "dataExtractionDate",
+                  "createdAt",
+                  "updatedAt",
+                  "publishedAt",
+                  "locale"
+                ]
+              }
+            }
+          },
+          {
+            "name": "populate",
+            "in": "query",
+            "description": "Embed these relations or components, which are omitted by default. Only the names listed here are supported; `*` and nested (deep) populate are not part of the Public Data API.",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "microorganism",
+                  "sampleType",
+                  "superCategorySampleOrigin",
+                  "sampleOrigin",
+                  "samplingStage",
+                  "matrixGroup",
+                  "matrix",
+                  "matrixDetail",
+                  "monitoring",
+                  "esblAmpcGene"
+                ]
+              }
+            }
+          },
+          {
+            "$ref": "#/components/parameters/locale"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EsblAmpcGeneResultResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/typing-results": {
+      "get": {
+        "tags": [
+          "Surveillance data"
+        ],
+        "operationId": "findTypingResults",
+        "summary": "List Typing Result records",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/filters"
+          },
+          {
+            "$ref": "#/components/parameters/sort"
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "description": "Return only these attributes (`id` and `documentId` are always returned). Repeat the parameter for several.",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "samplingYear",
+                  "numberOfIsolates",
+                  "numberOfIsolatesInSubgroup",
+                  "subgroupPrevalence",
+                  "subgroupPrevalenceCiMin",
+                  "subgroupPrevalenceCiMax",
+                  "dataExtractionDate",
+                  "createdAt",
+                  "updatedAt",
+                  "publishedAt",
+                  "locale"
+                ]
+              }
+            }
+          },
+          {
+            "name": "populate",
+            "in": "query",
+            "description": "Embed these relations or components, which are omitted by default. Only the names listed here are supported; `*` and nested (deep) populate are not part of the Public Data API.",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "microorganism",
+                  "sampleType",
+                  "superCategorySampleOrigin",
+                  "sampleOrigin",
+                  "samplingStage",
+                  "matrixGroup",
+                  "matrix",
+                  "matrixDetail",
+                  "typing",
+                  "typingSubgroup"
+                ]
+              }
+            }
+          },
+          {
+            "$ref": "#/components/parameters/locale"
+          },
+          {
+            "$ref": "#/components/parameters/paginationPage"
+          },
+          {
+            "$ref": "#/components/parameters/paginationPageSize"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TypingResultListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/typing-results/{documentId}": {
+      "get": {
+        "tags": [
+          "Surveillance data"
+        ],
+        "operationId": "findOneTypingResult",
+        "summary": "Get one Typing Result record",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/documentId"
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "description": "Return only these attributes (`id` and `documentId` are always returned). Repeat the parameter for several.",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "samplingYear",
+                  "numberOfIsolates",
+                  "numberOfIsolatesInSubgroup",
+                  "subgroupPrevalence",
+                  "subgroupPrevalenceCiMin",
+                  "subgroupPrevalenceCiMax",
+                  "dataExtractionDate",
+                  "createdAt",
+                  "updatedAt",
+                  "publishedAt",
+                  "locale"
+                ]
+              }
+            }
+          },
+          {
+            "name": "populate",
+            "in": "query",
+            "description": "Embed these relations or components, which are omitted by default. Only the names listed here are supported; `*` and nested (deep) populate are not part of the Public Data API.",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "microorganism",
+                  "sampleType",
+                  "superCategorySampleOrigin",
+                  "sampleOrigin",
+                  "samplingStage",
+                  "matrixGroup",
+                  "matrix",
+                  "matrixDetail",
+                  "typing",
+                  "typingSubgroup"
+                ]
+              }
+            }
+          },
+          {
+            "$ref": "#/components/parameters/locale"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TypingResultResponse"
                 }
               }
             }
@@ -1782,6 +2164,486 @@
         }
       }
     },
+    "/esbl-ampc-genes": {
+      "get": {
+        "tags": [
+          "Reference vocabularies"
+        ],
+        "operationId": "findEsblAmpcGenes",
+        "summary": "List MD ESBL/AmpC Gene records",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/filters"
+          },
+          {
+            "$ref": "#/components/parameters/sort"
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "description": "Return only these attributes (`id` and `documentId` are always returned). Repeat the parameter for several.",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "name",
+                  "createdAt",
+                  "updatedAt",
+                  "publishedAt"
+                ]
+              }
+            }
+          },
+          {
+            "$ref": "#/components/parameters/paginationPage"
+          },
+          {
+            "$ref": "#/components/parameters/paginationPageSize"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EsblAmpcGeneListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/esbl-ampc-genes/{documentId}": {
+      "get": {
+        "tags": [
+          "Reference vocabularies"
+        ],
+        "operationId": "findOneEsblAmpcGene",
+        "summary": "Get one MD ESBL/AmpC Gene record",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/documentId"
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "description": "Return only these attributes (`id` and `documentId` are always returned). Repeat the parameter for several.",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "name",
+                  "createdAt",
+                  "updatedAt",
+                  "publishedAt"
+                ]
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EsblAmpcGeneResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/monitorings": {
+      "get": {
+        "tags": [
+          "Reference vocabularies"
+        ],
+        "operationId": "findMonitorings",
+        "summary": "List MD Monitoring records",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/filters"
+          },
+          {
+            "$ref": "#/components/parameters/sort"
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "description": "Return only these attributes (`id` and `documentId` are always returned). Repeat the parameter for several.",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "name",
+                  "createdAt",
+                  "updatedAt",
+                  "publishedAt",
+                  "locale"
+                ]
+              }
+            }
+          },
+          {
+            "$ref": "#/components/parameters/locale"
+          },
+          {
+            "$ref": "#/components/parameters/paginationPage"
+          },
+          {
+            "$ref": "#/components/parameters/paginationPageSize"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MonitoringListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/monitorings/{documentId}": {
+      "get": {
+        "tags": [
+          "Reference vocabularies"
+        ],
+        "operationId": "findOneMonitoring",
+        "summary": "Get one MD Monitoring record",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/documentId"
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "description": "Return only these attributes (`id` and `documentId` are always returned). Repeat the parameter for several.",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "name",
+                  "createdAt",
+                  "updatedAt",
+                  "publishedAt",
+                  "locale"
+                ]
+              }
+            }
+          },
+          {
+            "$ref": "#/components/parameters/locale"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MonitoringResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/typings": {
+      "get": {
+        "tags": [
+          "Reference vocabularies"
+        ],
+        "operationId": "findTypings",
+        "summary": "List MD Typing records",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/filters"
+          },
+          {
+            "$ref": "#/components/parameters/sort"
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "description": "Return only these attributes (`id` and `documentId` are always returned). Repeat the parameter for several.",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "name",
+                  "createdAt",
+                  "updatedAt",
+                  "publishedAt",
+                  "locale"
+                ]
+              }
+            }
+          },
+          {
+            "$ref": "#/components/parameters/locale"
+          },
+          {
+            "$ref": "#/components/parameters/paginationPage"
+          },
+          {
+            "$ref": "#/components/parameters/paginationPageSize"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TypingListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/typings/{documentId}": {
+      "get": {
+        "tags": [
+          "Reference vocabularies"
+        ],
+        "operationId": "findOneTyping",
+        "summary": "Get one MD Typing record",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/documentId"
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "description": "Return only these attributes (`id` and `documentId` are always returned). Repeat the parameter for several.",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "name",
+                  "createdAt",
+                  "updatedAt",
+                  "publishedAt",
+                  "locale"
+                ]
+              }
+            }
+          },
+          {
+            "$ref": "#/components/parameters/locale"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TypingResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/typing-subgroups": {
+      "get": {
+        "tags": [
+          "Reference vocabularies"
+        ],
+        "operationId": "findTypingSubgroups",
+        "summary": "List MD Typing Subgroup records",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/filters"
+          },
+          {
+            "$ref": "#/components/parameters/sort"
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "description": "Return only these attributes (`id` and `documentId` are always returned). Repeat the parameter for several.",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "name",
+                  "createdAt",
+                  "updatedAt",
+                  "publishedAt",
+                  "locale"
+                ]
+              }
+            }
+          },
+          {
+            "$ref": "#/components/parameters/locale"
+          },
+          {
+            "$ref": "#/components/parameters/paginationPage"
+          },
+          {
+            "$ref": "#/components/parameters/paginationPageSize"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TypingSubgroupListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/typing-subgroups/{documentId}": {
+      "get": {
+        "tags": [
+          "Reference vocabularies"
+        ],
+        "operationId": "findOneTypingSubgroup",
+        "summary": "Get one MD Typing Subgroup record",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/documentId"
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "description": "Return only these attributes (`id` and `documentId` are always returned). Repeat the parameter for several.",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "name",
+                  "createdAt",
+                  "updatedAt",
+                  "publishedAt",
+                  "locale"
+                ]
+              }
+            }
+          },
+          {
+            "$ref": "#/components/parameters/locale"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TypingSubgroupResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
     "/antibiotics": {
       "get": {
         "tags": [
@@ -2367,6 +3229,11 @@
             "nullable": true,
             "description": "Only returned when requested with `populate=sampleOrigin`."
           },
+          "dataExtractionDate": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
           "createdAt": {
             "type": "string",
             "format": "date-time"
@@ -2552,6 +3419,11 @@
             "nullable": true,
             "description": "Only returned when requested with `populate=superCategorySampleOrigin`."
           },
+          "dataExtractionDate": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
           "createdAt": {
             "type": "string",
             "format": "date-time"
@@ -2721,6 +3593,11 @@
           "anzahlGetesteterIsolate": {
             "type": "integer"
           },
+          "dataExtractionDate": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
           "createdAt": {
             "type": "string",
             "format": "date-time"
@@ -2777,6 +3654,418 @@
         "properties": {
           "data": {
             "$ref": "#/components/schemas/MultiResistance"
+          },
+          "meta": {
+            "type": "object"
+          }
+        }
+      },
+      "EsblAmpcGeneResult": {
+        "type": "object",
+        "required": [
+          "id",
+          "documentId"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Locale-specific row id. Prefer `documentId`."
+          },
+          "documentId": {
+            "type": "string",
+            "description": "Stable id; the same `documentId` names this record in every locale."
+          },
+          "microorganism": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Microorganism"
+              }
+            ],
+            "nullable": true,
+            "description": "Only returned when requested with `populate=microorganism`."
+          },
+          "sampleType": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SampleType"
+              }
+            ],
+            "nullable": true,
+            "description": "Only returned when requested with `populate=sampleType`."
+          },
+          "superCategorySampleOrigin": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SuperCategorySampleOrigin"
+              }
+            ],
+            "nullable": true,
+            "description": "Only returned when requested with `populate=superCategorySampleOrigin`."
+          },
+          "sampleOrigin": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SampleOrigin"
+              }
+            ],
+            "nullable": true,
+            "description": "Only returned when requested with `populate=sampleOrigin`."
+          },
+          "samplingStage": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SamplingStage"
+              }
+            ],
+            "nullable": true,
+            "description": "Only returned when requested with `populate=samplingStage`."
+          },
+          "matrixGroup": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MatrixGroup"
+              }
+            ],
+            "nullable": true,
+            "description": "Only returned when requested with `populate=matrixGroup`."
+          },
+          "matrix": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Matrix"
+              }
+            ],
+            "nullable": true,
+            "description": "Only returned when requested with `populate=matrix`."
+          },
+          "matrixDetail": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MatrixDetail"
+              }
+            ],
+            "nullable": true,
+            "description": "Only returned when requested with `populate=matrixDetail`."
+          },
+          "monitoring": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Monitoring"
+              }
+            ],
+            "nullable": true,
+            "description": "Only returned when requested with `populate=monitoring`."
+          },
+          "esblAmpcGene": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/EsblAmpcGene"
+              }
+            ],
+            "nullable": true,
+            "description": "Only returned when requested with `populate=esblAmpcGene`."
+          },
+          "samplingYear": {
+            "type": "integer"
+          },
+          "numberOfIsolates": {
+            "type": "integer"
+          },
+          "numberOfGenes": {
+            "type": "integer"
+          },
+          "numberOfIsolatesWithGene": {
+            "type": "integer"
+          },
+          "relativeGeneAbundance": {
+            "type": "number"
+          },
+          "relativeGeneAbundanceCiMin": {
+            "type": "number"
+          },
+          "relativeGeneAbundanceCiMax": {
+            "type": "number"
+          },
+          "genePrevalence": {
+            "type": "number"
+          },
+          "genePrevalenceCiMin": {
+            "type": "number"
+          },
+          "genePrevalenceCiMax": {
+            "type": "number"
+          },
+          "dataExtractionDate": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "publishedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "locale": {
+            "type": "string",
+            "enum": [
+              "en",
+              "de"
+            ]
+          }
+        }
+      },
+      "EsblAmpcGeneResultListResponse": {
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EsblAmpcGeneResult"
+            }
+          },
+          "meta": {
+            "type": "object",
+            "required": [
+              "pagination"
+            ],
+            "properties": {
+              "pagination": {
+                "$ref": "#/components/schemas/Pagination"
+              }
+            }
+          }
+        }
+      },
+      "EsblAmpcGeneResultResponse": {
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/EsblAmpcGeneResult"
+          },
+          "meta": {
+            "type": "object"
+          }
+        }
+      },
+      "TypingResult": {
+        "type": "object",
+        "required": [
+          "id",
+          "documentId"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Locale-specific row id. Prefer `documentId`."
+          },
+          "documentId": {
+            "type": "string",
+            "description": "Stable id; the same `documentId` names this record in every locale."
+          },
+          "microorganism": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Microorganism"
+              }
+            ],
+            "nullable": true,
+            "description": "Only returned when requested with `populate=microorganism`."
+          },
+          "sampleType": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SampleType"
+              }
+            ],
+            "nullable": true,
+            "description": "Only returned when requested with `populate=sampleType`."
+          },
+          "superCategorySampleOrigin": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SuperCategorySampleOrigin"
+              }
+            ],
+            "nullable": true,
+            "description": "Only returned when requested with `populate=superCategorySampleOrigin`."
+          },
+          "sampleOrigin": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SampleOrigin"
+              }
+            ],
+            "nullable": true,
+            "description": "Only returned when requested with `populate=sampleOrigin`."
+          },
+          "samplingStage": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SamplingStage"
+              }
+            ],
+            "nullable": true,
+            "description": "Only returned when requested with `populate=samplingStage`."
+          },
+          "matrixGroup": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MatrixGroup"
+              }
+            ],
+            "nullable": true,
+            "description": "Only returned when requested with `populate=matrixGroup`."
+          },
+          "matrix": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Matrix"
+              }
+            ],
+            "nullable": true,
+            "description": "Only returned when requested with `populate=matrix`."
+          },
+          "matrixDetail": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MatrixDetail"
+              }
+            ],
+            "nullable": true,
+            "description": "Only returned when requested with `populate=matrixDetail`."
+          },
+          "typing": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Typing"
+              }
+            ],
+            "nullable": true,
+            "description": "Only returned when requested with `populate=typing`."
+          },
+          "typingSubgroup": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TypingSubgroup"
+              }
+            ],
+            "nullable": true,
+            "description": "Only returned when requested with `populate=typingSubgroup`."
+          },
+          "samplingYear": {
+            "type": "integer"
+          },
+          "numberOfIsolates": {
+            "type": "integer"
+          },
+          "numberOfIsolatesInSubgroup": {
+            "type": "integer"
+          },
+          "subgroupPrevalence": {
+            "type": "number"
+          },
+          "subgroupPrevalenceCiMin": {
+            "type": "number"
+          },
+          "subgroupPrevalenceCiMax": {
+            "type": "number"
+          },
+          "dataExtractionDate": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "publishedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "locale": {
+            "type": "string",
+            "enum": [
+              "en",
+              "de"
+            ]
+          }
+        }
+      },
+      "TypingResultListResponse": {
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TypingResult"
+            }
+          },
+          "meta": {
+            "type": "object",
+            "required": [
+              "pagination"
+            ],
+            "properties": {
+              "pagination": {
+                "$ref": "#/components/schemas/Pagination"
+              }
+            }
+          }
+        }
+      },
+      "TypingResultResponse": {
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/TypingResult"
           },
           "meta": {
             "type": "object"
@@ -3606,6 +4895,319 @@
         "properties": {
           "data": {
             "$ref": "#/components/schemas/AntimicrobialSubstance"
+          },
+          "meta": {
+            "type": "object"
+          }
+        }
+      },
+      "EsblAmpcGene": {
+        "type": "object",
+        "required": [
+          "id",
+          "documentId"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Locale-specific row id. Prefer `documentId`."
+          },
+          "documentId": {
+            "type": "string",
+            "description": "Stable id; the same `documentId` names this record in every locale."
+          },
+          "name": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "publishedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "EsblAmpcGeneListResponse": {
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EsblAmpcGene"
+            }
+          },
+          "meta": {
+            "type": "object",
+            "required": [
+              "pagination"
+            ],
+            "properties": {
+              "pagination": {
+                "$ref": "#/components/schemas/Pagination"
+              }
+            }
+          }
+        }
+      },
+      "EsblAmpcGeneResponse": {
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/EsblAmpcGene"
+          },
+          "meta": {
+            "type": "object"
+          }
+        }
+      },
+      "Monitoring": {
+        "type": "object",
+        "required": [
+          "id",
+          "documentId"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Locale-specific row id. Prefer `documentId`."
+          },
+          "documentId": {
+            "type": "string",
+            "description": "Stable id; the same `documentId` names this record in every locale."
+          },
+          "name": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "publishedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "locale": {
+            "type": "string",
+            "enum": [
+              "en",
+              "de"
+            ]
+          }
+        }
+      },
+      "MonitoringListResponse": {
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Monitoring"
+            }
+          },
+          "meta": {
+            "type": "object",
+            "required": [
+              "pagination"
+            ],
+            "properties": {
+              "pagination": {
+                "$ref": "#/components/schemas/Pagination"
+              }
+            }
+          }
+        }
+      },
+      "MonitoringResponse": {
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Monitoring"
+          },
+          "meta": {
+            "type": "object"
+          }
+        }
+      },
+      "Typing": {
+        "type": "object",
+        "required": [
+          "id",
+          "documentId"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Locale-specific row id. Prefer `documentId`."
+          },
+          "documentId": {
+            "type": "string",
+            "description": "Stable id; the same `documentId` names this record in every locale."
+          },
+          "name": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "publishedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "locale": {
+            "type": "string",
+            "enum": [
+              "en",
+              "de"
+            ]
+          }
+        }
+      },
+      "TypingListResponse": {
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Typing"
+            }
+          },
+          "meta": {
+            "type": "object",
+            "required": [
+              "pagination"
+            ],
+            "properties": {
+              "pagination": {
+                "$ref": "#/components/schemas/Pagination"
+              }
+            }
+          }
+        }
+      },
+      "TypingResponse": {
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Typing"
+          },
+          "meta": {
+            "type": "object"
+          }
+        }
+      },
+      "TypingSubgroup": {
+        "type": "object",
+        "required": [
+          "id",
+          "documentId"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Locale-specific row id. Prefer `documentId`."
+          },
+          "documentId": {
+            "type": "string",
+            "description": "Stable id; the same `documentId` names this record in every locale."
+          },
+          "name": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "publishedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "locale": {
+            "type": "string",
+            "enum": [
+              "en",
+              "de"
+            ]
+          }
+        }
+      },
+      "TypingSubgroupListResponse": {
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TypingSubgroup"
+            }
+          },
+          "meta": {
+            "type": "object",
+            "required": [
+              "pagination"
+            ],
+            "properties": {
+              "pagination": {
+                "$ref": "#/components/schemas/Pagination"
+              }
+            }
+          }
+        }
+      },
+      "TypingSubgroupResponse": {
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/TypingSubgroup"
           },
           "meta": {
             "type": "object"

@@ -1,0 +1,29 @@
+{
+  "kind": "collectionType",
+  "collectionName": "typings",
+  "info": {
+    "singularName": "typing",
+    "pluralName": "typings",
+    "displayName": "MD Typing",
+    "description": "Typing method (e.g. Salmonella serovars, MRSA spa type)."
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    }
+  }
+}
