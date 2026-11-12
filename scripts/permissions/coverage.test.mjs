@@ -18,7 +18,7 @@ describe('permission manifest coverage (real CMS source)', () => {
   });
 
   it('finds every content type, with its kind and whether it is localized', () => {
-    expect(surface.contentTypes).toHaveLength(38);
+    expect(surface.contentTypes).toHaveLength(44);
     expect(surface.contentTypes).toContainEqual({
       uid: 'api::amr-page.amr-page',
       pluralName: 'amr-pages',

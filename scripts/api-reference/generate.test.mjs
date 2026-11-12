@@ -6,15 +6,17 @@ describe('generate (real content-type schemas)', () => {
   const json = generate();
   const spec = JSON.parse(json);
 
-  it('documents exactly the 15 Public Data API collections, GET find + findOne only', () => {
+  it('documents exactly the 21 Public Data API collections, GET find + findOne only', () => {
     const paths = Object.keys(spec.paths);
 
-    expect(paths).toHaveLength(30);
+    expect(paths).toHaveLength(42);
     for (const item of Object.values(spec.paths)) expect(Object.keys(item)).toEqual(['get']);
     expect(paths.filter((p) => !p.endsWith('{documentId}'))).toEqual([
       '/prevalences',
       '/resistances',
       '/multi-resistances',
+      '/esbl-ampc-gene-results',
+      '/typing-results',
       '/microorganisms',
       '/matrices',
       '/matrix-groups',
@@ -25,6 +27,10 @@ describe('generate (real content-type schemas)', () => {
       '/sample-types',
       '/species',
       '/antimicrobial-substances',
+      '/esbl-ampc-genes',
+      '/monitorings',
+      '/typings',
+      '/typing-subgroups',
       '/antibiotics',
       '/resistance-tables',
     ]);

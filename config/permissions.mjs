@@ -91,6 +91,18 @@ export default {
         publicDataApi: 'Surveillance data',
         reason: 'Multi-resistance results; the multi-resistance page and the Public Data API.',
       },
+      'esbl-ampc-gene-results': {
+        actions: READ_COLLECTION,
+        consumers: BOTH,
+        publicDataApi: 'Surveillance data',
+        reason: 'ESBL/AmpC gene results (zn1934); the Public Data API and future client pages.',
+      },
+      'typing-results': {
+        actions: READ_COLLECTION,
+        consumers: BOTH,
+        publicDataApi: 'Surveillance data',
+        reason: 'Typing results (zn1934); the Public Data API and future client pages.',
+      },
       microorganisms: {
         actions: READ_COLLECTION,
         consumers: BOTH,
@@ -150,6 +162,30 @@ export default {
         consumers: BOTH,
         publicDataApi: 'Reference vocabularies',
         reason: 'Populated by the client through populate=* on resistances.',
+      },
+      'esbl-ampc-genes': {
+        actions: READ_COLLECTION,
+        consumers: BOTH,
+        publicDataApi: 'Reference vocabularies',
+        reason: 'Populated relation on ESBL/AmpC gene and typing results (zn1934).',
+      },
+      'monitorings': {
+        actions: READ_COLLECTION,
+        consumers: BOTH,
+        publicDataApi: 'Reference vocabularies',
+        reason: 'Populated relation on ESBL/AmpC gene and typing results (zn1934).',
+      },
+      'typings': {
+        actions: READ_COLLECTION,
+        consumers: BOTH,
+        publicDataApi: 'Reference vocabularies',
+        reason: 'Populated relation on ESBL/AmpC gene and typing results (zn1934).',
+      },
+      'typing-subgroups': {
+        actions: READ_COLLECTION,
+        consumers: BOTH,
+        publicDataApi: 'Reference vocabularies',
+        reason: 'Populated relation on ESBL/AmpC gene and typing results (zn1934).',
       },
       antibiotics: {
         actions: READ_COLLECTION,

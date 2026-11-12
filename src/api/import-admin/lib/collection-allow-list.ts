@@ -14,8 +14,8 @@ export class UnknownCollectionError extends Error {
 }
 
 /**
- * The 13 xlsx-managed collections, the only ones the Import CLI may wipe and
- * refill. `matrix-detail` is the sole flat (non-i18n) collection; every other
+ * The 19 xlsx-managed collections, the only ones the Import CLI may wipe and
+ * refill. `matrix-detail` and `esbl-ampc-gene` are flat (non-i18n); every other
  * collection is localized and follows the `{ en, de? }` row shape.
  * See CONTEXT.md § xlsx-managed collection and ADR 0003.
  */
@@ -39,6 +39,16 @@ const ALLOW_LIST: Record<string, ResolvedCollection> = {
   resistance: { uid: 'api::resistance.resistance', localized: true },
   prevalence: { uid: 'api::prevalence.prevalence', localized: true },
   'multi-resistance': { uid: 'api::multi-resistance.multi-resistance', localized: true },
+  // zn1934: ESBL/AmpC genes and typing.
+  'esbl-ampc-gene': { uid: 'api::esbl-ampc-gene.esbl-ampc-gene', localized: false },
+  monitoring: { uid: 'api::monitoring.monitoring', localized: true },
+  typing: { uid: 'api::typing.typing', localized: true },
+  'typing-subgroup': { uid: 'api::typing-subgroup.typing-subgroup', localized: true },
+  'esbl-ampc-gene-result': {
+    uid: 'api::esbl-ampc-gene-result.esbl-ampc-gene-result',
+    localized: true,
+  },
+  'typing-result': { uid: 'api::typing-result.typing-result', localized: true },
 };
 
 export function resolveCollection(name: string): ResolvedCollection {

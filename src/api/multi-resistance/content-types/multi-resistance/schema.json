@@ -92,6 +92,9 @@
           "localized": true
         }
       }
+    },
+    "dataExtractionDate": {
+      "type": "date"
     }
   }
 }

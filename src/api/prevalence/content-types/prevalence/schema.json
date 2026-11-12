@@ -111,6 +111,9 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::sample-origin.sample-origin"
+    },
+    "dataExtractionDate": {
+      "type": "date"
     }
   }
 }

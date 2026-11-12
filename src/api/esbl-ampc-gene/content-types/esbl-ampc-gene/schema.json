@@ -1,0 +1,20 @@
+{
+  "kind": "collectionType",
+  "collectionName": "esbl_ampc_genes",
+  "info": {
+    "singularName": "esbl-ampc-gene",
+    "pluralName": "esbl-ampc-genes",
+    "displayName": "MD ESBL/AmpC Gene",
+    "description": "ESBL/AmpC gene designation (e.g. CTX-M-1); language-neutral, so not localized."
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    }
+  }
+}

@@ -1,0 +1,116 @@
+{
+  "kind": "collectionType",
+  "collectionName": "typing_results",
+  "info": {
+    "singularName": "typing-result",
+    "pluralName": "typing-results",
+    "displayName": "Typing Result",
+    "description": "Share of isolates in one typing subgroup for one combination, sampling year and typing method."
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "zomoProgram": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "private": true
+    },
+    "microorganism": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::microorganism.microorganism"
+    },
+    "sampleType": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::sample-type.sample-type"
+    },
+    "superCategorySampleOrigin": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::super-category-sample-origin.super-category-sample-origin"
+    },
+    "sampleOrigin": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::sample-origin.sample-origin"
+    },
+    "samplingStage": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::sampling-stage.sampling-stage"
+    },
+    "matrixGroup": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::matrix-group.matrix-group"
+    },
+    "matrix": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::matrix.matrix"
+    },
+    "matrixDetail": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::matrix-detail.matrix-detail"
+    },
+    "typing": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::typing.typing"
+    },
+    "typingSubgroup": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::typing-subgroup.typing-subgroup"
+    },
+    "samplingYear": {
+      "type": "integer",
+      "required": true
+    },
+    "numberOfIsolates": {
+      "type": "integer",
+      "required": true
+    },
+    "numberOfIsolatesInSubgroup": {
+      "type": "integer",
+      "required": true
+    },
+    "subgroupPrevalence": {
+      "type": "float",
+      "required": true
+    },
+    "subgroupPrevalenceCiMin": {
+      "type": "float",
+      "required": true
+    },
+    "subgroupPrevalenceCiMax": {
+      "type": "float",
+      "required": true
+    },
+    "dataExtractionDate": {
+      "type": "date"
+    },
+    "dbId": {
+      "type": "string",
+      "required": true,
+      "private": true,
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    }
+  }
+}

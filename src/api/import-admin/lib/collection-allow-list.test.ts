@@ -17,6 +17,13 @@ const XLSX_MANAGED = [
   ['resistance', 'api::resistance.resistance', true],
   ['prevalence', 'api::prevalence.prevalence', true],
   ['multi-resistance', 'api::multi-resistance.multi-resistance', true],
+  // zn1934: ESBL/AmpC genes and typing.
+  ['esbl-ampc-gene', 'api::esbl-ampc-gene.esbl-ampc-gene', false],
+  ['monitoring', 'api::monitoring.monitoring', true],
+  ['typing', 'api::typing.typing', true],
+  ['typing-subgroup', 'api::typing-subgroup.typing-subgroup', true],
+  ['esbl-ampc-gene-result', 'api::esbl-ampc-gene-result.esbl-ampc-gene-result', true],
+  ['typing-result', 'api::typing-result.typing-result', true],
 ] as const;
 
 describe('resolveCollection', () => {

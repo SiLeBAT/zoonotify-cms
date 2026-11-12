@@ -1,0 +1,29 @@
+{
+  "kind": "collectionType",
+  "collectionName": "typing_subgroups",
+  "info": {
+    "singularName": "typing-subgroup",
+    "pluralName": "typing-subgroups",
+    "displayName": "MD Typing Subgroup",
+    "description": "Result of a typing method (e.g. a serovar or spa type)."
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    }
+  }
+}
