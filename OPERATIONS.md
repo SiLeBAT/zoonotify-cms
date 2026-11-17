@@ -48,3 +48,23 @@ logs rather than treating it as a fire-drill.
 
 To refresh cut-off data: place an updated `cutoff-data.xlsx` in
 `data/master-data/` and restart the CMS.
+
+## Restart after a host reboot
+
+PM2 runs as the account user, not as a system service, so nothing restarts the
+CMS when the host reboots. A cron entry (set in konsoleH → Cronjobs, one per
+host) does it instead:
+
+```sh
+@reboot bash /usr/home/<user>/<APP_DIR>/start.sh >> /usr/home/<user>/pm2-reboot.log 2>&1
+```
+
+`start.sh` selects the Node version from `.nvmrc` through nvm and runs
+`pm2 start ecosystem.config.js`. Don't call PM2 straight from cron: cron has no
+`NVM_DIR`, so PM2 cannot find the `node@<version>` interpreter and logs
+`Interpreter node@x.y.z is NOT AVAILABLE in PATH`.
+
+To test without rebooting: `./node_modules/.bin/pm2 delete all`, run the job
+with konsoleH's ▶ button, then check the tail of `pm2-reboot.log`, `pm2 ls`, and
+`curl -sI http://127.0.0.1:1337/_health` (expect `204` and a `cms-commit` header
+on QA).
