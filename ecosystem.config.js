@@ -9,7 +9,11 @@ module.exports = {
     apps: [
       {
         name: 'zoonotify-cms',
-        script: 'npm',
+        // Run Strapi's JS entry point directly. `script: 'npm'` resolves to
+        // /usr/bin/npm, which on the server is a shell wrapper, not JS — PM2
+        // then feeds it to the pinned node interpreter and crashes with
+        // "SyntaxError: Unexpected string".
+        script: './node_modules/@strapi/strapi/bin/strapi.js',
         args: 'start',
         interpreter: `node@${nodeVersion}`,
         env: {
