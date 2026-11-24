@@ -18,11 +18,18 @@ describe('permission manifest coverage (real CMS source)', () => {
   });
 
   it('finds every content type, with its kind and whether it is localized', () => {
-    expect(surface.contentTypes).toHaveLength(44);
+    expect(surface.contentTypes).toHaveLength(45);
     expect(surface.contentTypes).toContainEqual({
       uid: 'api::amr-page.amr-page',
       pluralName: 'amr-pages',
       singularName: 'amr-page',
+      kind: 'singleType',
+      localized: true,
+    });
+    expect(surface.contentTypes).toContainEqual({
+      uid: 'api::typing-information.typing-information',
+      pluralName: 'typing-informations',
+      singularName: 'typing-information',
       kind: 'singleType',
       localized: true,
     });
@@ -42,7 +49,7 @@ describe('permission manifest coverage (real CMS source)', () => {
   it('requires the client single types, data-import and prevelence-update included', () => {
     const required = requiredContent(manifest, surface);
 
-    expect(required).toHaveLength(12 * 2 - 3); // 12 client single types, 3 of them not localized
+    expect(required).toHaveLength(13 * 2 - 3); // 13 client single types, 3 of them not localized
     expect(required).toContainEqual({ pluralName: 'data-imports', route: '/data-import', locale: null });
     expect(required).toContainEqual({ pluralName: 'prevelence-updates', route: '/prevelence-update', locale: null });
     expect(required).toContainEqual({
@@ -50,5 +57,6 @@ describe('permission manifest coverage (real CMS source)', () => {
       route: '/multi-resistance-information',
       locale: 'en',
     });
+    expect(required).toContainEqual({ pluralName: 'typing-informations', route: '/typing-information', locale: 'de' });
   });
 });

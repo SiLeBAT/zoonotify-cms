@@ -1,0 +1,35 @@
+{
+  "kind": "singleType",
+  "collectionName": "typing_informations",
+  "info": {
+    "singularName": "typing-information",
+    "pluralName": "typing-informations",
+    "displayName": "Typing Information"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "title": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "description": {
+      "type": "richtext",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    }
+  }
+}
