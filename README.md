@@ -95,6 +95,7 @@ Types that need this grant:
 |---|---|---|
 | `multi-resistance` | collection | `GET <prefix>/multi-resistances` |
 | `multi-resistance-information` | single type | `GET <prefix>/multi-resistance-information` |
+| `typing-information` | single type | `GET <prefix>/typing-information` |
 | `esbl-ampc-gene-result`, `typing-result` | collection | `GET <prefix>/esbl-ampc-gene-results`, `GET <prefix>/typing-results` — tick `find` **and** `findOne` (Public Data API, as in `config/permissions.mjs`) |
 | `esbl-ampc-gene`, `monitoring`, `typing`, `typing-subgroup` | collection | `GET <prefix>/esbl-ampc-genes`, `/monitorings`, `/typings`, `/typing-subgroups` — `find` and `findOne` |
 | `data-import` | single type | `GET <prefix>/data-import` — the client's *Data status*; `404` until the first import is recorded |

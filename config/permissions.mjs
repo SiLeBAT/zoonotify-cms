@@ -245,6 +245,11 @@ export default {
         reason: 'Page content: substance detail page.',
       },
       'trend-informations': { actions: READ_SINGLE, consumers: CLIENT, reason: 'Page content: trend page.' },
+      'typing-informations': {
+        actions: READ_SINGLE,
+        consumers: CLIENT,
+        reason: 'Page content: text below the microbial-typing graph.',
+      },
       welcomes: { actions: READ_SINGLE, consumers: CLIENT, reason: 'Page content: home page.' },
 
       // Denied: no consumer.
