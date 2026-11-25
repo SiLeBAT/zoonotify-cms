@@ -3111,12 +3111,12 @@
     yup "0.32.9"
     zod "4.4.3"
 
-"@strapi/provider-email-nodemailer@5.59.0":
-  version "5.59.0"
-  resolved "https://registry.yarnpkg.com/@strapi/provider-email-nodemailer/-/provider-email-nodemailer-5.59.0.tgz#3c030c886c20ccbf9ad3b94d2a713dfbe3e2de86"
-  integrity sha512-p5Jbk+ubYxpMW2cMCmRPRrXkjNRgk58AO6MWX23/NVPKkuTVjpMKlBMa/5mZlExEHkIxjOwbw0FaiE8q+WjMWg==
+"@strapi/provider-email-nodemailer@5.63.0":
+  version "5.63.0"
+  resolved "https://registry.yarnpkg.com/@strapi/provider-email-nodemailer/-/provider-email-nodemailer-5.63.0.tgz#f63585315898ee6123351153ced68100a92b386a"
+  integrity sha512-XVSgHb9ZzSgHDH6fM45bzmyPwPsg3ErcGgFh91HRVZftSbVvRaJ5V4lMkmpIZ5OwoSzXnNdgqiTndIk9sH+PNA==
   dependencies:
-    nodemailer "9.0.1"
+    nodemailer "10.1.4"
 
 "@strapi/provider-email-sendmail@5.59.0":
   version "5.59.0"
@@ -8600,6 +8600,11 @@ node-xlsx@^0.25.0:
   version "0.25.0"
   resolved "https://registry.yarnpkg.com/node-xlsx/-/node-xlsx-0.25.0.tgz#fb4eeba26f55f1eae6eda1b040330bd6a572e112"
   integrity sha512-f8dAUau3+XbkZxvm+85WhJ80j4vDDz597hwn8Db5j/uF6OAnrM3CTSkOZIbwGTS9uQoKbnfbJEngJMqILTzk/g==
+
+nodemailer@10.1.4:
+  version "10.1.4"
+  resolved "https://registry.yarnpkg.com/nodemailer/-/nodemailer-10.1.4.tgz#66063221b29cb146c987e325ea92776f534e6524"
+  integrity sha512-EsMnOR2oRv4LGnWvHgcVYkkQ4O2j8KO4WTw6l+PHR4sOXo8SAgIraxtEnGDmotjbhv0hDsu3IuDIFZm8iXwO4A==
 
 nodemailer@9.0.1:
   version "9.0.1"
